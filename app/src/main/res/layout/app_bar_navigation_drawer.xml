@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="io.github.recodex.android.MainActivity">
+    tools:context="io.github.recodex.android.NavigationDrawer">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -21,15 +21,6 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_main" />
-
-    <TextView
-        android:text="Content here"
-        android:layout_width="106dp"
-        android:layout_height="65dp"
-        android:id="@+id/textView"
-        app:layout_anchorGravity="center_vertical|right"
-        android:layout_gravity="center_vertical|center_horizontal"
-        android:textAlignment="center" />
+    <include layout="@layout/content_navigation_drawer" />
 
 </android.support.design.widget.CoordinatorLayout>

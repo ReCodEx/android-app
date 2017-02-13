@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">ReCodEx</string>
     <string name="title_activity_main">ReCodEx</string>
+    <string name="title_activity_navigation_drawer">ReCodEx</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="action_about">About</string>
 </resources>
