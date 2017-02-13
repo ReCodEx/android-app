@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ReCodEx</string>
+    <string name="title_activity_main">ReCodEx</string>
 </resources>
