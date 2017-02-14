@@ -11,7 +11,7 @@
         android:title="@string/pref_title_api_uri" />
 
     <ListPreference
-        android:defaultValue="v1"
+        android:defaultValue="@string/pref_default_api_version"
         android:entries="@array/pref_api_version_titles"
         android:entryValues="@array/pref_api_version_values"
         android:key="api_version"

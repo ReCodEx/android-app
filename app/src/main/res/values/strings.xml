@@ -21,6 +21,8 @@
         <item>v1</item>
     </string-array>
     <string name="pref_title_sync_frequency">Sync frequency</string>
+    <string name="pref_token_name">bearerToken</string>
+    <string name="pref_default_api_version">v1</string>
     <string-array name="pref_sync_frequency_titles">
         <item>15 minutes</item>
         <item>30 minutes</item>

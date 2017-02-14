@@ -13,6 +13,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
+
+import java.io.IOException;
+
+import io.github.recodex.android.api.Constants;
+import io.github.recodex.android.model.Login;
+import io.github.recodex.android.model.Response;
+import io.github.recodex.android.utils.Utils;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 public class NavigationDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -71,7 +81,8 @@ public class NavigationDrawer extends AppCompatActivity
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
         } else if (id == R.id.action_about) {
-
+            final TextView text = (TextView)findViewById(R.id.textView);
+            text.setText(getPreferences(MODE_PRIVATE).getString(Constants.tokenPrefsId, "not here"));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
