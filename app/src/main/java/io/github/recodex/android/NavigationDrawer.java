@@ -1,6 +1,5 @@
 package io.github.recodex.android;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -47,22 +46,22 @@ public class NavigationDrawer extends AppCompatActivity
             Intent login = new Intent(this, LoginActivity.class);
             startActivityForResult(login, 0);
         } else {
-            fillUserInfo();
+            fillUserInfo(navigationView.getHeaderView(0));
         }
 
     }
 
-    private void fillUserInfo() {
+    private void fillUserInfo(View header) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View vi = inflater.inflate(R.layout.nav_header_navigation_drawer, null);
-        TextView userName = (TextView) vi.findViewById(R.id.userName);
-        userName.setText(prefs.getString(Constants.userFullName, "asd"));
-        new DownloadImageTask((ImageView) vi.findViewById(R.id.userAvatar))
-                .execute(prefs.getString(Constants.userAvatarUrl, ""));
 
-        Log.d("recodex", prefs.getString(Constants.userFullName, "not here"));
-        Log.d("recodex", prefs.getString(Constants.userAvatarUrl, "also not here"));
+        TextView userName = (TextView) header.findViewById(R.id.userName);
+        userName.setText(prefs.getString(Constants.userFullName, "John Doe"));
+
+        String avatarUrl = prefs.getString(Constants.userAvatarUrl, "");
+        if (!avatarUrl.isEmpty()) {
+            new DownloadImageTask((ImageView) header.findViewById(R.id.userAvatar))
+                    .execute(avatarUrl);
+        }
     }
 
     private boolean isLoggedIn() {
@@ -97,7 +96,7 @@ public class NavigationDrawer extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        fillUserInfo();
+        fillUserInfo(((NavigationView) findViewById(R.id.nav_view)).getHeaderView(0));
     }
 
     @Override

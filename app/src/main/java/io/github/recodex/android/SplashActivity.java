@@ -29,7 +29,6 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void initApiClient() {
-        //SharedPreferences prefs = getSharedPreferences(Constants.preferenceID, MODE_PRIVATE);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         // Add the interceptor to OkHttpClient

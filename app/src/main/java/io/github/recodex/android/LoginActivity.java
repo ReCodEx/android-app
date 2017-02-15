@@ -3,6 +3,7 @@ package io.github.recodex.android;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
@@ -325,9 +326,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 editor.putString(Constants.userAvatarUrl, login.getUser().getAvatarUrl());
                 editor.commit();
 
-                Log.d("recodex", preferences.getString(Constants.userFullName, "not here 2"));
-                Log.d("recodex", preferences.getString(Constants.userAvatarUrl, "also not here 2"));
-
                 return true;
 
             } catch (IOException e) {
@@ -343,6 +341,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
+                setResult(RESULT_OK, new Intent());
                 finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
