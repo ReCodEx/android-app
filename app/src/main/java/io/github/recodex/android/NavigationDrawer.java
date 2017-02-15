@@ -7,6 +7,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -43,21 +45,28 @@ public class NavigationDrawer extends AppCompatActivity
 
         if (!isLoggedIn()) {
             Intent login = new Intent(this, LoginActivity.class);
-            startActivity(login);
+            startActivityForResult(login, 0);
+        } else {
+            fillUserInfo();
         }
-
-        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
-        LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View vi = inflater.inflate(R.layout.nav_header_navigation_drawer, null);
-        TextView userName = (TextView) vi.findViewById(R.id.userName);
-        userName.setText(prefs.getString(Constants.userFullName, ""));
-        new DownloadImageTask((ImageView) vi.findViewById(R.id.userAvatar))
-                .execute(prefs.getString(Constants.userAvatarUrl, ""));
 
     }
 
+    private void fillUserInfo() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View vi = inflater.inflate(R.layout.nav_header_navigation_drawer, null);
+        TextView userName = (TextView) vi.findViewById(R.id.userName);
+        userName.setText(prefs.getString(Constants.userFullName, "asd"));
+        new DownloadImageTask((ImageView) vi.findViewById(R.id.userAvatar))
+                .execute(prefs.getString(Constants.userAvatarUrl, ""));
+
+        Log.d("recodex", prefs.getString(Constants.userFullName, "not here"));
+        Log.d("recodex", prefs.getString(Constants.userAvatarUrl, "also not here"));
+    }
+
     private boolean isLoggedIn() {
-        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         return prefs.contains(Constants.userPassword);
     }
 
@@ -83,6 +92,12 @@ public class NavigationDrawer extends AppCompatActivity
         protected void onPostExecute(Bitmap result) {
             bmImage.setImageBitmap(result);
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        fillUserInfo();
     }
 
     @Override

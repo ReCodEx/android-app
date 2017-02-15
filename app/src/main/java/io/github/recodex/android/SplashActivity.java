@@ -3,8 +3,10 @@ package io.github.recodex.android;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 
+import io.github.recodex.android.api.Constants;
 import io.github.recodex.android.api.RecodexApi;
 import io.github.recodex.android.api.TokenAuthenticator;
 import io.github.recodex.android.api.TokenInterceptor;
@@ -27,14 +29,17 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void initApiClient() {
+        //SharedPreferences prefs = getSharedPreferences(Constants.preferenceID, MODE_PRIVATE);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
         // Add the interceptor to OkHttpClient
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.interceptors().add(new TokenInterceptor(getPreferences(MODE_PRIVATE)));
-        builder.authenticator(new TokenAuthenticator(getPreferences(MODE_PRIVATE)));
+        builder.interceptors().add(new TokenInterceptor(prefs));
+        builder.authenticator(new TokenAuthenticator(prefs));
         OkHttpClient client = builder.build();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(getBaseUrl())
+                .baseUrl(getBaseUrl(prefs))
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();
@@ -43,8 +48,7 @@ public class SplashActivity extends AppCompatActivity {
         Utils.setApi(api);
     }
 
-    private String getBaseUrl() {
-        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+    private String getBaseUrl(SharedPreferences prefs) {
         String baseUrl = prefs.getString("api_uri", getString(R.string.pref_default_api_url));
         String version = prefs.getString("api_version", getString(R.string.pref_default_api_version));
         StringBuilder result = new StringBuilder();

@@ -9,4 +9,5 @@ public class Constants {
     public static final String userPassword = "password";
     public static final String userFullName = "userFullName";
     public static final String userAvatarUrl = "userAvatarUrl";
+    public static final String preferenceID = "recodex";
 }
