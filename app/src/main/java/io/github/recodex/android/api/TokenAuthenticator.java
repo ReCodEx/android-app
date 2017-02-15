@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import java.io.IOException;
 
 import io.github.recodex.android.R;
+import io.github.recodex.android.model.Login;
 import io.github.recodex.android.utils.Utils;
 import okhttp3.Authenticator;
 import okhttp3.Request;
@@ -21,8 +22,11 @@ public class TokenAuthenticator implements Authenticator {
 
     @Override
     public Request authenticate(Route route, Response response) throws IOException {
+        String userName = preferences.getString(Constants.userName, "");
+        String userPassword = preferences.getString(Constants.userPassword, "");
+
         // Refresh your access_token using a synchronous api request
-        String newAccessToken = Utils.getApi().login("ps@stdin.cz", "").execute().body().getPayload().getAccessToken();
+        String newAccessToken = Utils.getApi().login(userName, userPassword).execute().body().getPayload().getAccessToken();
 
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(Constants.tokenPrefsId, newAccessToken);

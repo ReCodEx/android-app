@@ -1,9 +1,13 @@
 package io.github.recodex.android;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -11,18 +15,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.IOException;
-
+import java.io.InputStream;
 import io.github.recodex.android.api.Constants;
-import io.github.recodex.android.model.Login;
-import io.github.recodex.android.model.Response;
-import io.github.recodex.android.utils.Utils;
-import retrofit2.Call;
-import retrofit2.Callback;
 
 public class NavigationDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -42,6 +40,49 @@ public class NavigationDrawer extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        if (!isLoggedIn()) {
+            Intent login = new Intent(this, LoginActivity.class);
+            startActivity(login);
+        }
+
+        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+        LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View vi = inflater.inflate(R.layout.nav_header_navigation_drawer, null);
+        TextView userName = (TextView) vi.findViewById(R.id.userName);
+        userName.setText(prefs.getString(Constants.userFullName, ""));
+        new DownloadImageTask((ImageView) vi.findViewById(R.id.userAvatar))
+                .execute(prefs.getString(Constants.userAvatarUrl, ""));
+
+    }
+
+    private boolean isLoggedIn() {
+        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+        return prefs.contains(Constants.userPassword);
+    }
+
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
+        }
     }
 
     @Override
@@ -81,8 +122,7 @@ public class NavigationDrawer extends AppCompatActivity
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
         } else if (id == R.id.action_about) {
-            final TextView text = (TextView)findViewById(R.id.textView);
-            text.setText(getPreferences(MODE_PRIVATE).getString(Constants.tokenPrefsId, "not here"));
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
