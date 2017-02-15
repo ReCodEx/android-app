@@ -53,5 +53,5 @@
         completions."
     </string>
     <string name="dashboard">Dashboard</string>
-    <string name="action_logout">Log out</string>
+    <string name="action_manage_accounts">Manage accounts</string>
 </resources>

@@ -8,17 +8,17 @@ import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 
 import io.github.recodex.android.LoginActivity;
+import io.github.recodex.android.api.Constants;
 import io.github.recodex.android.model.Login;
-import io.github.recodex.android.model.Response;
+import io.github.recodex.android.model.Envelope;
 import io.github.recodex.android.utils.Utils;
+import retrofit2.Response;
 
-/**
- * Created by martin on 2/15/17.
- */
 
 public class ReCodExAuthenticator extends AbstractAccountAuthenticator {
 
@@ -44,6 +44,7 @@ public class ReCodExAuthenticator extends AbstractAccountAuthenticator {
         Log.d("recodex","*** addAccount method called");
 
         final Intent intent = new Intent(mContext, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_TASK_ON_HOME);
         intent.putExtra(ARG_ACCOUNT_TYPE, s);
         intent.putExtra(ARG_AUTH_TYPE, s1);
         intent.putExtra(ARG_IS_ADDING_NEW_ACCOUNT, true);
@@ -80,7 +81,7 @@ public class ReCodExAuthenticator extends AbstractAccountAuthenticator {
                 try {
                     Log.d("recodex", "*** re-authenticating with the existing password");
 
-                    retrofit2.Response<Response<Login>> response = Utils.getApi().login(account.name, password).execute();
+                    Response<Envelope<Login>> response = Utils.getApi().login(account.name, password).execute();
                     if (response.isSuccessful() && response.body().getCode() == 200) {
                         Login login = response.body().getPayload();
                         authToken = login.getAccessToken();

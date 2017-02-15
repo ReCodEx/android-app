@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.text.TextUtils;
@@ -33,6 +34,8 @@ import io.github.recodex.android.utils.Utils;
 
 public class NavigationDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private final int MANAGE_ACCOUNTS_REQUEST = 666;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +97,8 @@ public class NavigationDrawer extends AppCompatActivity
                     showMessage("authenticated");
 
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    // if not authenticated, close the app
+                    finish();
                 }
             }
         }, null);
@@ -141,8 +145,12 @@ public class NavigationDrawer extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        fillUserInfo(((NavigationView) findViewById(R.id.nav_view)).getHeaderView(0));
+        switch (requestCode) {
+            case MANAGE_ACCOUNTS_REQUEST:
+                handleAccounts();
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override
@@ -169,17 +177,10 @@ public class NavigationDrawer extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.action_logout) { // TODO: handle differently with engaged AccountManager
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-            SharedPreferences.Editor e = prefs.edit();
-            e.remove(Constants.userPassword);
-            e.commit();
-
-            Intent intent = new Intent(this, LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_TASK_ON_HOME);
-            startActivity(intent);
-            this.finish();
-            return true;
+        if (id == R.id.action_manage_accounts) {
+            Intent intent = new Intent(Settings.ACTION_SYNC_SETTINGS);
+            //intent.putExtra(Settings.EXTRA_AUTHORITIES, new String[]{ Constants.accountAuthority });
+            startActivityForResult(intent, MANAGE_ACCOUNTS_REQUEST);
         }
 
         return super.onOptionsItemSelected(item);

@@ -3,13 +3,9 @@ package io.github.recodex.android.api;
 
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
-import android.content.SharedPreferences;
-
 import java.io.IOException;
 
-import io.github.recodex.android.R;
 import io.github.recodex.android.authentication.ReCodExAuthenticator;
-import io.github.recodex.android.model.Login;
 import io.github.recodex.android.utils.Utils;
 import okhttp3.Authenticator;
 import okhttp3.Request;
@@ -26,9 +22,7 @@ public class TokenAuthenticator implements Authenticator {
         String newAccessToken = null;
         try {
             newAccessToken = Utils.getAccountManager().blockingGetAuthToken(Utils.getCurrentAccount(), ReCodExAuthenticator.AUTH_TOKEN_TYPE, true);
-        } catch (OperationCanceledException e) {
-            e.printStackTrace();
-        } catch (AuthenticatorException e) {
+        } catch (OperationCanceledException | AuthenticatorException e) {
             e.printStackTrace();
         }
 

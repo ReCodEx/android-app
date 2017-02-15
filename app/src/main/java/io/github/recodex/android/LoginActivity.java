@@ -44,8 +44,9 @@ import java.util.List;
 import io.github.recodex.android.api.Constants;
 import io.github.recodex.android.authentication.ReCodExAuthenticator;
 import io.github.recodex.android.model.Login;
-import io.github.recodex.android.model.Response;
+import io.github.recodex.android.model.Envelope;
 import io.github.recodex.android.utils.Utils;
+import retrofit2.Response;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -355,7 +356,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             Intent result = new Intent();
 
             try {
-                retrofit2.Response<Response<Login>> response = Utils.getApi().login(mEmail, mPassword).execute();
+                Response<Envelope<Login>> response = Utils.getApi().login(mEmail, mPassword).execute();
 
                 if (!response.isSuccessful() || response.body().getCode() != 200) {
                     Log.d("recodex", "Reponse from server was not successful.");
@@ -372,9 +373,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     result.putExtra(AccountManager.KEY_PASSWORD, mPassword);
                     result.putExtra(KEY_LOGIN_RESULT, true);
 
-                    // TODO: what should stay down here?
                     SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString(Constants.userName, mEmail);
                     editor.putString(Constants.userFullName, login.getUser().getFullName());
                     editor.putString(Constants.userAvatarUrl, login.getUser().getAvatarUrl());
                     editor.commit();

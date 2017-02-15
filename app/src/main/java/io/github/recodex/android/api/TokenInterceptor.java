@@ -24,12 +24,10 @@ public class TokenInterceptor implements Interceptor {
         if (Utils.getCurrentAccount() != null) {
             Request originalRequest = chain.request();
 
-            String token = null;
+            String token = "";
             try {
                 token = Utils.getAccountManager().blockingGetAuthToken(Utils.getCurrentAccount(), ReCodExAuthenticator.AUTH_TOKEN_TYPE, true);
-            } catch (OperationCanceledException e) {
-                e.printStackTrace();
-            } catch (AuthenticatorException e) {
+            } catch (OperationCanceledException | AuthenticatorException e) {
                 e.printStackTrace();
             }
 
