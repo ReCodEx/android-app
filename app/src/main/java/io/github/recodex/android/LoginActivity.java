@@ -1,11 +1,15 @@
 package io.github.recodex.android;
 
+import android.accounts.Account;
+import android.accounts.AccountAuthenticatorResponse;
+import android.accounts.AccountManager;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -38,6 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.github.recodex.android.api.Constants;
+import io.github.recodex.android.authentication.ReCodExAuthenticator;
 import io.github.recodex.android.model.Login;
 import io.github.recodex.android.model.Response;
 import io.github.recodex.android.utils.Utils;
@@ -54,10 +59,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      */
     private static final int REQUEST_READ_CONTACTS = 0;
 
+    public static final String KEY_LOGIN_RESULT = "LOGIN_RESULT";
+
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
     private UserLoginTask mAuthTask = null;
+
+    /**
+     * Account manager
+     */
+    private Bundle mResultBundle = null;
+    private AccountAuthenticatorResponse mAccountAuthenticatorResponse = null;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -69,6 +82,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
@@ -95,6 +109,32 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
+        // manage authenticator result
+        Intent intent = getIntent();
+        String key = AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE;
+        Parcelable response = intent.getParcelableExtra(key);
+        if (response != null) {
+            mAccountAuthenticatorResponse = (android.accounts.AccountAuthenticatorResponse) response;
+        }
+
+        if (mAccountAuthenticatorResponse != null) {
+            mAccountAuthenticatorResponse.onRequestContinued();
+        }
+    }
+
+    @Override
+    public void finish() {
+        if (mAccountAuthenticatorResponse != null) {
+            // send the result bundle back if set, otherwise send an error.
+            if (mResultBundle != null) {
+                mAccountAuthenticatorResponse.onResult(mResultBundle);
+            } else {
+                mAccountAuthenticatorResponse.onError(AccountManager.ERROR_CODE_CANCELED, "canceled");
+            }
+            mAccountAuthenticatorResponse = null;
+        }
+        super.finish();
     }
 
     private void populateAutoComplete() {
@@ -297,7 +337,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserLoginTask extends AsyncTask<Void, Void, Intent> {
 
         private final String mEmail;
         private final String mPassword;
@@ -310,40 +350,73 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
+        protected Intent doInBackground(Void... params) {
+            Log.d("recodex", "Login on background...");
+            Intent result = new Intent();
+
             try {
                 retrofit2.Response<Response<Login>> response = Utils.getApi().login(mEmail, mPassword).execute();
+
                 if (!response.isSuccessful() || response.body().getCode() != 200) {
-                    return false;
+                    Log.d("recodex", "Reponse from server was not successful.");
+                    result.putExtra(KEY_LOGIN_RESULT, false);
+                } else {
+                    Log.d("recodex", "Login acquired from server, saving...");
+                    Login login = response.body().getPayload();
+
+                    String accountType = getIntent().getStringExtra(ReCodExAuthenticator.ARG_ACCOUNT_TYPE);
+
+                    result.putExtra(AccountManager.KEY_ACCOUNT_NAME, mEmail);
+                    result.putExtra(AccountManager.KEY_ACCOUNT_TYPE, accountType);
+                    result.putExtra(AccountManager.KEY_AUTHTOKEN, login.getAccessToken());
+                    result.putExtra(AccountManager.KEY_PASSWORD, mPassword);
+                    result.putExtra(KEY_LOGIN_RESULT, true);
+
+                    // TODO: what should stay down here?
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putString(Constants.userName, mEmail);
+                    editor.putString(Constants.userFullName, login.getUser().getFullName());
+                    editor.putString(Constants.userAvatarUrl, login.getUser().getAvatarUrl());
+                    editor.commit();
                 }
-                Login login = response.body().getPayload();
-
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putString(Constants.tokenPrefsId, login.getAccessToken());
-                editor.putString(Constants.userName, mEmail);
-                editor.putString(Constants.userPassword, mPassword);
-                editor.putString(Constants.userFullName, login.getUser().getFullName());
-                editor.putString(Constants.userAvatarUrl, login.getUser().getAvatarUrl());
-                editor.commit();
-
-                return true;
-
             } catch (IOException e) {
-                e.printStackTrace();
+                result.putExtra(KEY_LOGIN_RESULT, false);
             }
 
-            return false;
+            return result;
         }
 
         @Override
-        protected void onPostExecute(final Boolean success) {
+        protected void onPostExecute(final Intent intent) {
             mAuthTask = null;
             showProgress(false);
 
-            if (success) {
-                setResult(RESULT_OK, new Intent());
+            Log.d("recodex", "On post execute after login...");
+
+            if (intent.getBooleanExtra(KEY_LOGIN_RESULT, false)) {
+                Log.d("recodex", "Login successfull...");
+
+                String accountName = intent.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+                String accountPassword = intent.getStringExtra(AccountManager.KEY_PASSWORD);
+                final Account account = new Account(accountName, intent.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE));
+
+                if (getIntent().getBooleanExtra(ReCodExAuthenticator.ARG_IS_ADDING_NEW_ACCOUNT, false)) {
+                    String authtoken = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
+                    String authtokenType = ReCodExAuthenticator.AUTH_TOKEN_TYPE;
+                    // Creating the account on the device and setting the auth token we got
+                    // (Not setting the auth token will cause another call to the server to authenticate the user)
+                    Utils.getAccountManager().addAccountExplicitly(account, accountPassword, null);
+                    Utils.getAccountManager().setAuthToken(account, authtokenType, authtoken);
+                } else {
+                    Utils.getAccountManager().setPassword(account, accountPassword);
+                }
+
+                setAccountAuthenticatorResult(intent.getExtras());
+                setResult(RESULT_OK, intent);
                 finish();
             } else {
+                Log.d("recodex", "Login unsuccessfull...");
+
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
             }
@@ -354,6 +427,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = null;
             showProgress(false);
         }
+    }
+
+    /**
+     * Set the result that is to be sent as the result of the request that
+     * caused this Activity to be launched. If result is null or this method is
+     * never called then the request will be canceled.
+     *
+     * @param result this is returned as the result of the
+     *            AbstractAccountAuthenticator request
+     */
+    public final void setAccountAuthenticatorResult(Bundle result) {
+        mResultBundle = result;
     }
 }
 

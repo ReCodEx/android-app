@@ -1,5 +1,8 @@
 package io.github.recodex.android;
 
+import android.accounts.Account;
+import android.accounts.AccountManagerCallback;
+import android.accounts.AccountManagerFuture;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -9,6 +12,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -20,9 +24,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.InputStream;
 import io.github.recodex.android.api.Constants;
+import io.github.recodex.android.authentication.ReCodExAuthenticator;
+import io.github.recodex.android.utils.Utils;
 
 public class NavigationDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -43,13 +50,8 @@ public class NavigationDrawer extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        if (!isLoggedIn()) {
-            Intent login = new Intent(this, LoginActivity.class);
-            startActivityForResult(login, 0);
-        } else {
-            fillUserInfo(navigationView.getHeaderView(0));
-        }
-
+        // handle current user
+        handleAccounts();
     }
 
     private void fillUserInfo(View header) {
@@ -65,9 +67,49 @@ public class NavigationDrawer extends AppCompatActivity
         }
     }
 
-    private boolean isLoggedIn() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        return prefs.contains(Constants.userPassword);
+    private void handleAccounts() throws SecurityException {
+        Account accounts[] = Utils.getAccountManager().getAccountsByType(ReCodExAuthenticator.ACCOUNT_TYPE);
+
+        if (accounts.length == 0) {
+            // we have to login new user
+            addNewAccount();
+        } else if (accounts.length == 1) {
+            // we have only one user, this is it... use him/her
+            Utils.setCurrentAccount(accounts[0]);
+            fillUserInfo(((NavigationView) findViewById(R.id.nav_view)).getHeaderView(0));
+        } else {
+            // TODO: handle multiple accounts
+        }
+    }
+
+    private void addNewAccount() {
+        final AccountManagerFuture<Bundle> future =
+                Utils.getAccountManager().addAccount(ReCodExAuthenticator.ACCOUNT_TYPE,
+                        ReCodExAuthenticator.AUTH_TOKEN_TYPE, null, null, this, new AccountManagerCallback<Bundle>() {
+            @Override
+            public void run(AccountManagerFuture<Bundle> future) {
+                try {
+                    Bundle bnd = future.getResult();
+                    fillUserInfo(((NavigationView) findViewById(R.id.nav_view)).getHeaderView(0));
+                    showMessage("authenticated");
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }, null);
+    }
+
+    private void showMessage(final String msg) {
+        if (TextUtils.isEmpty(msg))
+            return;
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
@@ -127,7 +169,7 @@ public class NavigationDrawer extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.action_logout) {
+        if (id == R.id.action_logout) { // TODO: handle differently with engaged AccountManager
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             SharedPreferences.Editor e = prefs.edit();
             e.remove(Constants.userPassword);

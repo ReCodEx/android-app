@@ -1,5 +1,6 @@
 package io.github.recodex.android;
 
+import android.accounts.AccountManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -23,6 +24,9 @@ public class SplashActivity extends AppCompatActivity {
 
         initApiClient();
 
+        // init account manager
+        Utils.setAccountManager(AccountManager.get(getBaseContext()));
+
         Intent intent = new Intent(this, NavigationDrawer.class);
         startActivity(intent);
         finish();
@@ -33,8 +37,8 @@ public class SplashActivity extends AppCompatActivity {
 
         // Add the interceptor to OkHttpClient
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.interceptors().add(new TokenInterceptor(prefs));
-        builder.authenticator(new TokenAuthenticator(prefs));
+        builder.interceptors().add(new TokenInterceptor());
+        builder.authenticator(new TokenAuthenticator());
         OkHttpClient client = builder.build();
 
         Retrofit retrofit = new Retrofit.Builder()
