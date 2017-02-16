@@ -54,4 +54,9 @@
     </string>
     <string name="dashboard">Dashboard</string>
     <string name="action_manage_accounts">Manage accounts</string>
+    <string name="title_activity_about">About</string>
+    <string name="recodex_logo">ReCodEx logo</string>
+    <string name="github_repository">GitHub Repository</string>
+    <string name="description">ReCodEx is a whole environment for dynamic evaluation of programming exercises. This application provides alternative frontend for viewing assignments and overall student score. It is not possible to submit new solutions, for complete funcionality use the main web interface. The application is developed as an open-source project under the terms of MIT licence, so all contributions are welcome.</string>
+    <string name="hall_of_fame">Hall of Fame:</string>
 </resources>

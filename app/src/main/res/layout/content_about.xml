@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_about"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="io.github.recodex.android.AboutActivity"
+    tools:showIn="@layout/activity_about">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <View
+                    android:id="@+id/about_header_rect"
+                    android:layout_width="match_parent"
+                    android:background="@drawable/rectangle_grey"
+                    android:layout_height="200dp" />
+
+                <ImageView
+                    app:srcCompat="@drawable/ic_logo_vector"
+                    android:id="@+id/about_header_logo"
+                    android:scaleType="fitXY"
+                    android:layout_marginTop="36dp"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:contentDescription="@string/recodex_logo" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingBottom="30dp">
+
+                <TextView
+                    android:text="ReCodEx"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/about_recodex_title"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    android:textStyle="normal|bold"
+                    android:textSize="26sp"
+                    android:textAlignment="center"
+                    android:fontFamily="sans-serif-condensed"
+                    android:paddingTop="20dp"
+                    android:paddingBottom="5dp" />
+
+                <TextView
+                    android:text="android-app"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/about_android_app"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textAlignment="center"
+                    android:textStyle="normal|bold"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:paddingBottom="20dp" />
+
+                <TextView
+                    android:text="@string/description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/description"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingBottom="15dp"
+                    android:textAlignment="center" />
+
+                <Button
+                    android:text="@string/github_repository"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/button_repo"
+                    style="@android:style/Widget.DeviceDefault.Button"
+                    android:backgroundTint="@color/colorAccent"
+                    android:textColor="@android:color/white"
+                    android:autoLink="web" />
+
+                <TextView
+                    android:text="@string/hall_of_fame"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/authors"
+                    android:paddingTop="30dp"
+                    android:textSize="15sp"
+                    android:paddingBottom="5dp"
+                    android:textStyle="normal|bold" />
+
+                <TextView
+                    android:text="Jan Buchar\nMartin Polanka\nPetr Stefan"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/author_names"
+                    android:textStyle="normal|italic" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!--
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"-->
+</RelativeLayout>
