@@ -21,7 +21,7 @@ public class TokenAuthenticator implements Authenticator {
     @Override
     public Request authenticate(Route route, Response response) throws IOException {
 
-        if (response.request().url().encodedPath().endsWith("/login")) {
+        if (response.request().url().encodedPathSegments().contains("login")) {
             return null;
         }
 
