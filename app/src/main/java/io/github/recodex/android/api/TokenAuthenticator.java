@@ -3,6 +3,8 @@ package io.github.recodex.android.api;
 
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
+import android.util.Log;
+
 import java.io.IOException;
 
 import io.github.recodex.android.authentication.ReCodExAuthenticator;
@@ -18,8 +20,13 @@ public class TokenAuthenticator implements Authenticator {
 
     @Override
     public Request authenticate(Route route, Response response) throws IOException {
+
+        if (response.request().url().encodedPath().endsWith("/login")) {
+            return null;
+        }
+
         // Refresh your access_token using a synchronous api request
-        String newAccessToken = null;
+        String newAccessToken = "";
         try {
             newAccessToken = Utils.getAccountManager().blockingGetAuthToken(Utils.getCurrentAccount(), ReCodExAuthenticator.AUTH_TOKEN_TYPE, true);
         } catch (OperationCanceledException | AuthenticatorException e) {

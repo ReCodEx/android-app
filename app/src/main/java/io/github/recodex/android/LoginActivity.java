@@ -359,7 +359,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 Response<Envelope<Login>> response = Utils.getApi().login(mEmail, mPassword).execute();
 
                 if (!response.isSuccessful() || response.body().getCode() != 200) {
-                    Log.d("recodex", "Reponse from server was not successful.");
+                    Log.d("recodex", "Response from server was not successful.");
                     result.putExtra(KEY_LOGIN_RESULT, false);
                 } else {
                     Log.d("recodex", "Login acquired from server, saving...");
