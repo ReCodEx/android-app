@@ -13,7 +13,7 @@ import io.github.recodex.android.R;
 import io.github.recodex.android.api.RecodexApi;
 import io.github.recodex.android.api.TokenAuthenticator;
 import io.github.recodex.android.api.TokenInterceptor;
-import io.github.recodex.android.utils.Utils;
+import io.github.recodex.android.users.UsersManager;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -66,10 +66,10 @@ public class AppModule {
 
     @Provides
     @Singleton
-    OkHttpClient provideOkHttpClient(AccountManager accountManager) {
+    OkHttpClient provideOkHttpClient(UsersManager usersManager) {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.interceptors().add(new TokenInterceptor(accountManager));
-        builder.authenticator(new TokenAuthenticator(accountManager));
+        builder.interceptors().add(new TokenInterceptor(usersManager));
+        builder.authenticator(new TokenAuthenticator(usersManager));
         OkHttpClient client = builder.build();
         return client;
     }
@@ -87,7 +87,13 @@ public class AppModule {
 
     @Provides
     @Singleton
-    RecodexApi providesReCodExApi(Retrofit retrofit, SharedPreferences sharedPreferences) {
+    RecodexApi providesReCodExApi(Retrofit retrofit) {
         return retrofit.create(RecodexApi.class);
+    }
+
+    @Provides
+    @Singleton
+    UsersManager providesUsersManager(Application application, AccountManager accountManager) {
+        return new UsersManager(application, accountManager);
     }
 }

@@ -1,18 +1,14 @@
 package io.github.recodex.android;
 
 import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -36,9 +32,8 @@ import java.io.InputStream;
 
 import javax.inject.Inject;
 
-import io.github.recodex.android.api.Constants;
-import io.github.recodex.android.authentication.ReCodExAuthenticator;
-import io.github.recodex.android.utils.Utils;
+import io.github.recodex.android.users.UserWrapper;
+import io.github.recodex.android.users.UsersManager;
 
 public class NavigationDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -48,7 +43,7 @@ public class NavigationDrawer extends AppCompatActivity
     private AlertDialog mAlertDialog;
 
     @Inject
-    AccountManager accountManager;
+    UsersManager usersManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,15 +72,12 @@ public class NavigationDrawer extends AppCompatActivity
     private void fillUserInfo() {
         View header = ((NavigationView) findViewById(R.id.nav_view)).getHeaderView(0);
 
-        // load the right preferences
-        String userId = accountManager.getUserData(Utils.getCurrentAccount(), ReCodExAuthenticator.KEY_USER_ID);
-        SharedPreferences prefs = getApplicationContext()
-                .getSharedPreferences(getString(R.string.user_preferences_prefix) + userId, Context.MODE_PRIVATE);;
+        UserWrapper user = usersManager.getCurrentUser();
 
         TextView userName = (TextView) header.findViewById(R.id.userName);
-        userName.setText(prefs.getString(Constants.userFullName, "John Doe"));
+        userName.setText(user.getFullName());
 
-        String avatarUrl = prefs.getString(Constants.userAvatarUrl, "");
+        String avatarUrl = user.getAvatarUrl();
         if (!avatarUrl.isEmpty()) {
             new DownloadImageTask((ImageView) header.findViewById(R.id.userAvatar))
                     .execute(avatarUrl);
@@ -93,14 +85,20 @@ public class NavigationDrawer extends AppCompatActivity
     }
 
     private void handleAccounts() throws SecurityException {
-        Account accounts[] = accountManager.getAccountsByType(ReCodExAuthenticator.ACCOUNT_TYPE);
+        if (usersManager.getCurrentUser() != null) {
+            // we have loaded user, so we do not have to pick one or create one
+            fillUserInfo();
+            return;
+        }
+
+        Account accounts[] = usersManager.getAvailableAccounts();
 
         if (accounts.length == 0) {
             // we have to login new user
             addNewAccount();
         } else if (accounts.length == 1) {
             // we have only one user, this is it... use him/her
-            Utils.setCurrentAccount(accounts[0]);
+            usersManager.switchCurrentUser(accounts[0]);
             fillUserInfo();
         } else {
             showAccountPicker(accounts);
@@ -108,26 +106,22 @@ public class NavigationDrawer extends AppCompatActivity
     }
 
     private void addNewAccount() {
-        final AccountManagerFuture<Bundle> future =
-                accountManager.addAccount(ReCodExAuthenticator.ACCOUNT_TYPE,
-                        ReCodExAuthenticator.AUTH_TOKEN_TYPE, null, null, this, new AccountManagerCallback<Bundle>() {
+        usersManager.addAccount(this, new AccountManagerCallback<Bundle>() {
             @Override
             public void run(AccountManagerFuture<Bundle> future) {
                 try {
                     Bundle bnd = future.getResult();
                     fillUserInfo();
-                    showMessage("authenticated");
-
                 } catch (Exception e) {
                     // if not authenticated, close the app
                     finish();
                 }
             }
-        }, null);
+        });
     }
 
     private void showAccountPicker(final Account accounts[]) {
-        String names[] = new String[accounts.length];
+        String[] names = new String[accounts.length];
         for (int i = 0; i < accounts.length; i++) {
             names[i] = accounts[i].name;
         }
@@ -137,9 +131,9 @@ public class NavigationDrawer extends AppCompatActivity
                 .setAdapter(new ArrayAdapter<>(getBaseContext(), android.R.layout.simple_list_item_1, names), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Utils.setCurrentAccount(accounts[which]);
+                UserWrapper user = usersManager.switchCurrentUser(accounts[which]);
+                showMessage("User '" + user.getFullName() + "' chosen");
                 fillUserInfo();
-                showMessage("user chosen");
             }
         }).create();
         mAlertDialog.show();
@@ -222,6 +216,8 @@ public class NavigationDrawer extends AppCompatActivity
             Intent intent = new Intent(Settings.ACTION_SYNC_SETTINGS);
             //intent.putExtra(Settings.EXTRA_AUTHORITIES, new String[]{ Constants.accountAuthority });
             startActivityForResult(intent, MANAGE_ACCOUNTS_REQUEST);
+        } else if (id == R.id.action_pick_account) {
+            showAccountPicker(usersManager.getAvailableAccounts());
         }
 
         return super.onOptionsItemSelected(item);

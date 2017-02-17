@@ -46,7 +46,8 @@ import io.github.recodex.android.api.RecodexApi;
 import io.github.recodex.android.authentication.ReCodExAuthenticator;
 import io.github.recodex.android.model.Envelope;
 import io.github.recodex.android.model.Login;
-import io.github.recodex.android.utils.Utils;
+import io.github.recodex.android.users.UserWrapper;
+import io.github.recodex.android.users.UsersManager;
 import retrofit2.Response;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -81,7 +82,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mLoginFormView;
 
     @Inject
-    AccountManager accountManager;
+    UsersManager usersManager;
     @Inject
     RecodexApi recodexApi;
 
@@ -359,17 +360,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected Intent doInBackground(Void... params) {
-            Log.d("recodex", "Login on background...");
+            Log.d(getString(R.string.recodex_log_tag), "Login on background...");
             Intent result = new Intent();
 
             try {
                 Response<Envelope<Login>> response = recodexApi.login(mEmail, mPassword).execute();
 
                 if (!response.isSuccessful() || response.body().getCode() != 200) {
-                    Log.d("recodex", "Response from server was not successful.");
+                    Log.d(getString(R.string.recodex_log_tag), "Response from server was not successful.");
                     result.putExtra(KEY_LOGIN_RESULT, false);
                 } else {
-                    Log.d("recodex", "Login acquired from server, saving...");
+                    Log.d(getString(R.string.recodex_log_tag), "Login acquired from server, saving...");
                     Login login = response.body().getPayload();
 
                     String accountType = getIntent().getStringExtra(ReCodExAuthenticator.ARG_ACCOUNT_TYPE);
@@ -382,27 +383,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                     // create account
                     final Account account = new Account(mEmail, accountType);
-                    Utils.setCurrentAccount(account);
+                    UserWrapper user = usersManager.addUserExplicitly(account, login.getAccessToken(), login.getUser().getId(), mPassword);
 
-                    if (getIntent().getBooleanExtra(ReCodExAuthenticator.ARG_IS_ADDING_NEW_ACCOUNT, false)) {
-
-                        // Creating the account on the device and setting the auth token we got
-                        accountManager.addAccountExplicitly(account, mPassword, null);
-                        accountManager.setAuthToken(account, ReCodExAuthenticator.AUTH_TOKEN_TYPE, login.getAccessToken());
-
-                        // set user data
-                        accountManager.setUserData(account, ReCodExAuthenticator.KEY_USER_ID, login.getUser().getId());
-                    } else {
-                        accountManager.setPassword(account, mPassword);
-                    }
-
-                    // set preferences data
-                    SharedPreferences prefs = getApplicationContext()
-                            .getSharedPreferences(getString(R.string.user_preferences_prefix) + login.getUser().getId(), Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.putString(Constants.userFullName, login.getUser().getFullName());
-                    editor.putString(Constants.userAvatarUrl, login.getUser().getAvatarUrl());
-                    editor.commit();
+                    user.updateData(login);
                 }
             } catch (IOException e) {
                 result.putExtra(KEY_LOGIN_RESULT, false);
@@ -416,16 +399,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = null;
             showProgress(false);
 
-            Log.d("recodex", "On post execute after login...");
+            Log.d(getString(R.string.recodex_log_tag), "On post execute after login...");
 
             if (intent.getBooleanExtra(KEY_LOGIN_RESULT, false)) {
-                Log.d("recodex", "Login successfull...");
+                Log.d(getString(R.string.recodex_log_tag), "Login successfull...");
 
                 setAccountAuthenticatorResult(intent.getExtras());
                 setResult(RESULT_OK, intent);
                 finish();
             } else {
-                Log.d("recodex", "Login unsuccessfull...");
+                Log.d(getString(R.string.recodex_log_tag), "Login unsuccessfull...");
 
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();

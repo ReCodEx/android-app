@@ -9,7 +9,7 @@ import android.util.Log;
 import java.io.IOException;
 
 import io.github.recodex.android.authentication.ReCodExAuthenticator;
-import io.github.recodex.android.utils.Utils;
+import io.github.recodex.android.users.UsersManager;
 import okhttp3.Authenticator;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -17,10 +17,10 @@ import okhttp3.Route;
 
 public class TokenAuthenticator implements Authenticator {
 
-    private AccountManager accountManager;
+    private UsersManager usersManager;
 
-    public TokenAuthenticator(AccountManager accountManager) {
-        this.accountManager = accountManager;
+    public TokenAuthenticator(UsersManager usersManager) {
+        this.usersManager = usersManager;
     }
 
     @Override
@@ -31,12 +31,7 @@ public class TokenAuthenticator implements Authenticator {
         }
 
         // Refresh your access_token using a synchronous api request
-        String newAccessToken = "";
-        try {
-            newAccessToken = accountManager.blockingGetAuthToken(Utils.getCurrentAccount(), ReCodExAuthenticator.AUTH_TOKEN_TYPE, true);
-        } catch (OperationCanceledException | AuthenticatorException e) {
-            e.printStackTrace();
-        }
+        String newAccessToken = usersManager.blockingGetAuthToken();
 
         // Add new header to rejected request and retry it
         return response.request().newBuilder()

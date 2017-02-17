@@ -21,7 +21,8 @@ import io.github.recodex.android.api.Constants;
 import io.github.recodex.android.api.RecodexApi;
 import io.github.recodex.android.model.Envelope;
 import io.github.recodex.android.model.Login;
-import io.github.recodex.android.utils.Utils;
+import io.github.recodex.android.users.UserWrapper;
+import io.github.recodex.android.users.UsersManager;
 import retrofit2.Response;
 
 
@@ -30,11 +31,8 @@ public class ReCodExAuthenticator extends AbstractAccountAuthenticator {
     public final static String ARG_ACCOUNT_TYPE = "ACCOUNT_TYPE";
     public final static String ARG_AUTH_TYPE = "AUTH_TYPE";
     public final static String ARG_ACCOUNT_NAME = "ACCOUNT_NAME";
-    public final static String ARG_IS_ADDING_NEW_ACCOUNT = "IS_ADDING_ACCOUNT";
 
     public static final String ACCOUNT_TYPE = "io.github.recodex.android.authentication";
-
-    public static final String KEY_USER_ID = "USER_ID";
 
     public final static String AUTH_TOKEN_TYPE = "full";
     public final static String AUTH_TOKEN_TYPE_LABEL = "Full access";
@@ -43,6 +41,8 @@ public class ReCodExAuthenticator extends AbstractAccountAuthenticator {
 
     @Inject
     RecodexApi recodexApi;
+    @Inject
+    UsersManager usersManager;
 
     public ReCodExAuthenticator(Context context) {
         super(context);
@@ -59,7 +59,6 @@ public class ReCodExAuthenticator extends AbstractAccountAuthenticator {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_TASK_ON_HOME);
         intent.putExtra(ARG_ACCOUNT_TYPE, s);
         intent.putExtra(ARG_AUTH_TYPE, s1);
-        intent.putExtra(ARG_IS_ADDING_NEW_ACCOUNT, true);
         intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, accountAuthenticatorResponse);
 
         final Bundle result = new Bundle();
@@ -98,13 +97,8 @@ public class ReCodExAuthenticator extends AbstractAccountAuthenticator {
                         Login login = response.body().getPayload();
                         authToken = login.getAccessToken();
 
-                        // save new user data
-                        SharedPreferences prefs = mContext
-                                .getSharedPreferences(mContext.getString(R.string.user_preferences_prefix) + login.getUser().getId(), Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = prefs.edit();
-                        editor.putString(Constants.userFullName, login.getUser().getFullName());
-                        editor.putString(Constants.userAvatarUrl, login.getUser().getAvatarUrl());
-                        editor.commit();
+                        UserWrapper user = usersManager.switchCurrentUser(account);
+                        user.updateData(login);
                     }
 
                 } catch (Exception e) {

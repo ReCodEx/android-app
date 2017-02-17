@@ -11,7 +11,6 @@ import io.github.recodex.android.api.Constants;
 import io.github.recodex.android.api.RecodexApi;
 import io.github.recodex.android.api.TokenAuthenticator;
 import io.github.recodex.android.api.TokenInterceptor;
-import io.github.recodex.android.utils.Utils;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
