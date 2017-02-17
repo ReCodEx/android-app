@@ -9,15 +9,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 
+import javax.inject.Inject;
+
 import io.github.recodex.android.LoginActivity;
+import io.github.recodex.android.MyApp;
 import io.github.recodex.android.R;
 import io.github.recodex.android.api.Constants;
-import io.github.recodex.android.model.Login;
+import io.github.recodex.android.api.RecodexApi;
 import io.github.recodex.android.model.Envelope;
+import io.github.recodex.android.model.Login;
 import io.github.recodex.android.utils.Utils;
 import retrofit2.Response;
 
@@ -38,14 +41,19 @@ public class ReCodExAuthenticator extends AbstractAccountAuthenticator {
 
     private final Context mContext;
 
+    @Inject
+    RecodexApi recodexApi;
+
     public ReCodExAuthenticator(Context context) {
         super(context);
+
         mContext = context;
+        ((MyApp) context.getApplicationContext()).getAppComponent().inject(this);
     }
 
     @Override
     public Bundle addAccount(AccountAuthenticatorResponse accountAuthenticatorResponse, String s, String s1, String[] strings, Bundle bundle) throws NetworkErrorException {
-        Log.d("recodex","*** addAccount method called");
+        Log.d(mContext.getString(R.string.recodex_log_tag),"*** addAccount method called");
 
         final Intent intent = new Intent(mContext, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_TASK_ON_HOME);
@@ -61,7 +69,7 @@ public class ReCodExAuthenticator extends AbstractAccountAuthenticator {
 
     @Override
     public Bundle getAuthToken(AccountAuthenticatorResponse accountAuthenticatorResponse, Account account, String authTokenType, Bundle bundle) throws NetworkErrorException {
-        Log.d("recodex", "*** getAuthToken method called");
+        Log.d(mContext.getString(R.string.recodex_log_tag), "*** getAuthToken method called");
 
         // If the caller requested an authToken type we don't support, then
         // return an error
@@ -83,9 +91,9 @@ public class ReCodExAuthenticator extends AbstractAccountAuthenticator {
             final String password = am.getPassword(account);
             if (password != null) {
                 try {
-                    Log.d("recodex", "*** re-authenticating with the existing password");
+                    Log.d(mContext.getString(R.string.recodex_log_tag), "*** re-authenticating with the existing password");
 
-                    Response<Envelope<Login>> response = Utils.getApi().login(account.name, password).execute();
+                    Response<Envelope<Login>> response = recodexApi.login(account.name, password).execute();
                     if (response.isSuccessful() && response.body().getCode() == 200) {
                         Login login = response.body().getPayload();
                         authToken = login.getAccessToken();

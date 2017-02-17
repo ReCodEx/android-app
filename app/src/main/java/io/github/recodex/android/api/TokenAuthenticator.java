@@ -1,6 +1,7 @@
 package io.github.recodex.android.api;
 
 
+import android.accounts.AccountManager;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.util.Log;
@@ -16,7 +17,11 @@ import okhttp3.Route;
 
 public class TokenAuthenticator implements Authenticator {
 
-    public TokenAuthenticator() {}
+    private AccountManager accountManager;
+
+    public TokenAuthenticator(AccountManager accountManager) {
+        this.accountManager = accountManager;
+    }
 
     @Override
     public Request authenticate(Route route, Response response) throws IOException {
@@ -28,7 +33,7 @@ public class TokenAuthenticator implements Authenticator {
         // Refresh your access_token using a synchronous api request
         String newAccessToken = "";
         try {
-            newAccessToken = Utils.getAccountManager().blockingGetAuthToken(Utils.getCurrentAccount(), ReCodExAuthenticator.AUTH_TOKEN_TYPE, true);
+            newAccessToken = accountManager.blockingGetAuthToken(Utils.getCurrentAccount(), ReCodExAuthenticator.AUTH_TOKEN_TYPE, true);
         } catch (OperationCanceledException | AuthenticatorException e) {
             e.printStackTrace();
         }

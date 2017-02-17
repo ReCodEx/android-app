@@ -1,6 +1,7 @@
 package io.github.recodex.android;
 
 import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
 import android.content.Context;
@@ -32,6 +33,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.InputStream;
+
+import javax.inject.Inject;
+
 import io.github.recodex.android.api.Constants;
 import io.github.recodex.android.authentication.ReCodExAuthenticator;
 import io.github.recodex.android.utils.Utils;
@@ -43,10 +47,17 @@ public class NavigationDrawer extends AppCompatActivity
 
     private AlertDialog mAlertDialog;
 
+    @Inject
+    AccountManager accountManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation_drawer);
+
+        // Dagger DI
+        ((MyApp) getApplication()).getAppComponent().inject(this);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -67,7 +78,7 @@ public class NavigationDrawer extends AppCompatActivity
         View header = ((NavigationView) findViewById(R.id.nav_view)).getHeaderView(0);
 
         // load the right preferences
-        String userId = Utils.getAccountManager().getUserData(Utils.getCurrentAccount(), ReCodExAuthenticator.KEY_USER_ID);
+        String userId = accountManager.getUserData(Utils.getCurrentAccount(), ReCodExAuthenticator.KEY_USER_ID);
         SharedPreferences prefs = getApplicationContext()
                 .getSharedPreferences(getString(R.string.user_preferences_prefix) + userId, Context.MODE_PRIVATE);;
 
@@ -82,7 +93,7 @@ public class NavigationDrawer extends AppCompatActivity
     }
 
     private void handleAccounts() throws SecurityException {
-        Account accounts[] = Utils.getAccountManager().getAccountsByType(ReCodExAuthenticator.ACCOUNT_TYPE);
+        Account accounts[] = accountManager.getAccountsByType(ReCodExAuthenticator.ACCOUNT_TYPE);
 
         if (accounts.length == 0) {
             // we have to login new user
@@ -98,7 +109,7 @@ public class NavigationDrawer extends AppCompatActivity
 
     private void addNewAccount() {
         final AccountManagerFuture<Bundle> future =
-                Utils.getAccountManager().addAccount(ReCodExAuthenticator.ACCOUNT_TYPE,
+                accountManager.addAccount(ReCodExAuthenticator.ACCOUNT_TYPE,
                         ReCodExAuthenticator.AUTH_TOKEN_TYPE, null, null, this, new AccountManagerCallback<Bundle>() {
             @Override
             public void run(AccountManagerFuture<Bundle> future) {

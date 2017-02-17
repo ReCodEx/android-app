@@ -1,6 +1,7 @@
 package io.github.recodex.android.api;
 
 
+import android.accounts.AccountManager;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.content.SharedPreferences;
@@ -16,7 +17,11 @@ import okhttp3.Response;
 
 public class TokenInterceptor implements Interceptor {
 
-    public TokenInterceptor() {}
+    private AccountManager accountManager;
+
+    public TokenInterceptor(AccountManager accountManager) {
+        this.accountManager = accountManager;
+    }
 
     @Override
     public Response intercept(Chain chain) throws IOException {
@@ -26,7 +31,7 @@ public class TokenInterceptor implements Interceptor {
 
             String token = "";
             try {
-                token = Utils.getAccountManager().blockingGetAuthToken(Utils.getCurrentAccount(), ReCodExAuthenticator.AUTH_TOKEN_TYPE, true);
+                token = accountManager.blockingGetAuthToken(Utils.getCurrentAccount(), ReCodExAuthenticator.AUTH_TOKEN_TYPE, true);
             } catch (OperationCanceledException | AuthenticatorException e) {
                 e.printStackTrace();
             }

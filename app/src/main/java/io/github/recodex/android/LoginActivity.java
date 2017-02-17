@@ -6,26 +6,23 @@ import android.accounts.AccountManager;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.os.Parcelable;
-import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
-
-import android.content.CursorLoader;
-import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -42,10 +39,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import io.github.recodex.android.api.Constants;
+import io.github.recodex.android.api.RecodexApi;
 import io.github.recodex.android.authentication.ReCodExAuthenticator;
-import io.github.recodex.android.model.Login;
 import io.github.recodex.android.model.Envelope;
+import io.github.recodex.android.model.Login;
 import io.github.recodex.android.utils.Utils;
 import retrofit2.Response;
 
@@ -80,10 +80,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mProgressView;
     private View mLoginFormView;
 
+    @Inject
+    AccountManager accountManager;
+    @Inject
+    RecodexApi recodexApi;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        // Dagger DI
+        ((MyApp) getApplication()).getAppComponent().inject(this);
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -355,7 +363,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             Intent result = new Intent();
 
             try {
-                Response<Envelope<Login>> response = Utils.getApi().login(mEmail, mPassword).execute();
+                Response<Envelope<Login>> response = recodexApi.login(mEmail, mPassword).execute();
 
                 if (!response.isSuccessful() || response.body().getCode() != 200) {
                     Log.d("recodex", "Response from server was not successful.");
@@ -379,13 +387,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     if (getIntent().getBooleanExtra(ReCodExAuthenticator.ARG_IS_ADDING_NEW_ACCOUNT, false)) {
 
                         // Creating the account on the device and setting the auth token we got
-                        Utils.getAccountManager().addAccountExplicitly(account, mPassword, null);
-                        Utils.getAccountManager().setAuthToken(account, ReCodExAuthenticator.AUTH_TOKEN_TYPE, login.getAccessToken());
+                        accountManager.addAccountExplicitly(account, mPassword, null);
+                        accountManager.setAuthToken(account, ReCodExAuthenticator.AUTH_TOKEN_TYPE, login.getAccessToken());
 
                         // set user data
-                        Utils.getAccountManager().setUserData(account, ReCodExAuthenticator.KEY_USER_ID, login.getUser().getId());
+                        accountManager.setUserData(account, ReCodExAuthenticator.KEY_USER_ID, login.getUser().getId());
                     } else {
-                        Utils.getAccountManager().setPassword(account, mPassword);
+                        accountManager.setPassword(account, mPassword);
                     }
 
                     // set preferences data
