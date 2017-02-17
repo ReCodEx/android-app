@@ -3,6 +3,7 @@ package io.github.recodex.android;
 import android.accounts.Account;
 import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -13,6 +14,7 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.View;
@@ -23,6 +25,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +39,8 @@ public class NavigationDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private final int MANAGE_ACCOUNTS_REQUEST = 666;
+
+    private AlertDialog mAlertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +62,10 @@ public class NavigationDrawer extends AppCompatActivity
         handleAccounts();
     }
 
-    private void fillUserInfo(View header) {
+    private void fillUserInfo() {
+        View header = ((NavigationView) findViewById(R.id.nav_view)).getHeaderView(0);
+
+        // TODO: solve this differently with AccountManager in mind
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         TextView userName = (TextView) header.findViewById(R.id.userName);
@@ -79,9 +87,9 @@ public class NavigationDrawer extends AppCompatActivity
         } else if (accounts.length == 1) {
             // we have only one user, this is it... use him/her
             Utils.setCurrentAccount(accounts[0]);
-            fillUserInfo(((NavigationView) findViewById(R.id.nav_view)).getHeaderView(0));
+            fillUserInfo();
         } else {
-            // TODO: handle multiple accounts
+            showAccountPicker(accounts);
         }
     }
 
@@ -93,7 +101,7 @@ public class NavigationDrawer extends AppCompatActivity
             public void run(AccountManagerFuture<Bundle> future) {
                 try {
                     Bundle bnd = future.getResult();
-                    fillUserInfo(((NavigationView) findViewById(R.id.nav_view)).getHeaderView(0));
+                    fillUserInfo();
                     showMessage("authenticated");
 
                 } catch (Exception e) {
@@ -102,6 +110,25 @@ public class NavigationDrawer extends AppCompatActivity
                 }
             }
         }, null);
+    }
+
+    private void showAccountPicker(final Account accounts[]) {
+        String names[] = new String[accounts.length];
+        for (int i = 0; i < accounts.length; i++) {
+            names[i] = accounts[i].name;
+        }
+
+        // Account picker
+        mAlertDialog = new AlertDialog.Builder(this).setTitle(R.string.pick_account)
+                .setAdapter(new ArrayAdapter<>(getBaseContext(), android.R.layout.simple_list_item_1, names), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Utils.setCurrentAccount(accounts[which]);
+                fillUserInfo();
+                showMessage("user chosen");
+            }
+        }).create();
+        mAlertDialog.show();
     }
 
     private void showMessage(final String msg) {
