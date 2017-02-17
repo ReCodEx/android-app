@@ -6,6 +6,7 @@ import android.accounts.AccountManager;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -229,7 +230,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password, PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
+            mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
         }
     }
@@ -342,12 +343,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         private final String mEmail;
         private final String mPassword;
-        private final SharedPreferences preferences;
 
-        UserLoginTask(String email, String password, SharedPreferences prefs) {
+        UserLoginTask(String email, String password) {
             mEmail = email;
             mPassword = password;
-            preferences = prefs;
         }
 
         @Override
@@ -373,7 +372,26 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     result.putExtra(AccountManager.KEY_PASSWORD, mPassword);
                     result.putExtra(KEY_LOGIN_RESULT, true);
 
-                    SharedPreferences.Editor editor = preferences.edit();
+                    // create account
+                    final Account account = new Account(mEmail, accountType);
+                    Utils.setCurrentAccount(account);
+
+                    if (getIntent().getBooleanExtra(ReCodExAuthenticator.ARG_IS_ADDING_NEW_ACCOUNT, false)) {
+
+                        // Creating the account on the device and setting the auth token we got
+                        Utils.getAccountManager().addAccountExplicitly(account, mPassword, null);
+                        Utils.getAccountManager().setAuthToken(account, ReCodExAuthenticator.AUTH_TOKEN_TYPE, login.getAccessToken());
+
+                        // set user data
+                        Utils.getAccountManager().setUserData(account, ReCodExAuthenticator.KEY_USER_ID, login.getUser().getId());
+                    } else {
+                        Utils.getAccountManager().setPassword(account, mPassword);
+                    }
+
+                    // set preferences data
+                    SharedPreferences prefs = getApplicationContext()
+                            .getSharedPreferences(getString(R.string.user_preferences_prefix) + login.getUser().getId(), Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = prefs.edit();
                     editor.putString(Constants.userFullName, login.getUser().getFullName());
                     editor.putString(Constants.userAvatarUrl, login.getUser().getAvatarUrl());
                     editor.commit();
@@ -394,21 +412,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             if (intent.getBooleanExtra(KEY_LOGIN_RESULT, false)) {
                 Log.d("recodex", "Login successfull...");
-
-                String accountName = intent.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-                String accountPassword = intent.getStringExtra(AccountManager.KEY_PASSWORD);
-                final Account account = new Account(accountName, intent.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE));
-
-                if (getIntent().getBooleanExtra(ReCodExAuthenticator.ARG_IS_ADDING_NEW_ACCOUNT, false)) {
-                    String authtoken = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
-                    String authtokenType = ReCodExAuthenticator.AUTH_TOKEN_TYPE;
-                    // Creating the account on the device and setting the auth token we got
-                    // (Not setting the auth token will cause another call to the server to authenticate the user)
-                    Utils.getAccountManager().addAccountExplicitly(account, accountPassword, null);
-                    Utils.getAccountManager().setAuthToken(account, authtokenType, authtoken);
-                } else {
-                    Utils.getAccountManager().setPassword(account, accountPassword);
-                }
 
                 setAccountAuthenticatorResult(intent.getExtras());
                 setResult(RESULT_OK, intent);

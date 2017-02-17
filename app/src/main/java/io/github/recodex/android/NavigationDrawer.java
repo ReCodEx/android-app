@@ -3,6 +3,7 @@ package io.github.recodex.android;
 import android.accounts.Account;
 import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -65,8 +66,10 @@ public class NavigationDrawer extends AppCompatActivity
     private void fillUserInfo() {
         View header = ((NavigationView) findViewById(R.id.nav_view)).getHeaderView(0);
 
-        // TODO: solve this differently with AccountManager in mind
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        // load the right preferences
+        String userId = Utils.getAccountManager().getUserData(Utils.getCurrentAccount(), ReCodExAuthenticator.KEY_USER_ID);
+        SharedPreferences prefs = getApplicationContext()
+                .getSharedPreferences(getString(R.string.user_preferences_prefix) + userId, Context.MODE_PRIVATE);;
 
         TextView userName = (TextView) header.findViewById(R.id.userName);
         userName.setText(prefs.getString(Constants.userFullName, "John Doe"));

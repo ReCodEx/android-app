@@ -7,12 +7,14 @@ import android.accounts.AccountManager;
 import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 
 import io.github.recodex.android.LoginActivity;
+import io.github.recodex.android.R;
 import io.github.recodex.android.api.Constants;
 import io.github.recodex.android.model.Login;
 import io.github.recodex.android.model.Envelope;
@@ -28,6 +30,8 @@ public class ReCodExAuthenticator extends AbstractAccountAuthenticator {
     public final static String ARG_IS_ADDING_NEW_ACCOUNT = "IS_ADDING_ACCOUNT";
 
     public static final String ACCOUNT_TYPE = "io.github.recodex.android.authentication";
+
+    public static final String KEY_USER_ID = "USER_ID";
 
     public final static String AUTH_TOKEN_TYPE = "full";
     public final static String AUTH_TOKEN_TYPE_LABEL = "Full access";
@@ -72,7 +76,7 @@ public class ReCodExAuthenticator extends AbstractAccountAuthenticator {
         final AccountManager am = AccountManager.get(mContext);
         String authToken = am.peekAuthToken(account, authTokenType);
 
-        Log.d("recodex", "peekAuthToken returned - " + authToken);
+        Log.d(mContext.getString(R.string.recodex_log_tag), "peekAuthToken returned - " + authToken);
 
         // Lets give another try to authenticate the user
         if (TextUtils.isEmpty(authToken)) {
@@ -85,6 +89,14 @@ public class ReCodExAuthenticator extends AbstractAccountAuthenticator {
                     if (response.isSuccessful() && response.body().getCode() == 200) {
                         Login login = response.body().getPayload();
                         authToken = login.getAccessToken();
+
+                        // save new user data
+                        SharedPreferences prefs = mContext
+                                .getSharedPreferences(mContext.getString(R.string.user_preferences_prefix) + login.getUser().getId(), Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = prefs.edit();
+                        editor.putString(Constants.userFullName, login.getUser().getFullName());
+                        editor.putString(Constants.userAvatarUrl, login.getUser().getAvatarUrl());
+                        editor.commit();
                     }
 
                 } catch (Exception e) {
