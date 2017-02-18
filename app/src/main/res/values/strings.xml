@@ -62,6 +62,7 @@
     <string name="pick_account">Pick Account</string>
     <string name="user_preferences_prefix">user_</string>
     <string name="recodex_log_tag">recodex</string>
+    <string name="title_activity_dashboard">DashboardActivity</string>
     <string name="john_doe">John Doe</string>
     <string name="action_pick_account">Pick Account</string>
 </resources>

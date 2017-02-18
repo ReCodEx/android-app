@@ -5,6 +5,7 @@ public class User {
     private String fullName;
     private String id;
     private String avatarUrl;
+    private UserGroupIds groups;
 
     public String getFullName() {
         return fullName;
@@ -28,5 +29,13 @@ public class User {
 
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
+    }
+
+    public UserGroupIds getGroups() {
+        return groups;
+    }
+
+    public void setGroups(UserGroupIds groups) {
+        this.groups = groups;
     }
 }
