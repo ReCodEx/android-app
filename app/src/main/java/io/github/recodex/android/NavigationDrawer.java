@@ -38,7 +38,7 @@ import io.github.recodex.android.users.UserWrapper;
 import io.github.recodex.android.users.UsersManager;
 
 public class NavigationDrawer extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, GroupListFragment.OnGroupSelectedListener {
 
     private final int MANAGE_ACCOUNTS_REQUEST = 666;
 
@@ -154,6 +154,10 @@ public class NavigationDrawer extends AppCompatActivity
                 Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    public void onGroupSelected(String groupId) {
+        replaceContent(GroupDetailFragment.newInstance(groupId));
     }
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {

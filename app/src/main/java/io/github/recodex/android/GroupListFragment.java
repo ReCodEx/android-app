@@ -9,7 +9,9 @@ import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -38,6 +40,10 @@ public class GroupListFragment extends ListFragment {
 
     ListFragment fragment = this;
 
+    private GroupListAdapter adapter;
+
+    private OnGroupSelectedListener callback;
+
     class LoadGroupsTask extends AsyncTask<Void, Void, UserGroups> {
         protected UserGroups doInBackground(Void... params) {
             try {
@@ -60,7 +66,7 @@ public class GroupListFragment extends ListFragment {
                 return;
             }
 
-            GroupListAdapter adapter = new GroupListAdapter(fragment.getContext(), groups.getStudent(), groups.getStats());
+            adapter = new GroupListAdapter(fragment.getContext(), groups.getStudent(), groups.getStats());
 
             fragment.setListAdapter(adapter);
             fragment.setListShown(true);
@@ -82,7 +88,7 @@ public class GroupListFragment extends ListFragment {
         }
 
         @NonNull
-        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+        public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
             View view;
 
             if (convertView == null) {
@@ -122,8 +128,17 @@ public class GroupListFragment extends ListFragment {
         setListAdapter(null);
 
         new LoadGroupsTask().execute();
+    }
 
-        // ListView view = getListView();
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        if (adapter != null) {
+            Group group = adapter.getItem(position);
+
+            if (callback != null && group != null) {
+                callback.onGroupSelected(group.getId());
+            }
+        }
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -132,5 +147,14 @@ public class GroupListFragment extends ListFragment {
         ViewGroup parent = (ViewGroup) inflater.inflate(R.layout.fragment_group_list, container, false);
         parent.addView(v, 0);
         return parent;
+    }
+
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        callback = (OnGroupSelectedListener) context;
+    }
+
+    public interface OnGroupSelectedListener {
+        void onGroupSelected(String groupId);
     }
 }

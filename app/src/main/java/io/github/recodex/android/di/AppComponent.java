@@ -3,6 +3,7 @@ package io.github.recodex.android.di;
 import javax.inject.Singleton;
 
 import dagger.Component;
+import io.github.recodex.android.GroupDetailFragment;
 import io.github.recodex.android.GroupListFragment;
 import io.github.recodex.android.LoginActivity;
 import io.github.recodex.android.NavigationDrawer;
@@ -17,6 +18,7 @@ import io.github.recodex.android.authentication.ReCodExAuthenticator;
 public interface AppComponent {
     void inject(LoginActivity activity);
     void inject(GroupListFragment fragment);
+    void inject(GroupDetailFragment fragment);
     void inject(ReCodExAuthenticator activity);
     void inject(NavigationDrawer activity);
 }
