@@ -5,6 +5,7 @@ import java.util.List;
 public class UserGroups {
     private List<Group> student;
     private List<Group> supervisor;
+    private List<StudentGroupStats> stats;
 
     public List<Group> getStudent() {
         return student;
@@ -12,5 +13,9 @@ public class UserGroups {
 
     public List<Group> getSupervisor() {
         return supervisor;
+    }
+
+    public List<StudentGroupStats> getStats() {
+        return stats;
     }
 }
