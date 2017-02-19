@@ -10,6 +10,8 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AlertDialog;
@@ -67,6 +69,9 @@ public class NavigationDrawer extends AppCompatActivity
 
         // handle current user
         handleAccounts();
+
+        // display group list
+        replaceContent(new GroupListFragment());
     }
 
     private void fillUserInfo() {
@@ -228,19 +233,33 @@ public class NavigationDrawer extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+        Class<?> activity = null;
+        Fragment fragment = null;
+
         if (id == R.id.action_dashboard) {
-            Intent intent = new Intent(this, DashboardActivity.class);
-            startActivity(intent);
+            fragment = new GroupListFragment();
         } else if (id == R.id.action_settings) {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
+            activity = SettingsActivity.class;
         } else if (id == R.id.action_about) {
-            Intent intent = new Intent(this, AboutActivity.class);
+            activity = AboutActivity.class;
+        }
+
+        if (activity != null) {
+            Intent intent = new Intent(this, activity);
             startActivity(intent);
+        }
+
+        if (fragment != null) {
+            replaceContent(fragment);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void replaceContent(Fragment fragment) {
+        FragmentManager manager = getSupportFragmentManager();
+        manager.beginTransaction().replace(R.id.content_container, fragment).commit();
     }
 }

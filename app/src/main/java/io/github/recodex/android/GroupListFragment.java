@@ -129,7 +129,7 @@ public class GroupListFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
-        ViewGroup parent = (ViewGroup) inflater.inflate(R.layout.fragment_dashboard, container, false);
+        ViewGroup parent = (ViewGroup) inflater.inflate(R.layout.fragment_group_list, container, false);
         parent.addView(v, 0);
         return parent;
     }

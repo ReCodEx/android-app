@@ -13,13 +13,9 @@
     tools:context="io.github.recodex.android.NavigationDrawer"
     tools:showIn="@layout/app_bar_navigation_drawer">
 
-    <TextView
-        android:text="Content here"
-        android:layout_width="106dp"
-        android:layout_height="65dp"
-        android:id="@+id/textView"
-        android:textAlignment="center"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+    <FrameLayout
+        android:id="@+id/content_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </RelativeLayout>
