@@ -115,6 +115,10 @@ public class GroupListFragment extends ListFragment {
             progress.setMax(stats.getTotalPoints());
             progress.setProgress(stats.getGainedPoints());
 
+            TextView percent = (TextView) view.findViewById(R.id.percent);
+            int points_percent = stats.getGainedPoints() * 100 / stats.getTotalPoints();
+            percent.setText(String.format("%d%%", points_percent));
+
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
