@@ -53,6 +53,7 @@ public class GroupDetailFragment extends Fragment {
             }
 
             ((TextView) fragment.getView().findViewById(R.id.group_name)).setText(group.getName());
+            getActivity().setTitle(group.getName());
         }
     }
 
@@ -78,6 +79,8 @@ public class GroupDetailFragment extends Fragment {
         if (getArguments() != null) {
             groupId = getArguments().getString(ARG_GROUP_ID);
         }
+
+        new LoadGroupTask().execute();
     }
 
     @Override

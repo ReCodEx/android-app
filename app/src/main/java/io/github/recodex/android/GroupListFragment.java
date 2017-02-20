@@ -122,7 +122,6 @@ public class GroupListFragment extends ListFragment {
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(getContext(), "clicked", Toast.LENGTH_LONG).show();
                     if (callback != null) {
                         callback.onGroupSelected(group.getId());
                     }
@@ -142,6 +141,12 @@ public class GroupListFragment extends ListFragment {
         setListAdapter(null);
 
         new LoadGroupsTask().execute();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().setTitle(R.string.title_activity_navigation_drawer);
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

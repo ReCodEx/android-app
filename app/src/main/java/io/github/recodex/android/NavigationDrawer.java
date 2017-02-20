@@ -203,7 +203,11 @@ public class NavigationDrawer extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            if (getFragmentManager().getBackStackEntryCount() > 0) {
+                getFragmentManager().popBackStack();
+            } else {
+                super.onBackPressed();
+            }
         }
     }
 
@@ -264,6 +268,6 @@ public class NavigationDrawer extends AppCompatActivity
 
     private void replaceContent(Fragment fragment) {
         FragmentManager manager = getSupportFragmentManager();
-        manager.beginTransaction().replace(R.id.content_container, fragment).commit();
+        manager.beginTransaction().replace(R.id.content_container, fragment).addToBackStack(null).commit();
     }
 }
