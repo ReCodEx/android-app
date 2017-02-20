@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.List;
@@ -55,7 +56,7 @@ public class GroupListFragment extends ListFragment {
 
                 Envelope<UserGroups> body = response.body();
                 return body.getPayload();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 return null;
             }
         }
@@ -80,7 +81,7 @@ public class GroupListFragment extends ListFragment {
         private LayoutInflater inflater;
 
         GroupListAdapter(Context context, List<Group> groups, List<StudentGroupStats> stats) {
-            super(context, android.R.layout.simple_list_item_1);
+            super(context, R.layout.fragment_group_list);
             this.groups = groups;
             this.statsList = stats;
             this.inflater = LayoutInflater.from(context);
@@ -97,7 +98,7 @@ public class GroupListFragment extends ListFragment {
                 view = convertView;
             }
 
-            Group group = groups.get(position);
+            final Group group = groups.get(position);
             StudentGroupStats stats = null;
 
             for (StudentGroupStats statsItem : statsList) {
@@ -114,6 +115,15 @@ public class GroupListFragment extends ListFragment {
             progress.setMax(stats.getTotalPoints());
             progress.setProgress(stats.getGainedPoints());
 
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(getContext(), "clicked", Toast.LENGTH_LONG).show();
+                    if (callback != null) {
+                        callback.onGroupSelected(group.getId());
+                    }
+                }
+            });
             return view;
         }
     }
@@ -128,17 +138,6 @@ public class GroupListFragment extends ListFragment {
         setListAdapter(null);
 
         new LoadGroupsTask().execute();
-    }
-
-    @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        if (adapter != null) {
-            Group group = adapter.getItem(position);
-
-            if (callback != null && group != null) {
-                callback.onGroupSelected(group.getId());
-            }
-        }
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
