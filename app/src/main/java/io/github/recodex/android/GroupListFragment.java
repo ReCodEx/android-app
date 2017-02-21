@@ -9,15 +9,13 @@ import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -39,9 +37,8 @@ public class GroupListFragment extends ListFragment {
     @Inject
     UsersManager users;
 
-    ListFragment fragment = this;
-
-    private GroupListAdapter adapter;
+    private ListFragment fragment = this;
+    private ArrayAdapter<Group> adapter;
 
     private OnGroupSelectedListener callback;
 
@@ -62,15 +59,15 @@ public class GroupListFragment extends ListFragment {
         }
 
         protected void onPostExecute(UserGroups groups) {
+
             if (groups == null) {
-                // TODO loading failed - do something smart
-                return;
+                // loading failed
+                adapter = new ArrayAdapter<>(fragment.getContext(), R.layout.fragment_group_list);
+                Toast.makeText(fragment.getContext(), R.string.loadingFailed, Toast.LENGTH_LONG).show();
+            } else {
+                // we got the actual data
+                adapter = new GroupListAdapter(fragment.getContext(), groups.getStudent(), groups.getStats());
             }
-
-            adapter = new GroupListAdapter(fragment.getContext(), groups.getStudent(), groups.getStats());
-
-            fragment.setListAdapter(adapter);
-            fragment.setListShown(true);
         }
     }
 
@@ -117,7 +114,7 @@ public class GroupListFragment extends ListFragment {
 
             TextView percent = (TextView) view.findViewById(R.id.percent);
             int points_percent = stats.getGainedPoints() * 100 / stats.getTotalPoints();
-            percent.setText(String.format("%d%%", points_percent));
+            percent.setText(String.format(Locale.ROOT, "%d%%", points_percent));
 
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -134,13 +131,13 @@ public class GroupListFragment extends ListFragment {
     public GroupListFragment() {
     }
 
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ((MyApp) getContext().getApplicationContext()).getAppComponent().inject(this);
 
-        setListAdapter(null);
-
         new LoadGroupsTask().execute();
+        setListAdapter(null);
     }
 
     @Override
@@ -149,6 +146,7 @@ public class GroupListFragment extends ListFragment {
         getActivity().setTitle(R.string.title_activity_navigation_drawer);
     }
 
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
@@ -157,6 +155,15 @@ public class GroupListFragment extends ListFragment {
         return parent;
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        fragment.setListAdapter(adapter);
+        fragment.setListShown(true);
+    }
+
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         callback = (OnGroupSelectedListener) context;

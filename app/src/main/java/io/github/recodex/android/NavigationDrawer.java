@@ -180,10 +180,12 @@ public class NavigationDrawer extends AppCompatActivity
         }
 
         protected void onPostExecute(Bitmap result) {
-            RoundedBitmapDrawable dr =
-                    RoundedBitmapDrawableFactory.create(getResources(), result);
-            dr.setCornerRadius(Math.max(result.getWidth(), result.getHeight()) / 2.0f);
-            bmImage.setImageDrawable(dr);
+            if (result != null) {
+                RoundedBitmapDrawable dr =
+                        RoundedBitmapDrawableFactory.create(getResources(), result);
+                dr.setCornerRadius(Math.max(result.getWidth(), result.getHeight()) / 2.0f);
+                bmImage.setImageDrawable(dr);
+            }
         }
     }
 
