@@ -1,11 +1,9 @@
 package io.github.recodex.android.api;
 
 
-import java.util.List;
-
+import io.github.recodex.android.model.Envelope;
 import io.github.recodex.android.model.Group;
 import io.github.recodex.android.model.Login;
-import io.github.recodex.android.model.Envelope;
 import io.github.recodex.android.model.UserGroups;
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -19,6 +17,10 @@ public interface RecodexApi {
     @POST("login")
     @FormUrlEncoded
     Call<Envelope<Login>> login(@Field("username") String username, @Field("password") String password);
+
+    @POST("login/{serviceId}")
+    @FormUrlEncoded
+    Call<Envelope<Login>> externalLogin(@Path("serviceId") String serviceId, @Field("username") String username, @Field("password") String password);
 
     @GET("groups/{id}")
     Call<Envelope<Group>> getGroup(@Path("id") String id);

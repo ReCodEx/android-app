@@ -13,7 +13,7 @@ import io.github.recodex.android.R;
 import io.github.recodex.android.api.RecodexApi;
 import io.github.recodex.android.api.TokenAuthenticator;
 import io.github.recodex.android.api.TokenInterceptor;
-import io.github.recodex.android.helpers.LoginHelper;
+import io.github.recodex.android.users.LoginHelper;
 import io.github.recodex.android.users.UsersManager;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;

@@ -20,11 +20,6 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
-import io.github.recodex.android.api.RecodexApi;
-import io.github.recodex.android.users.UsersManager;
-
 /**
  * A login screen that offers login via email/password.
  */

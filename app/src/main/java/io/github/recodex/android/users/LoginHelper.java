@@ -1,4 +1,4 @@
-package io.github.recodex.android.helpers;
+package io.github.recodex.android.users;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -11,8 +11,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import java.io.IOException;
 
 import io.github.recodex.android.LoginActivity;
@@ -21,6 +19,7 @@ import io.github.recodex.android.api.RecodexApi;
 import io.github.recodex.android.authentication.ReCodExAuthenticator;
 import io.github.recodex.android.model.Envelope;
 import io.github.recodex.android.model.Login;
+import io.github.recodex.android.users.LoginType;
 import io.github.recodex.android.users.UserWrapper;
 import io.github.recodex.android.users.UsersManager;
 import retrofit2.Response;
@@ -48,33 +47,10 @@ public class LoginHelper {
         this.usersManager = usersManager;
     }
 
-    /**
-     * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
-     */
-    public void attemptLogin(LoginActivity activity, TextView mEmailView, TextView mPasswordView) {
-        if (mAuthTask != null) {
-            return;
-        }
-
-        // Reset errors.
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
-
-        // Store values at the time of the login attempt.
+    public void attemptRegularLogin(LoginActivity activity, TextView mEmailView, TextView mPasswordView) {
         String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
-
         boolean cancel = false;
         View focusView = null;
-
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(context.getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
-            cancel = true;
-        }
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
@@ -91,13 +67,55 @@ public class LoginHelper {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
             focusView.requestFocus();
-        } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            activity.showProgress(true);
-            mAuthTask = new UserLoginTask(activity, mEmailView, mPasswordView);
-            mAuthTask.execute((Void) null);
+            return;
         }
+
+        attemptLogin(activity, mEmailView, mPasswordView, LoginType.REGULAR);
+    }
+
+    public void attemptCasLogin(LoginActivity activity, TextView mEmailView, TextView mPasswordView) {
+        attemptLogin(activity, mEmailView, mPasswordView, LoginType.CAS_UK);
+    }
+
+    /**
+     * Attempts to sign in or register the account specified by the login form.
+     * If there are form errors (invalid email, missing fields, etc.), the
+     * errors are presented and no actual login attempt is made.
+     */
+    private void attemptLogin(LoginActivity activity, TextView mEmailView, TextView mPasswordView, LoginType type) {
+        if (mAuthTask != null) {
+            return;
+        }
+
+        // Reset errors.
+        mEmailView.setError(null);
+        mPasswordView.setError(null);
+
+        // Store values at the time of the login attempt.
+        String password = mPasswordView.getText().toString();
+
+        boolean cancel = false;
+        View focusView = null;
+
+        // Check for a valid password, if the user entered one.
+        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+            mPasswordView.setError(context.getString(R.string.error_invalid_password));
+            focusView = mPasswordView;
+            cancel = true;
+        }
+
+        if (cancel) {
+            // There was an error; don't attempt login and focus the first
+            // form field with an error.
+            focusView.requestFocus();
+            return;
+        }
+
+        // Show a progress spinner, and kick off a background task to
+        // perform the user login attempt.
+        activity.showProgress(true);
+        mAuthTask = new UserLoginTask(activity, mEmailView, mPasswordView, type);
+        mAuthTask.execute((Void) null);
     }
 
     private boolean isEmailValid(String email) {
@@ -122,14 +140,16 @@ public class LoginHelper {
 
         private final String mEmail;
         private final String mPassword;
+        private final LoginType loginType;
 
-        UserLoginTask(LoginActivity activity, TextView email, TextView password) {
+        UserLoginTask(LoginActivity activity, TextView emailView, TextView passwordView, LoginType loginType) {
             this.activity = activity;
-            mEmailView = email;
-            mPasswordView = password;
+            mEmailView = emailView;
+            mPasswordView = passwordView;
 
-            this.mEmail = email.getText().toString();
-            this.mPassword = password.getText().toString();
+            this.mEmail = emailView.getText().toString();
+            this.mPassword = passwordView.getText().toString();
+            this.loginType = loginType;
         }
 
         @Override
@@ -138,7 +158,12 @@ public class LoginHelper {
             Intent result = new Intent();
 
             try {
-                Response<Envelope<Login>> response = recodexApi.login(mEmail, mPassword).execute();
+                Response<Envelope<Login>> response = null;
+                if (loginType == LoginType.REGULAR) {
+                    response = recodexApi.login(mEmail, mPassword).execute();
+                } else {
+                    response = recodexApi.externalLogin(LoginType.typeToString(loginType), mEmail, mPassword).execute();
+                }
 
                 if (!response.isSuccessful() || response.body().getCode() != 200) {
                     Log.d(context.getString(R.string.recodex_log_tag), "Response from server was not successful.");
@@ -157,7 +182,7 @@ public class LoginHelper {
 
                     // create account
                     final Account account = new Account(mEmail, accountType);
-                    UserWrapper user = usersManager.addUserExplicitly(account, login.getAccessToken(), login.getUser().getId(), mPassword);
+                    UserWrapper user = usersManager.addUserExplicitly(account, login.getAccessToken(), login.getUser().getId(), mPassword, loginType);
 
                     user.updateData(login);
                 }

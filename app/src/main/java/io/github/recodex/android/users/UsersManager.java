@@ -29,6 +29,7 @@ import io.github.recodex.android.model.Login;
 public class UsersManager {
 
     public static final String KEY_USER_ID = "USER_ID";
+    public static final String KEY_LOGIN_TYPE = "LOGIN_TYPE";
     public static final String KEY_USERNAME = "USERNAME";
 
     private Application application;
@@ -54,7 +55,8 @@ public class UsersManager {
             for (Account account : getAvailableAccounts()) {
                 if (account.name.equals(username)) {
                     String id = accountManager.getUserData(account, KEY_USER_ID);
-                    currentUser = new UserWrapper(context, id, account);
+                    String loginType = accountManager.getUserData(account, KEY_LOGIN_TYPE);
+                    currentUser = new UserWrapper(context, id, account, loginType);
                     Log.d("recodex", "User successfully loaded from preferences");
                     break;
                 }
@@ -90,7 +92,8 @@ public class UsersManager {
         for (Account acc : getAvailableAccounts()) {
             if (acc.equals(account)) {
                 String id = accountManager.getUserData(account, KEY_USER_ID);
-                currentUser = new UserWrapper(context, id, account);
+                String loginType = accountManager.getUserData(account, KEY_LOGIN_TYPE);
+                currentUser = new UserWrapper(context, id, account, loginType);
 
                 // save user id into preferences
                 sharedPreferences.edit().putString(KEY_USERNAME, account.name).apply();
@@ -107,13 +110,14 @@ public class UsersManager {
         return result;
     }
 
-    public UserWrapper addUserExplicitly(Account account, String accessToken, String id, String password) {
+    public UserWrapper addUserExplicitly(Account account, String accessToken, String id, String password, LoginType loginType) {
         // Creating the account on the device and setting the auth token we got
         accountManager.addAccountExplicitly(account, password, null);
         accountManager.setAuthToken(account, ReCodExAuthenticator.AUTH_TOKEN_TYPE, accessToken);
 
         // set user data
         accountManager.setUserData(account, KEY_USER_ID, id);
+        accountManager.setUserData(account, KEY_LOGIN_TYPE, LoginType.typeToString(loginType));
 
         return switchCurrentUser(account);
     }

@@ -21,10 +21,12 @@ public class UserWrapper {
     private SharedPreferences preferences;
     private Account account;
     private String id;
+    private LoginType loginType;
 
-    public UserWrapper(Context context, String id, Account account) {
+    public UserWrapper(Context context, String id, Account account, String loginType) {
         this.context = context;
         this.id = id;
+        this.loginType = LoginType.stringToType(loginType);
         this.account = account;
         this.preferences = context.getSharedPreferences(context.getString(R.string.user_preferences_prefix) + id, Context.MODE_PRIVATE);
     }
@@ -32,6 +34,8 @@ public class UserWrapper {
     public Account getAccount() { return account; }
 
     public String getId() { return id; }
+
+    public LoginType getLoginType() { return loginType; }
 
     public String getFullName() {
         return preferences.getString(FULL_NAME, context.getString(R.string.john_doe));

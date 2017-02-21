@@ -21,6 +21,7 @@ import io.github.recodex.android.api.Constants;
 import io.github.recodex.android.api.RecodexApi;
 import io.github.recodex.android.model.Envelope;
 import io.github.recodex.android.model.Login;
+import io.github.recodex.android.users.LoginType;
 import io.github.recodex.android.users.UserWrapper;
 import io.github.recodex.android.users.UsersManager;
 import retrofit2.Response;
@@ -91,13 +92,20 @@ public class ReCodExAuthenticator extends AbstractAccountAuthenticator {
             if (password != null) {
                 try {
                     Log.d(mContext.getString(R.string.recodex_log_tag), "*** re-authenticating with the existing password");
+                    UserWrapper user = usersManager.switchCurrentUser(account);
+                    Response<Envelope<Login>> response = null;
 
-                    Response<Envelope<Login>> response = recodexApi.login(account.name, password).execute();
+                    if (user.getLoginType() == LoginType.REGULAR) {
+                        response = recodexApi.login(account.name, password).execute();
+                    } else {
+                        response = recodexApi.externalLogin(LoginType.typeToString(user.getLoginType()), account.name, password).execute();
+                    }
+
                     if (response.isSuccessful() && response.body().getCode() == 200) {
                         Login login = response.body().getPayload();
                         authToken = login.getAccessToken();
 
-                        UserWrapper user = usersManager.switchCurrentUser(account);
+                        // update user data like full name and other possible stuff
                         user.updateData(login);
                     }
 

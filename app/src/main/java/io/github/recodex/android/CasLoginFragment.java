@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import javax.inject.Inject;
 
-import io.github.recodex.android.helpers.LoginHelper;
+import io.github.recodex.android.users.LoginHelper;
 
 /**
  * Displays groups the user belongs to, along with some useful information
@@ -45,7 +45,7 @@ public class CasLoginFragment extends Fragment {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    loginHelper.attemptLogin((LoginActivity) getActivity(), mEmailView, mPasswordView);
+                    loginHelper.attemptCasLogin((LoginActivity) getActivity(), mEmailView, mPasswordView);
                     return true;
                 }
                 return false;
@@ -56,7 +56,7 @@ public class CasLoginFragment extends Fragment {
         mEmailSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                loginHelper.attemptLogin((LoginActivity) getActivity(), mEmailView, mPasswordView);
+                loginHelper.attemptCasLogin((LoginActivity) getActivity(), mEmailView, mPasswordView);
             }
         });
 
