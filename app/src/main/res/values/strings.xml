@@ -65,4 +65,7 @@
     <string name="title_activity_dashboard">DashboardActivity</string>
     <string name="john_doe">John Doe</string>
     <string name="action_pick_account">Pick Account</string>
+    <string name="regular_login_tab_label">Regular</string>
+    <string name="cas_login_tab_label">CAS</string>
+    <string name="ukco">UKCO</string>
 </resources>
