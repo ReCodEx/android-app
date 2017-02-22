@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AlertDialog;
@@ -117,6 +118,7 @@ public class NavigationDrawer extends AppCompatActivity
                 try {
                     Bundle bnd = future.getResult();
                     fillUserInfo();
+                    refreshFragment();
                 } catch (Exception e) {
                     // if not authenticated, close the app
                     finish();
@@ -139,6 +141,7 @@ public class NavigationDrawer extends AppCompatActivity
                 UserWrapper user = usersManager.switchCurrentUser(accounts[which]);
                 showMessage("User '" + user.getFullName() + "' chosen");
                 fillUserInfo();
+                refreshFragment();
             }
         }).create();
         mAlertDialog.show();
@@ -154,6 +157,12 @@ public class NavigationDrawer extends AppCompatActivity
                 Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    private void refreshFragment() {
+        Fragment f = getSupportFragmentManager().findFragmentById(R.id.content_container);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.detach(f).attach(f).commit();
     }
 
     public void onGroupSelected(String groupId) {

@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 import java.util.List;
 import java.util.Locale;
-
 import javax.inject.Inject;
 
 import io.github.recodex.android.api.RecodexApi;
@@ -38,8 +37,6 @@ public class GroupListFragment extends ListFragment {
     UsersManager users;
 
     private ListFragment fragment = this;
-    private ArrayAdapter<Group> adapter;
-
     private OnGroupSelectedListener callback;
 
     class LoadGroupsTask extends AsyncTask<Void, Void, UserGroups> {
@@ -58,16 +55,16 @@ public class GroupListFragment extends ListFragment {
             }
         }
 
+        @Override
         protected void onPostExecute(UserGroups groups) {
-
             if (groups == null) {
                 // loading failed
-                adapter = new ArrayAdapter<>(fragment.getContext(), R.layout.fragment_group_list);
-                Toast.makeText(fragment.getContext(), R.string.loadingFailed, Toast.LENGTH_LONG).show();
+                Toast.makeText(fragment.getContext(), R.string.loadingFailed, Toast.LENGTH_SHORT).show();
             } else {
-                // we got the actual data
-                adapter = new GroupListAdapter(fragment.getContext(), groups.getStudent(), groups.getStats());
+                users.getCurrentUser().setGroupsInfo(groups.getStudent(), groups.getStats());
             }
+
+            fillData();
         }
     }
 
@@ -136,7 +133,6 @@ public class GroupListFragment extends ListFragment {
         super.onCreate(savedInstanceState);
         ((MyApp) getContext().getApplicationContext()).getAppComponent().inject(this);
 
-        new LoadGroupsTask().execute();
         setListAdapter(null);
     }
 
@@ -152,14 +148,18 @@ public class GroupListFragment extends ListFragment {
         View v = super.onCreateView(inflater, container, savedInstanceState);
         ViewGroup parent = (ViewGroup) inflater.inflate(R.layout.fragment_group_list, container, false);
         parent.addView(v, 0);
+
+        new LoadGroupsTask().execute();
+
         return parent;
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+    //public void onActivityCreated(Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        //super.onActivityCreated(savedInstanceState);
 
-        fragment.setListAdapter(adapter);
         fragment.setListShown(true);
     }
 
@@ -167,6 +167,17 @@ public class GroupListFragment extends ListFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         callback = (OnGroupSelectedListener) context;
+    }
+
+    public void fillData() {
+        List<Group> groups = users.getCurrentUser().getGroups();
+        List<StudentGroupStats> stats = users.getCurrentUser().getGroupStats();
+        if (groups == null || stats == null) {
+            return;
+        }
+
+        ArrayAdapter<Group> adapter = new GroupListAdapter(fragment.getContext(), groups, stats);
+        fragment.setListAdapter(adapter);
     }
 
     public interface OnGroupSelectedListener {
