@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,13 +24,14 @@ import io.github.recodex.android.model.Envelope;
 import io.github.recodex.android.model.Group;
 import io.github.recodex.android.model.StudentGroupStats;
 import io.github.recodex.android.model.UserGroups;
+import io.github.recodex.android.users.UserWrapper;
 import io.github.recodex.android.users.UsersManager;
 import retrofit2.Response;
 
 /**
  * Displays groups the user belongs to, along with some useful information
  */
-public class GroupListFragment extends ListFragment {
+public class GroupListFragment extends ListFragment implements SwipeRefreshLayout.OnRefreshListener {
     @Inject
     RecodexApi api;
 
@@ -38,6 +40,7 @@ public class GroupListFragment extends ListFragment {
 
     private ListFragment fragment = this;
     private OnGroupSelectedListener callback;
+    private SwipeRefreshLayout swipeLayout = null;
 
     class LoadGroupsTask extends AsyncTask<Void, Void, UserGroups> {
         protected UserGroups doInBackground(Void... params) {
@@ -65,6 +68,8 @@ public class GroupListFragment extends ListFragment {
             }
 
             fillData();
+
+            swipeLayout.setRefreshing(false);
         }
     }
 
@@ -110,7 +115,8 @@ public class GroupListFragment extends ListFragment {
             progress.setProgress(stats.getGainedPoints());
 
             TextView percent = (TextView) view.findViewById(R.id.percent);
-            int points_percent = stats.getGainedPoints() * 100 / stats.getTotalPoints();
+            int points_percent = stats.getGainedPoints() * 100 /
+                    (stats.getTotalPoints() == 0 ? 1 : stats.getTotalPoints());
             percent.setText(String.format(Locale.ROOT, "%d%%", points_percent));
 
             view.setOnClickListener(new View.OnClickListener() {
@@ -149,16 +155,19 @@ public class GroupListFragment extends ListFragment {
         ViewGroup parent = (ViewGroup) inflater.inflate(R.layout.fragment_group_list, container, false);
         parent.addView(v, 0);
 
-        new LoadGroupsTask().execute();
+        swipeLayout = (SwipeRefreshLayout) parent.findViewById(R.id.swipe_container);
+        swipeLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimaryDark);
+        swipeLayout.setNestedScrollingEnabled(true);
+        swipeLayout.setOnRefreshListener(this);
 
+        fillData();
+        onRefresh();
         return parent;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-    //public void onActivityCreated(Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //super.onActivityCreated(savedInstanceState);
 
         fragment.setListShown(true);
     }
@@ -169,9 +178,19 @@ public class GroupListFragment extends ListFragment {
         callback = (OnGroupSelectedListener) context;
     }
 
+
+    @Override
+    public void onRefresh() {
+        new LoadGroupsTask().execute();
+    }
+
     public void fillData() {
-        List<Group> groups = users.getCurrentUser().getGroups();
-        List<StudentGroupStats> stats = users.getCurrentUser().getGroupStats();
+        UserWrapper currentUser = users.getCurrentUser();
+        if (currentUser == null) {
+            return;
+        }
+        List<Group> groups = currentUser.getGroups();
+        List<StudentGroupStats> stats = currentUser.getGroupStats();
         if (groups == null || stats == null) {
             return;
         }
