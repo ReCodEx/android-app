@@ -68,7 +68,6 @@ public class GroupListFragment extends ListFragment implements SwipeRefreshLayou
             }
 
             fillData();
-
             swipeLayout.setRefreshing(false);
         }
     }
@@ -153,9 +152,9 @@ public class GroupListFragment extends ListFragment implements SwipeRefreshLayou
                              Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
         ViewGroup parent = (ViewGroup) inflater.inflate(R.layout.fragment_group_list, container, false);
-        parent.addView(v, 0);
-
         swipeLayout = (SwipeRefreshLayout) parent.findViewById(R.id.swipe_container);
+        swipeLayout.addView(v);
+
         swipeLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimaryDark);
         swipeLayout.setNestedScrollingEnabled(true);
         swipeLayout.setOnRefreshListener(this);
