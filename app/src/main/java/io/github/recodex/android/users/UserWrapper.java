@@ -1,8 +1,10 @@
 package io.github.recodex.android.users;
 
 import android.accounts.Account;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -11,7 +13,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 import io.github.recodex.android.R;
-import io.github.recodex.android.api.Constants;
+import io.github.recodex.android.authentication.ReCodExAuthenticator;
 import io.github.recodex.android.model.Group;
 import io.github.recodex.android.model.Login;
 import io.github.recodex.android.model.StudentGroupStats;
@@ -39,6 +41,20 @@ public class UserWrapper {
     }
 
     public Account getAccount() { return account; }
+
+    public void requestSync() {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true); // perform even if off
+        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true); // perform even if off
+        ContentResolver.requestSync(account, ReCodExAuthenticator.PROVIDER_AUTHORITY, bundle);
+    }
+
+    public void setSyncInterval(long minutes) {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true); // perform even if off
+        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true); // perform even if off
+        ContentResolver.addPeriodicSync(account, ReCodExAuthenticator.PROVIDER_AUTHORITY, bundle, minutes * 60);
+    }
 
     public String getId() { return id; }
 
@@ -82,5 +98,22 @@ public class UserWrapper {
         String groupsJson = preferences.getString(GROUP_LIST, "");
         Type type = new TypeToken<List<Group>>() {}.getType();
         return new Gson().fromJson(groupsJson, type);
+    }
+
+    public Group getGroup(String groupId) {
+        if (!preferences.contains(GROUP_LIST)) {
+            return null;
+        }
+        String groupsJson = preferences.getString(GROUP_LIST, "");
+        Type type = new TypeToken<List<Group>>() {}.getType();
+        List<Group> groups = new Gson().fromJson(groupsJson, type);
+
+        for (Group group : groups) {
+            if (group.getId().equals(groupId)) {
+                return group;
+            }
+        }
+
+        return null;
     }
 }

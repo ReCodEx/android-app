@@ -246,6 +246,11 @@ public class NavigationDrawer extends AppCompatActivity
             startActivityForResult(intent, MANAGE_ACCOUNTS_REQUEST);
         } else if (id == R.id.action_pick_account) {
             showAccountPicker(usersManager.getAvailableAccounts());
+        } else if (id == R.id.action_sync_now) {
+            if (usersManager.getCurrentUser() != null) {
+                usersManager.getCurrentUser().requestSync();
+            }
+            refreshFragment(); // TODO: should be refresh after sync is done... but how to find it?
         }
 
         return super.onOptionsItemSelected(item);

@@ -84,24 +84,27 @@ public class UsersManager {
         return accessToken;
     }
 
+    public UserWrapper getUserForAccount(Account account) {
+        for (Account acc : getAvailableAccounts()) {
+            if (acc.equals(account)) {
+                String id = accountManager.getUserData(account, KEY_USER_ID);
+                String loginType = accountManager.getUserData(account, KEY_LOGIN_TYPE);
+                return new UserWrapper(context, id, account, loginType);
+            }
+        }
+
+        return null;
+    }
+
     public UserWrapper switchCurrentUser(Account account) {
         if (currentUser != null && currentUser.getAccount().equals(account)) {
             return currentUser;
         }
 
-        currentUser = null;
-        for (Account acc : getAvailableAccounts()) {
-            if (acc.equals(account)) {
-                String id = accountManager.getUserData(account, KEY_USER_ID);
-                String loginType = accountManager.getUserData(account, KEY_LOGIN_TYPE);
-                currentUser = new UserWrapper(context, id, account, loginType);
+        currentUser = getUserForAccount(account);
 
-                // save user id into preferences
-                sharedPreferences.edit().putString(KEY_USERNAME, account.name).apply();
-
-                break;
-            }
-        }
+        // save user id into preferences
+        sharedPreferences.edit().putString(KEY_USERNAME, account.name).apply();
 
         return currentUser;
     }

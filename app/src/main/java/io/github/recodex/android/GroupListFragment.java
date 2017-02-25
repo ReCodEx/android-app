@@ -1,10 +1,9 @@
 package io.github.recodex.android;
 
 import android.content.Context;
-import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
@@ -13,27 +12,21 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 import java.util.Locale;
+
 import javax.inject.Inject;
 
-import io.github.recodex.android.api.RecodexApi;
-import io.github.recodex.android.model.Envelope;
 import io.github.recodex.android.model.Group;
 import io.github.recodex.android.model.StudentGroupStats;
-import io.github.recodex.android.model.UserGroups;
 import io.github.recodex.android.users.UserWrapper;
 import io.github.recodex.android.users.UsersManager;
-import retrofit2.Response;
 
 /**
  * Displays groups the user belongs to, along with some useful information
  */
 public class GroupListFragment extends ListFragment implements SwipeRefreshLayout.OnRefreshListener {
-    @Inject
-    RecodexApi api;
 
     @Inject
     UsersManager users;
@@ -41,36 +34,6 @@ public class GroupListFragment extends ListFragment implements SwipeRefreshLayou
     private ListFragment fragment = this;
     private OnGroupSelectedListener callback;
     private SwipeRefreshLayout swipeLayout = null;
-
-    class LoadGroupsTask extends AsyncTask<Void, Void, UserGroups> {
-        protected UserGroups doInBackground(Void... params) {
-            try {
-                Response<Envelope<UserGroups>> response = api.getGroupsForUser(users.getCurrentUser().getId()).execute();
-
-                if (!response.isSuccessful()) {
-                    return null;
-                }
-
-                Envelope<UserGroups> body = response.body();
-                return body.getPayload();
-            } catch (Exception e) {
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(UserGroups groups) {
-            if (groups == null) {
-                // loading failed
-                Toast.makeText(fragment.getContext(), R.string.loadingFailed, Toast.LENGTH_SHORT).show();
-            } else {
-                users.getCurrentUser().setGroupsInfo(groups.getStudent(), groups.getStats());
-            }
-
-            fillData();
-            swipeLayout.setRefreshing(false);
-        }
-    }
 
     class GroupListAdapter extends ArrayAdapter<Group> {
         private final List<StudentGroupStats> statsList;
@@ -180,7 +143,7 @@ public class GroupListFragment extends ListFragment implements SwipeRefreshLayou
     @Override
     public void onRefresh() {
         if (users.getCurrentUser() != null) {
-            new LoadGroupsTask().execute();
+            fillData();
         }
     }
 
