@@ -3,6 +3,7 @@ package io.github.recodex.android.users;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Application;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -182,6 +183,10 @@ public class LoginHelper {
                     UserWrapper user = usersManager.addUserExplicitly(account, login.getAccessToken(), login.getUser().getId(), mPassword, loginType);
 
                     user.updateData(login);
+
+                    // set sync adapter
+                    ContentResolver.setIsSyncable(account, ReCodExAuthenticator.PROVIDER_AUTHORITY, 1);
+                    ContentResolver.setSyncAutomatically(account, ReCodExAuthenticator.PROVIDER_AUTHORITY, true);
                 }
             } catch (IOException e) {
                 result.putExtra(KEY_LOGIN_RESULT, false);

@@ -1,0 +1,7 @@
+<sync-adapter xmlns:android="http://schemas.android.com/apk/res/android"
+    android:contentAuthority="io.github.recodex.android.sync.provider"
+    android:accountType="io.github.recodex.android.authentication"
+    android:userVisible="true"
+    android:allowParallelSyncs="true"
+    android:isAlwaysSyncable="true"
+    android:supportsUploading="false"/>
