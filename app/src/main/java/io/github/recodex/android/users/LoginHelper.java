@@ -19,9 +19,6 @@ import io.github.recodex.android.api.RecodexApi;
 import io.github.recodex.android.authentication.ReCodExAuthenticator;
 import io.github.recodex.android.model.Envelope;
 import io.github.recodex.android.model.Login;
-import io.github.recodex.android.users.LoginType;
-import io.github.recodex.android.users.UserWrapper;
-import io.github.recodex.android.users.UsersManager;
 import retrofit2.Response;
 
 /**

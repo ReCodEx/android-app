@@ -49,9 +49,10 @@ public class UsersManager {
 
     private void loadSavedUser() {
         String username = sharedPreferences.getString(KEY_USERNAME, "");
-        Log.d("recodex", "Loaded username: " + username);
 
         if (!TextUtils.isEmpty(username)) {
+            Log.d("recodex", "Loaded username: " + username);
+
             for (Account account : getAvailableAccounts()) {
                 if (account.name.equals(username)) {
                     String id = accountManager.getUserData(account, KEY_USER_ID);

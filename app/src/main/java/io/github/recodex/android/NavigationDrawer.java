@@ -17,6 +17,7 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -68,11 +69,11 @@ public class NavigationDrawer extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // handle current user
-        handleAccounts();
-
         // display group list
         replaceContent(new GroupListFragment());
+
+        // handle current user
+        handleAccounts();
     }
 
     private void fillUserInfo() {
@@ -121,6 +122,7 @@ public class NavigationDrawer extends AppCompatActivity
                     refreshFragment();
                 } catch (Exception e) {
                     // if not authenticated, close the app
+                    Log.d(getBaseContext().getString(R.string.recodex_log_tag), "Add account error: " + e.getMessage());
                     finish();
                 }
             }
@@ -161,8 +163,10 @@ public class NavigationDrawer extends AppCompatActivity
 
     private void refreshFragment() {
         Fragment f = getSupportFragmentManager().findFragmentById(R.id.content_container);
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.detach(f).attach(f).commit();
+        if (f != null) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.detach(f).attach(f).commitAllowingStateLoss();
+        }
     }
 
     public void onGroupSelected(String groupId) {

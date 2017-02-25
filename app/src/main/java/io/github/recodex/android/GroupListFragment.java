@@ -177,10 +177,11 @@ public class GroupListFragment extends ListFragment implements SwipeRefreshLayou
         callback = (OnGroupSelectedListener) context;
     }
 
-
     @Override
     public void onRefresh() {
-        new LoadGroupsTask().execute();
+        if (users.getCurrentUser() != null) {
+            new LoadGroupsTask().execute();
+        }
     }
 
     public void fillData() {
