@@ -3,8 +3,10 @@ package io.github.recodex.android;
 import android.accounts.Account;
 import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SyncStatusObserver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -36,6 +38,7 @@ import java.io.InputStream;
 
 import javax.inject.Inject;
 
+import io.github.recodex.android.authentication.ReCodExAuthenticator;
 import io.github.recodex.android.users.UserWrapper;
 import io.github.recodex.android.users.UsersManager;
 
@@ -48,6 +51,33 @@ public class NavigationDrawer extends AppCompatActivity
 
     @Inject
     UsersManager usersManager;
+
+    /**
+     * SyncAdapter status observer. If sync is finished fragment is refreshed... which should cause
+     * reloading of data.
+     */
+    SyncStatusObserver syncObserver = new SyncStatusObserver() {
+        @Override
+        public void onStatusChanged(final int which) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Log.d(getBaseContext().getString(R.string.recodex_log_tag), "Sync status changed");
+
+                    if (usersManager.getCurrentUser() == null) {
+                        return;
+                    }
+
+                    Account account = usersManager.getCurrentUser().getAccount();
+                    if (!ContentResolver.isSyncActive(account, ReCodExAuthenticator.PROVIDER_AUTHORITY) &&
+                            !ContentResolver.isSyncPending(account, ReCodExAuthenticator.PROVIDER_AUTHORITY)) {
+                        refreshFragment();
+                        Log.d(getBaseContext().getString(R.string.recodex_log_tag), "Sync finished, fragment refreshed");
+                    }
+                }
+            });
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -250,7 +280,7 @@ public class NavigationDrawer extends AppCompatActivity
             if (usersManager.getCurrentUser() != null) {
                 usersManager.getCurrentUser().requestSync();
             }
-            refreshFragment(); // TODO: should be refresh after sync is done... but how to find it?
+            refreshFragment();
         }
 
         return super.onOptionsItemSelected(item);
@@ -289,5 +319,20 @@ public class NavigationDrawer extends AppCompatActivity
     private void replaceContent(Fragment fragment) {
         FragmentManager manager = getSupportFragmentManager();
         manager.beginTransaction().replace(R.id.content_container, fragment).addToBackStack(null).commit();
+    }
+
+    Object handleSyncObserver;
+    @Override
+    protected void onResume() {
+        super.onResume();
+        handleSyncObserver = ContentResolver.addStatusChangeListener(ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE |
+                ContentResolver.SYNC_OBSERVER_TYPE_PENDING, syncObserver);
+    }
+
+    @Override
+    protected void onPause() {
+        if (handleSyncObserver != null)
+            ContentResolver.removeStatusChangeListener(handleSyncObserver);
+        super.onStop();
     }
 }

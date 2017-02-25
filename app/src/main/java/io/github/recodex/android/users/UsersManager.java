@@ -22,10 +22,6 @@ import java.util.List;
 import io.github.recodex.android.authentication.ReCodExAuthenticator;
 import io.github.recodex.android.model.Login;
 
-/**
- * Created by martin on 2/17/17.
- */
-
 public class UsersManager {
 
     public static final String KEY_USER_ID = "USER_ID";

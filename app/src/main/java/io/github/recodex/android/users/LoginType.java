@@ -1,9 +1,5 @@
 package io.github.recodex.android.users;
 
-/**
- * Created by martin on 2/21/17.
- */
-
 public enum LoginType {
     REGULAR, CAS_UK, UNKNOWN;
 

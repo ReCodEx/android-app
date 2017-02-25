@@ -22,10 +22,6 @@ import io.github.recodex.android.model.Envelope;
 import io.github.recodex.android.model.Login;
 import retrofit2.Response;
 
-/**
- * Created by martin on 2/21/17.
- */
-
 public class LoginHelper {
 
     public static final String KEY_LOGIN_RESULT = "LOGIN_RESULT";

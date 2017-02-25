@@ -4,10 +4,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-/**
- * Created by martin on 2/15/17.
- */
-
 public class ReCodExSyncAdapterService extends Service {
     private static final Object sSyncAdapterLock = new Object();
     private static ReCodExSyncAdapter syncAdapter = null;
