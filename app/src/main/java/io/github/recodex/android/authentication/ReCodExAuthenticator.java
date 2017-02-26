@@ -29,6 +29,7 @@ import retrofit2.Response;
 
 public class ReCodExAuthenticator extends AbstractAccountAuthenticator {
 
+    public final static String PROVIDER_AUTHORITY = "io.github.recodex.android.sync.provider";
     public final static String ARG_ACCOUNT_TYPE = "ACCOUNT_TYPE";
     public final static String ARG_AUTH_TYPE = "AUTH_TYPE";
     public final static String ARG_ACCOUNT_NAME = "ACCOUNT_NAME";

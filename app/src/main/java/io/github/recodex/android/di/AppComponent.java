@@ -10,6 +10,7 @@ import io.github.recodex.android.LoginActivity;
 import io.github.recodex.android.NavigationDrawer;
 import io.github.recodex.android.RegularLoginFragment;
 import io.github.recodex.android.authentication.ReCodExAuthenticator;
+import io.github.recodex.android.sync.ReCodExSyncAdapter;
 
 /**
  * Created by martin on 2/17/17.
@@ -25,4 +26,5 @@ public interface AppComponent {
     void inject(NavigationDrawer activity);
     void inject(RegularLoginFragment fragment);
     void inject(CasLoginFragment fragment);
+    void inject(ReCodExSyncAdapter adapter);
 }

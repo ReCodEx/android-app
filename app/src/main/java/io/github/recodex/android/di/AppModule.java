@@ -14,6 +14,7 @@ import io.github.recodex.android.api.RecodexApi;
 import io.github.recodex.android.api.TokenAuthenticator;
 import io.github.recodex.android.api.TokenInterceptor;
 import io.github.recodex.android.users.LoginHelper;
+import io.github.recodex.android.users.UserDataFetcher;
 import io.github.recodex.android.users.UsersManager;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -102,5 +103,11 @@ public class AppModule {
     @Singleton
     LoginHelper providesLoginHelper(UsersManager users, RecodexApi api) {
         return new LoginHelper(mApplication, users, api);
+    }
+
+    @Provides
+    @Singleton
+    UserDataFetcher providesUserDataFetcher(RecodexApi api) {
+        return new UserDataFetcher(api);
     }
 }
