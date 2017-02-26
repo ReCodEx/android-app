@@ -1,6 +1,7 @@
 package io.github.recodex.android.api;
 
 
+import io.github.recodex.android.model.Assignment;
 import io.github.recodex.android.model.Envelope;
 import io.github.recodex.android.model.Group;
 import io.github.recodex.android.model.Login;
@@ -29,5 +30,5 @@ public interface RecodexApi {
     Call<Envelope<UserGroups>> getGroupsForUser(@Path("id") String userId);
 
     @GET("exercise-assignments/{id}")
-    Call<Envelope<Group>> getAssignment(@Path("id") String id);
+    Call<Envelope<Assignment>> getAssignment(@Path("id") String id);
 }

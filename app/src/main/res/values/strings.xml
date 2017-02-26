@@ -68,5 +68,6 @@
     <string name="regular_login_tab_label">Regular</string>
     <string name="cas_login_tab_label">CAS</string>
     <string name="ukco">UKCO</string>
-    <string name="loadingFailed">Loading remote data failed.</string>
+    <string name="loading_group_list_failed">Loading group list data failed.</string>
+    <string name="loading_group_detail_failed">Loading group data failed.</string>
 </resources>

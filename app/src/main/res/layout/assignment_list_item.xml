@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:descendantFocusability="blocksDescendants"
-    android:layout_height="wrap_content"
     android:clickable="true"
     android:focusable="true"
     android:background="@color/colorBlue">
@@ -24,44 +23,16 @@
             android:layout_alignParentStart="true"
             android:layout_marginLeft="15dp"
             android:layout_marginStart="15dp" />
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/group_name"
+            android:id="@+id/assignment_name"
             android:paddingTop="25dp"
             android:paddingBottom="25dp"
             android:paddingLeft="20dp"
             android:textColor="@color/colorWhite"
-            android:textAllCaps="true"
             android:layout_weight="1"
-            android:layout_toRightOf="@+id/imageView"
-            android:layout_toLeftOf="@+id/percent"/>
-
-        <TextView
-            android:text="0%"
-            android:layout_height="wrap_content"
-            android:id="@+id/percent"
-            android:layout_alignBottom="@+id/group_name"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true"
-            android:layout_width="wrap_content"
-            android:fontFamily="sans-serif"
-            android:textSize="20sp"
-            android:textStyle="normal|bold"
-            android:textColor="@color/colorWhite"
-            android:textAlignment="textEnd"
-            android:layout_gravity="end"
-            android:paddingTop="20dp"
-            android:paddingRight="20dp" />
+            android:layout_toRightOf="@+id/imageView" />
     </RelativeLayout>
-
-    <ProgressBar
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/progress"
-        android:paddingBottom="10dp" />
 
 </LinearLayout>

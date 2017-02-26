@@ -62,7 +62,7 @@ public class GroupListFragment extends ListFragment implements SwipeRefreshLayou
         protected void onPostExecute(UserGroups groups) {
             if (groups == null) {
                 // loading failed
-                Toast.makeText(fragment.getContext(), R.string.loadingFailed, Toast.LENGTH_SHORT).show();
+                Toast.makeText(fragment.getContext(), R.string.loading_group_list_failed, Toast.LENGTH_SHORT).show();
             } else {
                 users.getCurrentUser().setGroupsInfo(groups.getStudent(), groups.getStats());
             }

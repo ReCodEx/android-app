@@ -1,18 +1,26 @@
 package io.github.recodex.android;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
 import io.github.recodex.android.api.RecodexApi;
+import io.github.recodex.android.model.Assignment;
 import io.github.recodex.android.model.Envelope;
 import io.github.recodex.android.model.Group;
 import retrofit2.Response;
@@ -31,32 +39,80 @@ public class GroupDetailFragment extends Fragment {
 
     private GroupDetailFragment fragment = this;
 
-    class LoadGroupTask extends AsyncTask<Void, Void, Group> {
-        protected Group doInBackground(Void... params) {
+    class GroupData {
+        public Group group;
+
+        public List<Assignment> assignments;
+    }
+
+    class LoadGroupTask extends AsyncTask<Void, Void, GroupData> {
+        protected GroupData doInBackground(Void... params) {
             try {
                 Response<Envelope<Group>> response = api.getGroup(groupId).execute();
+                GroupData result = new GroupData();
 
                 if (!response.isSuccessful()) {
                     return null;
                 }
 
-                return response.body().getPayload();
+                result.group = response.body().getPayload();
+                result.assignments = new ArrayList<>();
+
+                for (String assignmentId : result.group.getAssignments().getPublic()) {
+                    Response<Envelope<Assignment>> assignmentResponse = api.getAssignment(assignmentId).execute();
+                    if (assignmentResponse.isSuccessful()) {
+                        result.assignments.add(assignmentResponse.body().getPayload());
+                    }
+                }
+
+                return result;
             } catch (IOException e) {
                 return null;
             }
         }
 
-        protected void onPostExecute(Group group) {
-            if (group == null) {
-                // TODO handle this
+        protected void onPostExecute(GroupData data) {
+            if (data == null) {
+                Toast.makeText(fragment.getContext(), R.string.loading_group_detail_failed, Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            ((TextView) fragment.getView().findViewById(R.id.group_name)).setText(group.getName());
-            getActivity().setTitle(group.getName());
+            ((TextView) fragment.getView().findViewById(R.id.group_name)).setText(data.group.getName());
+            ((TextView) fragment.getView().findViewById(R.id.group_description)).setText(data.group.getDescription());
+            getActivity().setTitle(data.group.getName());
+
+            ((ListView) fragment.getView().findViewById(R.id.group_assignments)).setAdapter(new AssignmentListAdapter(getContext(), data.assignments));
         }
     }
 
+    class AssignmentListAdapter extends ArrayAdapter<Assignment> {
+        private List<Assignment> assignments;
+
+        private LayoutInflater inflater;
+
+        AssignmentListAdapter(Context context, List<Assignment> assignments) {
+            super(context, R.layout.fragment_group_detail);
+            this.assignments = assignments;
+            this.inflater = LayoutInflater.from(context);
+            addAll(assignments);
+        }
+
+        @NonNull
+        public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
+            View view;
+
+            if (convertView == null) {
+                view = inflater.inflate(R.layout.assignment_list_item, parent, false);
+            } else {
+                view = convertView;
+            }
+
+            ((TextView) view.findViewById(R.id.assignment_name))
+                    .setText(assignments.get(position).getName());
+
+            return view;
+        }
+    }
 
     public GroupDetailFragment() {
         // Required empty public constructor
