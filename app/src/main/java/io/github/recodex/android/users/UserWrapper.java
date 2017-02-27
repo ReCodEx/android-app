@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -50,10 +51,8 @@ public class UserWrapper {
     }
 
     public void setSyncInterval(long minutes) {
-        Bundle bundle = new Bundle();
-        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true); // perform even if off
-        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true); // perform even if off
-        ContentResolver.addPeriodicSync(account, ReCodExAuthenticator.PROVIDER_AUTHORITY, bundle, minutes * 60);
+        ContentResolver.addPeriodicSync(account, ReCodExAuthenticator.PROVIDER_AUTHORITY, Bundle.EMPTY, minutes * 60);
+        Log.d(context.getString(R.string.recodex_log_tag), "Sync interval changed: " + minutes + " min");
     }
 
     public String getId() { return id; }

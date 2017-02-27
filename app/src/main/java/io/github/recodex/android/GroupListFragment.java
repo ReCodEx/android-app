@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,10 +95,15 @@ public class GroupListFragment extends ListFragment implements SwipeRefreshLayou
             StudentGroupStats stats = null;
 
             for (StudentGroupStats statsItem : statsList) {
-                if (statsItem.getGroupId().equals(group.getId())) {
+                if (TextUtils.equals(statsItem.getGroupId(), group.getId())) {
                     stats = statsItem;
                     break;
                 }
+            }
+
+            // stats not found, cannot proceed further
+            if (stats == null) {
+                return view;
             }
 
             TextView groupName = (TextView) view.findViewById(R.id.group_name);

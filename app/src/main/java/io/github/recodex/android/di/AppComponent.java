@@ -9,6 +9,7 @@ import io.github.recodex.android.GroupListFragment;
 import io.github.recodex.android.LoginActivity;
 import io.github.recodex.android.NavigationDrawer;
 import io.github.recodex.android.RegularLoginFragment;
+import io.github.recodex.android.SettingsActivity;
 import io.github.recodex.android.authentication.ReCodExAuthenticator;
 import io.github.recodex.android.sync.ReCodExSyncAdapter;
 
@@ -27,4 +28,5 @@ public interface AppComponent {
     void inject(RegularLoginFragment fragment);
     void inject(CasLoginFragment fragment);
     void inject(ReCodExSyncAdapter adapter);
+    void inject(SettingsActivity.GeneralPreferenceFragment fragment);
 }
