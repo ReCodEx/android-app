@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,21 +24,34 @@ import io.github.recodex.android.api.RecodexApi;
 import io.github.recodex.android.model.Assignment;
 import io.github.recodex.android.model.Envelope;
 import io.github.recodex.android.model.Group;
+import io.github.recodex.android.users.UsersManager;
 import retrofit2.Response;
 
 
 /**
  * Displays details of a group
  */
-public class GroupDetailFragment extends Fragment {
+public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     private static final String ARG_GROUP_ID = "groupId";
 
     @Inject
     RecodexApi api;
 
+    @Inject
+    UsersManager users;
+
     private String groupId;
 
     private GroupDetailFragment fragment = this;
+
+    private SwipeRefreshLayout swipeLayout = null;
+
+    @Override
+    public void onRefresh() {
+        if (users.getCurrentUser() != null) {
+            new LoadGroupTask().execute();
+        }
+    }
 
     class GroupData {
         public Group group;
@@ -48,14 +62,9 @@ public class GroupDetailFragment extends Fragment {
     class LoadGroupTask extends AsyncTask<Void, Void, GroupData> {
         protected GroupData doInBackground(Void... params) {
             try {
-                Response<Envelope<Group>> response = api.getGroup(groupId).execute();
                 GroupData result = new GroupData();
 
-                if (!response.isSuccessful()) {
-                    return null;
-                }
-
-                result.group = response.body().getPayload();
+                result.group = users.getCurrentUser().getGroup(groupId);
                 result.assignments = new ArrayList<>();
 
                 for (String assignmentId : result.group.getAssignments().getPublic()) {
@@ -77,11 +86,11 @@ public class GroupDetailFragment extends Fragment {
                 return;
             }
 
-            ((TextView) fragment.getView().findViewById(R.id.group_name)).setText(data.group.getName());
             ((TextView) fragment.getView().findViewById(R.id.group_description)).setText(data.group.getDescription());
             getActivity().setTitle(data.group.getName());
 
             ((ListView) fragment.getView().findViewById(R.id.group_assignments)).setAdapter(new AssignmentListAdapter(getContext(), data.assignments));
+            swipeLayout.setRefreshing(false);
         }
     }
 
@@ -142,7 +151,14 @@ public class GroupDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_group_detail, container, false);
+        ViewGroup view = (ViewGroup) inflater.inflate(R.layout.fragment_group_detail, container, false);
+        swipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
+
+        swipeLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimaryDark);
+        swipeLayout.setNestedScrollingEnabled(true);
+        swipeLayout.setOnRefreshListener(this);
+
+        onRefresh();
+        return view;
     }
 }
