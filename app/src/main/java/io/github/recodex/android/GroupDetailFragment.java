@@ -46,6 +46,16 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
 
     private SwipeRefreshLayout swipeLayout = null;
 
+    /**
+     * Called when the assignment text should be displayed
+     */
+    private OnAssignmentTextSelectedListener textCallback = null;
+
+    /**
+     * Called when the solutions submitted to an assignment should be displayed
+     */
+    private OnAssignmentSolutionsSelectedListener solutionsCallback = null;
+
     @Override
     public void onRefresh() {
         if (users.getCurrentUser() != null) {
@@ -119,6 +129,24 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
             ((TextView) view.findViewById(R.id.assignment_name))
                     .setText(assignments.get(position).getName());
 
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (solutionsCallback != null) {
+                        solutionsCallback.onAssignmentSolutionsSelected(assignments.get(position).getId());
+                    }
+                }
+            });
+
+            view.findViewById(R.id.assignmentInfoIcon).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (textCallback != null) {
+                        textCallback.onAssignmentTextSelected(assignments.get(position).getId());
+                    }
+                }
+            });
+
             return view;
         }
     }
@@ -160,5 +188,22 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
 
         onRefresh();
         return view;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnAssignmentTextSelectedListener && context instanceof OnAssignmentSolutionsSelectedListener) {
+            solutionsCallback = (OnAssignmentSolutionsSelectedListener) context;
+            textCallback = (OnAssignmentTextSelectedListener) context;
+        }
+    }
+
+    public interface OnAssignmentTextSelectedListener {
+        void onAssignmentTextSelected(String assignmentId);
+    }
+
+    public interface OnAssignmentSolutionsSelectedListener {
+        void onAssignmentSolutionsSelected(String assignmentId);
     }
 }

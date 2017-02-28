@@ -4,7 +4,6 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:descendantFocusability="blocksDescendants"
     android:clickable="true"
     android:focusable="true"
     android:background="@color/contentBackground">
@@ -16,8 +15,10 @@
         <ImageView
             android:layout_width="35dp"
             android:layout_height="35dp"
+            android:clickable="true"
+            android:focusable="true"
             app:srcCompat="@drawable/ic_info"
-            android:id="@+id/imageView"
+            android:id="@+id/assignmentInfoIcon"
             android:tint="@color/contentForegroundMuted"
             android:layout_centerVertical="true"
             android:layout_alignParentLeft="true"
@@ -33,7 +34,7 @@
             android:paddingLeft="20dp"
             android:textColor="@color/contentForeground"
             android:layout_weight="1"
-            android:layout_toRightOf="@+id/imageView" />
+            android:layout_toRightOf="@+id/assignmentInfoIcon" />
     </RelativeLayout>
 
 </LinearLayout>

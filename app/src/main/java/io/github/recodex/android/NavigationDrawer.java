@@ -43,7 +43,7 @@ import io.github.recodex.android.users.UserWrapper;
 import io.github.recodex.android.users.UsersManager;
 
 public class NavigationDrawer extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, GroupListFragment.OnGroupSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, GroupListFragment.OnGroupSelectedListener, GroupDetailFragment.OnAssignmentTextSelectedListener, GroupDetailFragment.OnAssignmentSolutionsSelectedListener {
 
     private final int MANAGE_ACCOUNTS_REQUEST = 666;
 
@@ -201,6 +201,16 @@ public class NavigationDrawer extends AppCompatActivity
 
     public void onGroupSelected(String groupId) {
         replaceContent(GroupDetailFragment.newInstance(groupId));
+    }
+
+    @Override
+    public void onAssignmentSolutionsSelected(String assignmentId) {
+        replaceContent(AssignmentSolutionsFragment.newInstance(assignmentId));
+    }
+
+    @Override
+    public void onAssignmentTextSelected(String assignmentId) {
+        replaceContent(AssignmentTextFragment.newInstance(assignmentId));
     }
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
