@@ -3,6 +3,7 @@ package io.github.recodex.android.di;
 import javax.inject.Singleton;
 
 import dagger.Component;
+import io.github.recodex.android.AssignmentTextFragment;
 import io.github.recodex.android.CasLoginFragment;
 import io.github.recodex.android.GroupDetailFragment;
 import io.github.recodex.android.GroupListFragment;
@@ -29,4 +30,5 @@ public interface AppComponent {
     void inject(CasLoginFragment fragment);
     void inject(ReCodExSyncAdapter adapter);
     void inject(SettingsActivity.GeneralPreferenceFragment fragment);
+    void inject(AssignmentTextFragment assignmentTextFragment);
 }
