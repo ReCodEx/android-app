@@ -80,6 +80,14 @@ public class UsersManager {
         return accessToken;
     }
 
+    public void invalidateAuthToken() {
+        String token = accountManager.peekAuthToken(getCurrentUser().getAccount(), ReCodExAuthenticator.AUTH_TOKEN_TYPE);
+
+        if (!TextUtils.isEmpty(token)) {
+            accountManager.invalidateAuthToken(ReCodExAuthenticator.ACCOUNT_TYPE, token);
+        }
+    }
+
     public UserWrapper getUserForAccount(Account account) {
         for (Account acc : getAvailableAccounts()) {
             if (acc.equals(account)) {

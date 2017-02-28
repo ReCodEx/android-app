@@ -1,14 +1,8 @@
 package io.github.recodex.android.api;
 
 
-import android.accounts.AccountManager;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
-import android.util.Log;
-
 import java.io.IOException;
 
-import io.github.recodex.android.authentication.ReCodExAuthenticator;
 import io.github.recodex.android.users.UsersManager;
 import okhttp3.Authenticator;
 import okhttp3.Request;
@@ -31,6 +25,7 @@ public class TokenAuthenticator implements Authenticator {
         }
 
         // Refresh your access_token using a synchronous api request
+        usersManager.invalidateAuthToken();
         String newAccessToken = usersManager.blockingGetAuthToken();
 
         // Add new header to rejected request and retry it
