@@ -2,17 +2,19 @@ package io.github.recodex.android;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
 
 import javax.inject.Inject;
 
+import io.github.recodex.android.api.ApiWrapper;
 import io.github.recodex.android.api.RecodexApi;
 import io.github.recodex.android.model.Assignment;
 import io.github.recodex.android.model.Envelope;
@@ -25,7 +27,7 @@ import us.feras.mdv.MarkdownView;
  * Use the {@link AssignmentTextFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AssignmentTextFragment extends Fragment {
+public class AssignmentTextFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     private static final String ASSIGNMENT_ID = "assignmentId";
 
     private String assignmentId;
@@ -33,38 +35,55 @@ public class AssignmentTextFragment extends Fragment {
     private final AssignmentTextFragment fragment = this;
 
     @Inject
-    RecodexApi api;
+    ApiWrapper<RecodexApi> api;
 
-    class LoadAssignmentTask extends AsyncTask<Void, Void, Assignment> {
-        protected Assignment doInBackground(Void... params) {
-            try {
-                Response<Envelope<Assignment>> response = api.getAssignment(assignmentId).execute();
+    private SwipeRefreshLayout swipeLayout = null;
 
-                if (!response.isSuccessful() || !response.body().isSuccess()) {
-                    return null;
+    @Override
+    public void onRefresh() {
+        new AsyncTask<Void, Void, Assignment>() {
+            protected Assignment doInBackground(Void... params) {
+                return fetchAssignmentData(api.fromRemote());
+            }
+
+            protected void onPostExecute(Assignment assignment) {
+                if (assignment == null) {
+                    Toast.makeText(fragment.getContext(), R.string.loading_assignment_failed, Toast.LENGTH_SHORT).show();
+                    return;
                 }
 
-                return response.body().getPayload();
-            } catch (IOException e) {
-                return null;
+                renderData(assignment);
+                swipeLayout.setRefreshing(false);
             }
-        }
-
-        protected void onPostExecute(Assignment assignment) {
-            if (assignment == null) {
-                Toast.makeText(fragment.getContext(), R.string.loading_assignment_failed, Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            // TODO pick the correct locale
-            String text = assignment.getLocalizedTexts().get(0).getText();
-            ((MarkdownView) fragment.getView().findViewById(R.id.assignment_text))
-                    .loadMarkdown(text);
-        }
+        }.execute();
     }
 
     public AssignmentTextFragment() {
         // Required empty public constructor
+    }
+
+    private Assignment fetchAssignmentData(RecodexApi api) {
+        try {
+            Response<Envelope<Assignment>> response = api.getAssignment(assignmentId).execute();
+
+            if (!response.isSuccessful() || !response.body().isSuccess()) {
+                return null;
+            }
+
+            return response.body().getPayload();
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    private void renderData(Assignment assignment) {
+        getActivity().setTitle(assignment.getName());
+
+        // TODO pick the correct locale
+        String text = assignment.getLocalizedTexts().get(0).getText();
+
+        ((MarkdownView) fragment.getView().findViewById(R.id.assignment_text))
+                .loadMarkdown(text);
     }
 
     /**
@@ -90,14 +109,45 @@ public class AssignmentTextFragment extends Fragment {
         }
 
         ((MyApp) getContext().getApplicationContext()).getAppComponent().inject(this);
-
-        new LoadAssignmentTask().execute();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_assignment_text, container, false);
+        ViewGroup view = (ViewGroup) inflater.inflate(R.layout.fragment_assignment_text, container, false);
+        swipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
+
+        swipeLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimaryDark);
+        swipeLayout.setNestedScrollingEnabled(true);
+        swipeLayout.setOnRefreshListener(this);
+
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        // Try to load data from the cache so that there is something to display
+        new AsyncTask<Void, Void, Assignment>() {
+            @Override
+            protected Assignment doInBackground(Void... params) {
+                return fetchAssignmentData(api.fromCache());
+            }
+
+            @Override
+            protected void onPostExecute(Assignment assignment) {
+                if (assignment != null) {
+                    renderData(assignment);
+                } else {
+                    startForcedReload();
+                }
+            }
+        }.execute();
+    }
+
+    private void startForcedReload() {
+        swipeLayout.setRefreshing(true);
+        onRefresh();
     }
 }

@@ -11,7 +11,6 @@
 
         <TextView
             android:id="@+id/group_description"
-            android:text="Group description"
             android:padding="@dimen/textbox_padding"
             android:background="@color/colorTextBoxBackground"
             android:textColor="@color/contentForeground"
