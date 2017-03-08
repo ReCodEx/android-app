@@ -100,7 +100,10 @@ public class NavigationDrawer extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         // display group list
-        replaceContent(new GroupListFragment());
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_container);
+        if (fragment == null) {
+            replaceContent(new GroupListFragment());
+        }
 
         // handle current user
         handleAccounts();
@@ -336,6 +339,7 @@ public class NavigationDrawer extends AppCompatActivity
 
     @Override
     protected void onPause() {
+        super.onPause();
         if (handleSyncObserver != null)
             ContentResolver.removeStatusChangeListener(handleSyncObserver);
         super.onStop();

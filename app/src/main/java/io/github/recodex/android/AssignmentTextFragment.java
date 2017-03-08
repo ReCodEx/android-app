@@ -82,8 +82,10 @@ public class AssignmentTextFragment extends Fragment implements SwipeRefreshLayo
         // TODO pick the correct locale
         String text = assignment.getLocalizedTexts().get(0).getText();
 
-        ((MarkdownView) fragment.getView().findViewById(R.id.assignment_text))
-                .loadMarkdown(text, "file:///android_asset/markdown.css");
+        try {
+            ((MarkdownView) fragment.getView().findViewById(R.id.assignment_text))
+                    .loadMarkdown(text, "file:///android_asset/markdown.css");
+        } catch (NullPointerException e) {}
     }
 
     /**
