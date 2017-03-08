@@ -83,7 +83,7 @@ public class AssignmentTextFragment extends Fragment implements SwipeRefreshLayo
         String text = assignment.getLocalizedTexts().get(0).getText();
 
         ((MarkdownView) fragment.getView().findViewById(R.id.assignment_text))
-                .loadMarkdown(text);
+                .loadMarkdown(text, "file:///android_asset/markdown.css");
     }
 
     /**
