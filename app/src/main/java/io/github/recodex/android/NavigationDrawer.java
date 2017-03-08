@@ -46,6 +46,7 @@ public class NavigationDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GroupListFragment.OnGroupSelectedListener, GroupDetailFragment.OnAssignmentTextSelectedListener, GroupDetailFragment.OnAssignmentSolutionsSelectedListener {
 
     private final int MANAGE_ACCOUNTS_REQUEST = 666;
+    private final String FRAGMENT_TAG = "drawer_fragment_tag";
 
     private AlertDialog mAlertDialog;
 
@@ -261,10 +262,11 @@ public class NavigationDrawer extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            if (getFragmentManager().getBackStackEntryCount() > 0) {
-                getFragmentManager().popBackStack();
+            // When there are more than 1 fragments, so there is a way back
+            if (getSupportFragmentManager().getBackStackEntryCount() > 1) {
+                getSupportFragmentManager().popBackStack();
             } else {
-                super.onBackPressed();
+                finish();
             }
         }
     }
@@ -326,7 +328,7 @@ public class NavigationDrawer extends AppCompatActivity
 
     private void replaceContent(Fragment fragment) {
         FragmentManager manager = getSupportFragmentManager();
-        manager.beginTransaction().replace(R.id.content_container, fragment).addToBackStack(null).commit();
+        manager.beginTransaction().replace(R.id.content_container, fragment).addToBackStack(FRAGMENT_TAG).commit();
     }
 
     Object handleSyncObserver;
