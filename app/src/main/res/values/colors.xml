@@ -6,8 +6,10 @@
     <color name="colorBlue">#0073B7</color>
     <color name="colorWhite">#ffffff</color>
     <color name="colorRed">#ff0000</color>
+    <color name="colorGreen">#008000</color>
     <color name="colorMoccasin">#ffe4b5</color>
     <color name="colorLightGreen">#90ee90</color>
+    <color name="colorDarkOrange">#ff8c00</color>
 
     <color name="contentBackground">#ecf0f5</color>
     <color name="contentForeground">#000</color>

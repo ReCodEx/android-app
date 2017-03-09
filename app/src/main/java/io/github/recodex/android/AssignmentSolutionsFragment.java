@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,15 +81,15 @@ public class AssignmentSolutionsFragment extends Fragment implements SwipeRefres
                 TextView submissionPoints = (TextView) view.findViewById(R.id.assignment_submission_points);
                 submissionPoints.setText(submission.getEvaluation().getPoints() + "/" + submission.getMaxPoints());
 
-                // set tick instead of cross
+                // set state symbol depending on the evaluation and solution
                 ImageView stateImage = (ImageView) view.findViewById(R.id.assignment_submission_state_icon);
-                stateImage.setImageResource(R.drawable.ic_check_black_24dp);
-
-                // set background color for evaluated solution
-                submissionListItem.setBackgroundColor(getResources().getColor(R.color.colorLightGreen));
-            } else {
-                // set background color for solution which does not have evaluation yet
-                submissionListItem.setBackgroundColor(getResources().getColor(R.color.colorMoccasin));
+                if (submission.getEvaluation().getScore() > 0) {
+                    stateImage.setImageResource(R.drawable.ic_check_black_24dp);
+                    stateImage.setColorFilter(getResources().getColor(R.color.colorGreen));
+                } else {
+                    stateImage.setImageResource(R.drawable.ic_clear_black_24dp);
+                    stateImage.setColorFilter(getResources().getColor(R.color.colorRed));
+                }
             }
 
             view.setOnClickListener(new View.OnClickListener() {
@@ -172,6 +171,7 @@ public class AssignmentSolutionsFragment extends Fragment implements SwipeRefres
                 protected void onPostExecute(SubmissionsAssignmentPair pair) {
                     if (pair.submissions == null || pair.assignment == null) {
                         Toast.makeText(getContext(), R.string.assignment_submissions_loading_failed, Toast.LENGTH_SHORT).show();
+                        swipeLayout.setRefreshing(false);
                         return;
                     }
 
@@ -205,12 +205,20 @@ public class AssignmentSolutionsFragment extends Fragment implements SwipeRefres
         }.execute();
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnSubmissionSelectedListener) {
+            callback = (OnSubmissionSelectedListener) context;
+        }
+    }
+
     private void startForcedReload() {
         swipeLayout.setRefreshing(true);
         onRefresh();
     }
 
     public interface OnSubmissionSelectedListener {
-        void onSubmissionSelected(String groupId);
+        void onSubmissionSelected(String submissionId);
     }
 }
