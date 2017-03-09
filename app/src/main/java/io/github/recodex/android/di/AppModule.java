@@ -15,9 +15,6 @@ import io.github.recodex.android.users.ApiDataFetcher;
 import io.github.recodex.android.users.LoginHelper;
 import io.github.recodex.android.users.UsersManager;
 
-/**
- * Created by martin on 2/17/17.
- */
 
 @Module
 public class AppModule {
@@ -73,6 +70,6 @@ public class AppModule {
     @Provides
     @Singleton
     ApiDataFetcher providesApiDataFetcher(ApiWrapper<RecodexApi> api) {
-        return new ApiDataFetcher(api.fromRemote(), api);
+        return new ApiDataFetcher(api.fromRemote(), api, mApplication.getApplicationContext());
     }
 }

@@ -3,7 +3,9 @@ package io.github.recodex.android;
 import android.accounts.Account;
 import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
+import android.app.NotificationManager;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SyncStatusObserver;
@@ -108,6 +110,10 @@ public class NavigationDrawer extends AppCompatActivity
 
         // handle current user
         handleAccounts();
+
+        // clear pending notifications
+        ((NotificationManager) getApplicationContext()
+                .getSystemService(Context.NOTIFICATION_SERVICE)).cancelAll();
     }
 
     private void fillUserInfo() {

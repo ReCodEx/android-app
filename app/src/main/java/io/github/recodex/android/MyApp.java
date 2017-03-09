@@ -6,9 +6,6 @@ import io.github.recodex.android.di.AppComponent;
 import io.github.recodex.android.di.AppModule;
 import io.github.recodex.android.di.DaggerAppComponent;
 
-/**
- * Created by martin on 2/17/17.
- */
 
 public class MyApp extends Application {
 
