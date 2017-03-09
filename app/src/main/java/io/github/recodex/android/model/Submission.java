@@ -6,6 +6,8 @@ public class Submission {
     private long submittedAt;
     private SolutionEvaluation evaluation;
     private int maxPoints;
+    private String exerciseAssignmentId;
+    private String userId;
 
     public String getId() {
         return id;
@@ -25,5 +27,13 @@ public class Submission {
 
     public int getMaxPoints() {
         return maxPoints;
+    }
+
+    public String getExerciseAssignmentId() {
+        return exerciseAssignmentId;
+    }
+
+    public String getUserId() {
+        return userId;
     }
 }

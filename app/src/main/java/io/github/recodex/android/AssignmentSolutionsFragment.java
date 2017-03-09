@@ -25,6 +25,7 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import io.github.recodex.android.model.Assignment;
+import io.github.recodex.android.model.SolutionEvaluation;
 import io.github.recodex.android.model.Submission;
 import io.github.recodex.android.users.ApiDataFetcher;
 import io.github.recodex.android.users.UsersManager;
@@ -74,16 +75,24 @@ public class AssignmentSolutionsFragment extends Fragment implements SwipeRefres
             submissionDate.setText(submittedAt);
 
             if (submission.getEvaluation() != null) {
-                int percentual_score = (int) submission.getEvaluation().getScore() * 100;
+                SolutionEvaluation evaluation = submission.getEvaluation();
+
+                // prepare and fill percentual score of submission
+                int percentual_score = (int) evaluation.getScore() * 100;
                 TextView submissionValidity = (TextView) view.findViewById(R.id.assignment_submission_validity);
                 submissionValidity.setText(String.format(Locale.ROOT, "%d%%", percentual_score));
 
+                // get actual points and maybe bonus one and display them
+                String points = evaluation.getPoints() + "/" + submission.getMaxPoints();
+                if (evaluation.getBonusPoints() > 0) {
+                    points = evaluation.getPoints() + "+" + evaluation.getBonusPoints() + "/" + submission.getMaxPoints();
+                }
                 TextView submissionPoints = (TextView) view.findViewById(R.id.assignment_submission_points);
-                submissionPoints.setText(submission.getEvaluation().getPoints() + "/" + submission.getMaxPoints());
+                submissionPoints.setText(points);
 
                 // set state symbol depending on the evaluation and solution
                 ImageView stateImage = (ImageView) view.findViewById(R.id.assignment_submission_state_icon);
-                if (submission.getEvaluation().getScore() > 0) {
+                if (evaluation.getScore() > 0) {
                     stateImage.setImageResource(R.drawable.ic_check_black_24dp);
                     stateImage.setColorFilter(getResources().getColor(R.color.colorGreen));
                 } else {

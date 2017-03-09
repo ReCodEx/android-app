@@ -8,6 +8,7 @@ import io.github.recodex.android.model.Envelope;
 import io.github.recodex.android.model.Group;
 import io.github.recodex.android.model.Login;
 import io.github.recodex.android.model.Submission;
+import io.github.recodex.android.model.User;
 import io.github.recodex.android.model.UserGroups;
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -26,6 +27,9 @@ public interface RecodexApi {
     @FormUrlEncoded
     Call<Envelope<Login>> externalLogin(@Path("serviceId") String serviceId, @Field("username") String username, @Field("password") String password);
 
+    @GET("users/{id}")
+    Call<Envelope<User>> getUser(@Path("id") String userId);
+
     @GET("groups/{id}")
     Call<Envelope<Group>> getGroup(@Path("id") String id);
 
@@ -37,4 +41,7 @@ public interface RecodexApi {
 
     @GET("exercise-assignments/{id}/users/{userId}/submissions")
     Call<Envelope<List<Submission>>> getAssignmentSubmissions(@Path("id") String id, @Path("userId") String userId);
+
+    @GET("submissions/{id}")
+    Call<Envelope<Submission>> getSubmission(@Path("id") String submissionId);
 }

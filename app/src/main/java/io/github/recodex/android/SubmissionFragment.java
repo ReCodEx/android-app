@@ -19,6 +19,7 @@ import io.github.recodex.android.api.RecodexApi;
 import io.github.recodex.android.model.Assignment;
 import io.github.recodex.android.model.Envelope;
 import io.github.recodex.android.model.Submission;
+import io.github.recodex.android.model.User;
 import io.github.recodex.android.users.ApiDataFetcher;
 import retrofit2.Response;
 import us.feras.mdv.MarkdownView;
@@ -34,8 +35,8 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
 
     private SwipeRefreshLayout swipeLayout = null;
 
-    private void renderData(Submission submission) {
-        getActivity().setTitle("");
+    private void renderData(AsyncResultStruct asyncResultStruct) {
+        getActivity().setTitle("Evaluation: " + asyncResultStruct.assignment.getName());
 
         // TODO
     }
@@ -78,21 +79,41 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
         return view;
     }
 
+    class AsyncResultStruct {
+        public User submittedBy;
+        public Submission submission;
+        public Assignment assignment;
+
+        public AsyncResultStruct(User submittedBy, Submission submission, Assignment assignment) {
+            this.submittedBy = submittedBy;
+            this.submission = submission;
+            this.assignment = assignment;
+        }
+    }
+
     @Override
     public void onRefresh() {
-        new AsyncTask<Void, Void, Submission>() {
-            protected Submission doInBackground(Void... params) {
-                return null; // TODO
+        new AsyncTask<Void, Void, AsyncResultStruct>() {
+            protected AsyncResultStruct doInBackground(Void... params) {
+                Submission submission = apiDataFetcher.fetchRemoteSubmission(submissionId);
+                Assignment assignment = null;
+                User user = null;
+                if (submission != null) {
+                    assignment = apiDataFetcher.fetchRemoteAssignment(submission.getExerciseAssignmentId());
+                    user = apiDataFetcher.fetchRemoteUser(submission.getUserId());
+                }
+                return new AsyncResultStruct(user, submission, assignment);
             }
 
-            protected void onPostExecute(Submission submission) {
-                if (submission == null) {
+            protected void onPostExecute(AsyncResultStruct asyncResultStruct) {
+                if (asyncResultStruct.assignment == null || asyncResultStruct.submission == null ||
+                        asyncResultStruct.submittedBy == null) {
                     Toast.makeText(getContext(), R.string.submission_loading_failed, Toast.LENGTH_SHORT).show();
                     swipeLayout.setRefreshing(false);
                     return;
                 }
 
-                renderData(submission);
+                renderData(asyncResultStruct);
                 swipeLayout.setRefreshing(false);
             }
         }.execute();
@@ -103,16 +124,24 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
         super.onActivityCreated(savedInstanceState);
 
         // Try to load data from the cache so that there is something to display
-        new AsyncTask<Void, Void, Submission>() {
+        new AsyncTask<Void, Void, AsyncResultStruct>() {
             @Override
-            protected Submission doInBackground(Void... params) {
-                return null; // TODO
+            protected AsyncResultStruct doInBackground(Void... params) {
+                Submission submission = apiDataFetcher.fetchCachedSubmission(submissionId);
+                Assignment assignment = null;
+                User user = null;
+                if (submission != null) {
+                    assignment = apiDataFetcher.fetchCachedAssignment(submission.getExerciseAssignmentId());
+                    user = apiDataFetcher.fetchCachedUser(submission.getUserId());
+                }
+                return new AsyncResultStruct(user, submission, assignment);
             }
 
             @Override
-            protected void onPostExecute(Submission submission) {
-                if (submission != null) {
-                    renderData(submission);
+            protected void onPostExecute(AsyncResultStruct asyncResultStruct) {
+                if (asyncResultStruct.assignment != null && asyncResultStruct.submittedBy != null &&
+                        asyncResultStruct.submission != null) {
+                    renderData(asyncResultStruct);
                 } else {
                     startForcedReload();
                 }

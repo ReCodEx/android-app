@@ -24,6 +24,7 @@ import io.github.recodex.android.model.Assignment;
 import io.github.recodex.android.model.Envelope;
 import io.github.recodex.android.model.Group;
 import io.github.recodex.android.model.Submission;
+import io.github.recodex.android.model.User;
 import io.github.recodex.android.model.UserGroups;
 import retrofit2.Response;
 
@@ -55,6 +56,28 @@ public class ApiDataFetcher {
         }
 
         return null;
+    }
+
+    private User getUser(RecodexApi api, String userId) {
+        try {
+            Response<Envelope<User>> response = api.getUser(userId).execute();
+
+            if (!response.isSuccessful() || !response.body().isSuccess()) {
+                return null;
+            }
+
+            return response.body().getPayload();
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    public User fetchRemoteUser(String userId) {
+        return getUser(apiWrapper.fromRemote(), userId);
+    }
+
+    public User fetchCachedUser(String userId) {
+        return getUser(apiWrapper.fromCache(), userId);
     }
 
     private List<Submission> getAssignmentSubmissions(RecodexApi api, UserWrapper user, String assignmentId) {
@@ -99,6 +122,28 @@ public class ApiDataFetcher {
 
     public Assignment fetchCachedAssignment(String assignmentId) {
         return getAssignment(apiWrapper.fromCache(), assignmentId);
+    }
+
+    private Submission getSubmission(RecodexApi api, String submissionId) {
+        try {
+            Response<Envelope<Submission>> response = api.getSubmission(submissionId).execute();
+
+            if (!response.isSuccessful() || !response.body().isSuccess()) {
+                return null;
+            }
+
+            return response.body().getPayload();
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    public Submission fetchRemoteSubmission(String submissionId) {
+        return getSubmission(apiWrapper.fromRemote(), submissionId);
+    }
+
+    public Submission fetchCachedSubmission(String submissionId) {
+        return getSubmission(apiWrapper.fromCache(), submissionId);
     }
 
     public void fetchAndStoreAll(UserWrapper user) {
