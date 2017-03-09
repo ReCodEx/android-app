@@ -4,9 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <us.feras.mdv.MarkdownView
-        android:id="@+id/assignment_text"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <us.feras.mdv.MarkdownView
+            android:id="@+id/assignment_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </ScrollView>
+
 
 </android.support.v4.widget.SwipeRefreshLayout>

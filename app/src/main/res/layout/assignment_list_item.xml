@@ -1,40 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorWhite"
     android:clickable="true"
     android:focusable="true"
-    android:background="@color/contentBackground">
+    android:orientation="vertical"
+    android:paddingBottom="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="10dp">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
 
-        <ImageView
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:clickable="true"
-            android:focusable="true"
-            app:srcCompat="@drawable/ic_info"
-            android:id="@+id/assignmentInfoIcon"
-            android:tint="@color/contentForegroundMuted"
-            android:layout_centerVertical="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginLeft="15dp"
-            android:layout_marginStart="15dp" />
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/assignment_name"
-            android:paddingTop="25dp"
-            android:paddingBottom="25dp"
-            android:paddingLeft="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:paddingLeft="25dp"
             android:textColor="@color/contentForeground"
-            android:layout_weight="1"
-            android:layout_toRightOf="@+id/assignmentInfoIcon" />
-    </RelativeLayout>
+            android:textSize="17sp"
+            tools:text="Formula Evaluation" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:id="@+id/assignment_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            app:srcCompat="@drawable/ic_assignment" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="25dp"
+            android:layout_gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/deadline1_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text=""
+                android:textAlignment="center"
+                android:textSize="12sp"
+                tools:text="2.3.2017 23:59" />
+
+            <TextView
+                android:id="@+id/deadline2_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text=""
+                android:textAlignment="center"
+                android:textSize="12sp"
+                tools:text="8.3.2017 22:00" />
+        </LinearLayout>
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:id="@+id/solutions_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            app:srcCompat="@drawable/ic_solutions" />
+
+    </LinearLayout>
 
 </LinearLayout>

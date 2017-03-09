@@ -11,13 +11,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -150,20 +154,30 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
             ((TextView) view.findViewById(R.id.assignment_name))
                     .setText(assignments.get(position).getName());
 
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (solutionsCallback != null) {
-                        solutionsCallback.onAssignmentSolutionsSelected(assignments.get(position).getId());
-                    }
-                }
-            });
+            String firstDeadline = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.ENGLISH)
+                    .format(new Date(assignments.get(position).getFirstDeadline() * 1000));
+            ((TextView) view.findViewById(R.id.deadline1_text)).setText(firstDeadline);
 
-            view.findViewById(R.id.assignmentInfoIcon).setOnClickListener(new View.OnClickListener() {
+            if (assignments.get(position).isAllowedSecondDeadline()) {
+                String secondDeadline = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.ENGLISH)
+                        .format(new Date(assignments.get(position).getSecondDeadline() * 1000));
+                ((TextView) view.findViewById(R.id.deadline2_text)).setText(secondDeadline);
+            }
+
+            view.findViewById(R.id.assignment_button).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (textCallback != null) {
                         textCallback.onAssignmentTextSelected(assignments.get(position).getId());
+                    }
+                }
+            });
+
+            view.findViewById(R.id.solutions_button).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (solutionsCallback != null) {
+                        solutionsCallback.onAssignmentSolutionsSelected(assignments.get(position).getId());
                     }
                 }
             });
