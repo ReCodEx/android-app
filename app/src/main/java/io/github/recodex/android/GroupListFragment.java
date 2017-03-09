@@ -24,7 +24,7 @@ import javax.inject.Inject;
 import io.github.recodex.android.model.Group;
 import io.github.recodex.android.model.StudentGroupStats;
 import io.github.recodex.android.model.UserGroups;
-import io.github.recodex.android.users.UserDataFetcher;
+import io.github.recodex.android.users.ApiDataFetcher;
 import io.github.recodex.android.users.UserWrapper;
 import io.github.recodex.android.users.UsersManager;
 
@@ -37,7 +37,7 @@ public class GroupListFragment extends ListFragment implements SwipeRefreshLayou
     UsersManager users;
 
     @Inject
-    UserDataFetcher userDataFetcher;
+    ApiDataFetcher userDataFetcher;
 
     private ListFragment fragment = this;
     private OnGroupSelectedListener callback;

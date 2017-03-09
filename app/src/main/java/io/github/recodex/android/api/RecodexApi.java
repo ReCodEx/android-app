@@ -1,10 +1,13 @@
 package io.github.recodex.android.api;
 
 
+import java.util.List;
+
 import io.github.recodex.android.model.Assignment;
 import io.github.recodex.android.model.Envelope;
 import io.github.recodex.android.model.Group;
 import io.github.recodex.android.model.Login;
+import io.github.recodex.android.model.Submission;
 import io.github.recodex.android.model.UserGroups;
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -31,4 +34,7 @@ public interface RecodexApi {
 
     @GET("exercise-assignments/{id}")
     Call<Envelope<Assignment>> getAssignment(@Path("id") String id);
+
+    @GET("exercise-assignments/{id}/users/{userId}/submissions")
+    Call<Envelope<List<Submission>>> getAssignmentSubmissions(@Path("id") String id, @Path("userId") String userId);
 }

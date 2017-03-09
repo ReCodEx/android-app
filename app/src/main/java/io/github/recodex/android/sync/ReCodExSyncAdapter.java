@@ -14,7 +14,7 @@ import javax.inject.Inject;
 import io.github.recodex.android.MyApp;
 import io.github.recodex.android.R;
 import io.github.recodex.android.authentication.ReCodExAuthenticator;
-import io.github.recodex.android.users.UserDataFetcher;
+import io.github.recodex.android.users.ApiDataFetcher;
 import io.github.recodex.android.users.UserWrapper;
 import io.github.recodex.android.users.UsersManager;
 
@@ -22,7 +22,7 @@ public class ReCodExSyncAdapter extends AbstractThreadedSyncAdapter {
     @Inject
     AccountManager accountManager;
     @Inject
-    UserDataFetcher userDataFetcher;
+    ApiDataFetcher userDataFetcher;
     @Inject
     UsersManager usersManager;
 

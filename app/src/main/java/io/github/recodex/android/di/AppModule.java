@@ -9,17 +9,11 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import io.github.recodex.android.R;
 import io.github.recodex.android.api.ApiWrapper;
 import io.github.recodex.android.api.RecodexApi;
-import io.github.recodex.android.api.TokenAuthenticator;
-import io.github.recodex.android.api.TokenInterceptor;
+import io.github.recodex.android.users.ApiDataFetcher;
 import io.github.recodex.android.users.LoginHelper;
-import io.github.recodex.android.users.UserDataFetcher;
 import io.github.recodex.android.users.UsersManager;
-import okhttp3.OkHttpClient;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by martin on 2/17/17.
@@ -78,7 +72,7 @@ public class AppModule {
 
     @Provides
     @Singleton
-    UserDataFetcher providesUserDataFetcher(ApiWrapper<RecodexApi> api) {
-        return new UserDataFetcher(api.fromRemote());
+    ApiDataFetcher providesApiDataFetcher(ApiWrapper<RecodexApi> api) {
+        return new ApiDataFetcher(api.fromRemote(), api);
     }
 }

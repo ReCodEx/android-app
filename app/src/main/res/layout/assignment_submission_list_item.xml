@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="@color/contentBackground"
+    android:id="@+id/assignment_submission_list_item">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:paddingLeft="25dp">
+
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/ic_clear_black_24dp"
+            android:id="@+id/assignment_submission_state_icon" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="25dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/assignment_submission_date"
+                android:textColor="@color/contentForeground"
+                android:layout_weight="1"
+                android:textSize="17sp"
+                android:paddingTop="10dp"
+                android:paddingBottom="5dp"
+                tools:text="9.3.2017 17:00" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:paddingBottom="10dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/assignment_submission_validity"
+                    android:textColor="@color/contentForeground"
+                    android:layout_weight="1"
+                    tools:text="100%" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/assignment_submission_points"
+                    android:textColor="@color/contentForeground"
+                    android:layout_weight="1"
+                    tools:text="20/20" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
