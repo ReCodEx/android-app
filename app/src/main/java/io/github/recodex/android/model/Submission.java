@@ -5,6 +5,7 @@ public class Submission {
     private String note;
     private long submittedAt;
     private SolutionEvaluation evaluation;
+    private String evaluationStatus;
     private int maxPoints;
     private String exerciseAssignmentId;
     private String userId;
@@ -19,6 +20,10 @@ public class Submission {
 
     public SolutionEvaluation getEvaluation() {
         return evaluation;
+    }
+
+    public String getEvaluationStatus() {
+        return evaluationStatus;
     }
 
     public long getSubmittedAt() {

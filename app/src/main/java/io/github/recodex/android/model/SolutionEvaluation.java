@@ -6,6 +6,9 @@ public class SolutionEvaluation {
     private float score;
     private int points;
     private int bonusPoints;
+    private boolean initFailed;
+    private boolean isValid;
+    private boolean evaluationFailed;
 
     public String getId() {
         return id;
@@ -25,5 +28,17 @@ public class SolutionEvaluation {
 
     public long getEvaluatedAt() {
         return evaluatedAt;
+    }
+
+    public boolean getInitFailed() {
+        return initFailed;
+    }
+
+    public boolean getIsValid() {
+        return isValid;
+    }
+
+    public boolean getEvaluationFailed() {
+        return evaluationFailed;
     }
 }

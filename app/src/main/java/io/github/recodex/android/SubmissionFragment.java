@@ -5,12 +5,18 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.TextViewCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -18,6 +24,7 @@ import io.github.recodex.android.api.ApiWrapper;
 import io.github.recodex.android.api.RecodexApi;
 import io.github.recodex.android.model.Assignment;
 import io.github.recodex.android.model.Envelope;
+import io.github.recodex.android.model.SolutionEvaluation;
 import io.github.recodex.android.model.Submission;
 import io.github.recodex.android.model.User;
 import io.github.recodex.android.users.ApiDataFetcher;
@@ -36,9 +43,57 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
     private SwipeRefreshLayout swipeLayout = null;
 
     private void renderData(AsyncResultStruct asyncResultStruct) {
-        getActivity().setTitle("Evaluation: " + asyncResultStruct.assignment.getName());
+        Submission submission = asyncResultStruct.submission;
+        Assignment assignment = asyncResultStruct.assignment;
+        User user = asyncResultStruct.submittedBy;
 
-        // TODO
+        getActivity().setTitle("Evaluation: " + assignment.getName());
+
+        String submittedAt = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.ENGLISH)
+                .format(new Date(submission.getSubmittedAt() * 1000));
+        TextView submittedAtView = (TextView) getView().findViewById(R.id.submission_submitted_at);
+        submittedAtView.setText(submittedAt);
+
+        TextView submissionAuthor = (TextView) getView().findViewById(R.id.submission_author);
+        submissionAuthor.setText(user.getFullName());
+
+        TextView submissionStatus = (TextView) getView().findViewById(R.id.submission_evaluation_status);
+        submissionStatus.setText(submission.getEvaluationStatus());
+
+        // display evaluation details if submission is evaluated
+        if (submission.getEvaluation() != null) {
+            SolutionEvaluation evaluation = submission.getEvaluation();
+
+            // first hide and display appropriate layouts
+            LinearLayout evaluationNotReady = (LinearLayout) getView().findViewById(R.id.submission_evaluation_not_complete_area);
+            LinearLayout evaluationReady = (LinearLayout) getView().findViewById(R.id.submission_evaluation_area);
+            evaluationNotReady.setVisibility(View.GONE);
+            evaluationReady.setVisibility(View.VISIBLE);
+
+            String evaluatedAt = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.ENGLISH)
+                    .format(new Date(evaluation.getEvaluatedAt() * 1000));
+            TextView evaluatedAtView = (TextView) getView().findViewById(R.id.submission_evaluated_at);
+            evaluatedAtView.setText(evaluatedAt);
+
+            int percentual_score = (int) evaluation.getScore() * 100;
+            TextView score = (TextView) getView().findViewById(R.id.submission_score);
+            score.setText(String.format(Locale.ROOT, "%d%%", percentual_score));
+
+            TextView points = (TextView) getView().findViewById(R.id.submission_points);
+            points.setText(String.format(Locale.ROOT, "%d/%d", evaluation.getPoints(), submission.getMaxPoints()));
+
+            TextView bonusPoints = (TextView) getView().findViewById(R.id.submission_bonus_points);
+            bonusPoints.setText(String.format(Locale.ROOT, "+%d", evaluation.getBonusPoints()));
+
+            TextView evaluationFailed = (TextView) getView().findViewById(R.id.submission_evaluation_finished);
+            evaluationFailed.setText(evaluation.getEvaluationFailed() ? "No" : "Yes");
+
+            TextView buildSucceeded = (TextView) getView().findViewById(R.id.submission_build_succeeded);
+            buildSucceeded.setText(evaluation.getInitFailed() ? "No" : "Yes");
+
+            TextView evaluationValid = (TextView) getView().findViewById(R.id.submission_evaluation_valid);
+            evaluationValid.setText(evaluation.getIsValid() ? "Yes" : "No");
+        }
     }
 
     /**
