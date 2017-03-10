@@ -1,22 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/swipe_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <TextView
-        android:text="Test Results"
+    <TableLayout
+        android:id="@+id/test_results_table"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/about_recodex_title"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textStyle="normal|bold"
-        android:textSize="26sp"
-        android:textAlignment="center"
-        android:fontFamily="sans-serif-condensed"
-        android:paddingTop="20dp"
-        android:paddingBottom="5dp" />
+        android:layout_height="match_parent"
+        android:stretchColumns="*">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
+            <TextView
+                android:layout_column="0"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:text="Test" />
+            <ImageView
+                android:layout_column="1"
+                app:srcCompat="@drawable/ic_check_black_24dp" />
+            <ImageView
+                android:layout_column="2"
+                app:srcCompat="@drawable/ic_memory_black_24dp" />
+            <ImageView
+                android:layout_column="3"
+                app:srcCompat="@drawable/ic_timer_black_24dp" />
+        </TableRow>
+
+    </TableLayout>
 
 
 </RelativeLayout>

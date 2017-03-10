@@ -78,9 +78,9 @@ public class AssignmentSolutionsFragment extends Fragment implements SwipeRefres
                 SolutionEvaluation evaluation = submission.getEvaluation();
 
                 // prepare and fill percentual score of submission
-                int percentual_score = (int) evaluation.getScore() * 100;
+                int percentualScore = (int) evaluation.getScore() * 100;
                 TextView submissionValidity = (TextView) view.findViewById(R.id.assignment_submission_validity);
-                submissionValidity.setText(String.format(Locale.ROOT, "%d%%", percentual_score));
+                submissionValidity.setText(String.format(Locale.ROOT, "%d%%", percentualScore));
 
                 // get actual points and maybe bonus one and display them
                 String points = evaluation.getPoints() + "/" + submission.getMaxPoints();

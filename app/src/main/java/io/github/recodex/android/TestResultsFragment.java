@@ -1,28 +1,28 @@
 package io.github.recodex.android;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.ImageView;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
 
 import io.github.recodex.android.model.Assignment;
-import io.github.recodex.android.model.SolutionEvaluation;
+import io.github.recodex.android.model.EvaluationTestResult;
 import io.github.recodex.android.model.Submission;
-import io.github.recodex.android.model.User;
 import io.github.recodex.android.users.ApiDataFetcher;
 
 
@@ -37,10 +37,60 @@ public class TestResultsFragment extends Fragment {
     private void renderData(AsyncResultStruct asyncResultStruct) {
         Submission submission = asyncResultStruct.submission;
         Assignment assignment = asyncResultStruct.assignment;
+        List<EvaluationTestResult> testResults = submission.getEvaluation().getTestResults();
 
         getActivity().setTitle("Evaluation: " + assignment.getName());
 
-        // TODO
+        TableLayout table = (TableLayout) getView().findViewById(R.id.test_results_table);
+        for (EvaluationTestResult testResult : testResults) {
+            int padding = getResources().getDimensionPixelSize(R.dimen.test_results_row_padding);
+            TableRow row = new TableRow(getActivity());
+            row.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+            row.setPadding(padding, padding, padding, padding);
+            row.setBackgroundColor(getResources().getColor(R.color.colorWhite));
+            table.addView(row);
+
+            TableRow.LayoutParams firstParams = new TableRow.LayoutParams(0);
+            firstParams.gravity = Gravity.CENTER;
+            TextView testName = new TextView(getActivity());
+            testName.setText(testResult.getTestName());
+            testName.setLayoutParams(firstParams);
+            row.addView(testName);
+
+            TableRow.LayoutParams secondParams = new TableRow.LayoutParams(1);
+            secondParams.gravity = Gravity.CENTER;
+            int percentualScore = (int) testResult.getScore() * 100;
+            TextView score = new TextView(getActivity());
+            score.setText(String.format(Locale.ROOT, "%d%%", percentualScore));
+            score.setLayoutParams(secondParams);
+            row.addView(score);
+
+            TableRow.LayoutParams thirdParams = new TableRow.LayoutParams(2);
+            thirdParams.gravity = Gravity.CENTER;
+            ImageView memory = new ImageView(getActivity());
+            if (testResult.getMemoryExceeded()) {
+                memory.setImageResource(R.drawable.ic_clear_black_24dp);
+                memory.setColorFilter(getResources().getColor(R.color.colorRed));
+            } else {
+                memory.setImageResource(R.drawable.ic_check_black_24dp);
+                memory.setColorFilter(getResources().getColor(R.color.colorGreen));
+            }
+            memory.setLayoutParams(thirdParams);
+            row.addView(memory);
+
+            TableRow.LayoutParams fourthParams = new TableRow.LayoutParams(3);
+            fourthParams.gravity = Gravity.CENTER;
+            ImageView time = new ImageView(getActivity());
+            if (testResult.getTimeExceeded()) {
+                time.setImageResource(R.drawable.ic_clear_black_24dp);
+                time.setColorFilter(getResources().getColor(R.color.colorRed));
+            } else {
+                time.setImageResource(R.drawable.ic_check_black_24dp);
+                time.setColorFilter(getResources().getColor(R.color.colorGreen));
+            }
+            time.setLayoutParams(fourthParams);
+            row.addView(time);
+        }
     }
 
     /**

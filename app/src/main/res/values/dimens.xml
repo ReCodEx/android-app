@@ -8,6 +8,8 @@
     <dimen name="nav_header_height">170dp</dimen>
     <dimen name="text_margin">16dp</dimen>
 
+    <dimen name="test_results_row_padding">10dp</dimen>
+
     <dimen name="heading_height">44sp</dimen>
     <dimen name="heading_padding">14sp</dimen>
 

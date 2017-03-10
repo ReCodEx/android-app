@@ -9,6 +9,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -80,14 +81,23 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
             TextView bonusPoints = (TextView) getView().findViewById(R.id.submission_bonus_points);
             bonusPoints.setText(String.format(Locale.ROOT, "+%d", evaluation.getBonusPoints()));
 
-            TextView evaluationFailed = (TextView) getView().findViewById(R.id.submission_evaluation_finished);
-            evaluationFailed.setText(evaluation.getEvaluationFailed() ? "No" : "Yes");
+            if (!evaluation.getEvaluationFailed()) {
+                ImageView evaluationFailed = (ImageView) getView().findViewById(R.id.submission_evaluation_finished);
+                evaluationFailed.setImageResource(R.drawable.ic_check_black_24dp);
+                evaluationFailed.setColorFilter(getResources().getColor(R.color.colorGreen));
+            }
 
-            TextView buildSucceeded = (TextView) getView().findViewById(R.id.submission_build_succeeded);
-            buildSucceeded.setText(evaluation.getInitFailed() ? "No" : "Yes");
+            if (!evaluation.getInitFailed()) {
+                ImageView buildSucceeded = (ImageView) getView().findViewById(R.id.submission_build_succeeded);
+                buildSucceeded.setImageResource(R.drawable.ic_check_black_24dp);
+                buildSucceeded.setColorFilter(getResources().getColor(R.color.colorGreen));
+            }
 
-            TextView evaluationValid = (TextView) getView().findViewById(R.id.submission_evaluation_valid);
-            evaluationValid.setText(evaluation.getIsValid() ? "Yes" : "No");
+            if (evaluation.getIsValid()) {
+                ImageView evaluationValid = (ImageView) getView().findViewById(R.id.submission_evaluation_valid);
+                evaluationValid.setImageResource(R.drawable.ic_check_black_24dp);
+                evaluationValid.setColorFilter(getResources().getColor(R.color.colorGreen));
+            }
 
             getView().findViewById(R.id.display_test_results_button).setOnClickListener(new View.OnClickListener() {
                 @Override
