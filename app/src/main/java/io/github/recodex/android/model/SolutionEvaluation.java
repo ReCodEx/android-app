@@ -1,5 +1,7 @@
 package io.github.recodex.android.model;
 
+import java.util.List;
+
 public class SolutionEvaluation {
     private String id;
     private long evaluatedAt;
@@ -9,6 +11,7 @@ public class SolutionEvaluation {
     private boolean initFailed;
     private boolean isValid;
     private boolean evaluationFailed;
+    private List<EvaluationTestResult> testResults;
 
     public String getId() {
         return id;
@@ -40,5 +43,9 @@ public class SolutionEvaluation {
 
     public boolean getEvaluationFailed() {
         return evaluationFailed;
+    }
+
+    public List<EvaluationTestResult> getTestResults() {
+        return testResults;
     }
 }

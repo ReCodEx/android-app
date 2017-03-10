@@ -1,11 +1,11 @@
 package io.github.recodex.android;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v4.widget.TextViewCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,23 +13,17 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 import javax.inject.Inject;
 
-import io.github.recodex.android.api.ApiWrapper;
-import io.github.recodex.android.api.RecodexApi;
 import io.github.recodex.android.model.Assignment;
-import io.github.recodex.android.model.Envelope;
 import io.github.recodex.android.model.SolutionEvaluation;
 import io.github.recodex.android.model.Submission;
 import io.github.recodex.android.model.User;
 import io.github.recodex.android.users.ApiDataFetcher;
-import retrofit2.Response;
-import us.feras.mdv.MarkdownView;
 
 
 public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -41,9 +35,10 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
     ApiDataFetcher apiDataFetcher;
 
     private SwipeRefreshLayout swipeLayout = null;
+    private OnTestResultsSelectedListener testResultsCallback = null;
 
     private void renderData(AsyncResultStruct asyncResultStruct) {
-        Submission submission = asyncResultStruct.submission;
+        final Submission submission = asyncResultStruct.submission;
         Assignment assignment = asyncResultStruct.assignment;
         User user = asyncResultStruct.submittedBy;
 
@@ -93,6 +88,15 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
 
             TextView evaluationValid = (TextView) getView().findViewById(R.id.submission_evaluation_valid);
             evaluationValid.setText(evaluation.getIsValid() ? "Yes" : "No");
+
+            getView().findViewById(R.id.display_test_results_button).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (testResultsCallback != null) {
+                        testResultsCallback.onTestResultsSelected(submission.getId());
+                    }
+                }
+            });
         }
     }
 
@@ -207,5 +211,17 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
     private void startForcedReload() {
         swipeLayout.setRefreshing(true);
         onRefresh();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnTestResultsSelectedListener) {
+            testResultsCallback = (OnTestResultsSelectedListener) context;
+        }
+    }
+
+    public interface OnTestResultsSelectedListener {
+        void onTestResultsSelected(String submissiontId);
     }
 }

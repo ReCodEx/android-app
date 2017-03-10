@@ -13,6 +13,7 @@ import io.github.recodex.android.NavigationDrawer;
 import io.github.recodex.android.RegularLoginFragment;
 import io.github.recodex.android.SettingsActivity;
 import io.github.recodex.android.SubmissionFragment;
+import io.github.recodex.android.TestResultsFragment;
 import io.github.recodex.android.authentication.ReCodExAuthenticator;
 import io.github.recodex.android.sync.ReCodExSyncAdapter;
 
@@ -35,4 +36,5 @@ public interface AppComponent {
     void inject(AssignmentTextFragment assignmentTextFragment);
     void inject(AssignmentSolutionsFragment assignmentSolutionsFragment);
     void inject(SubmissionFragment submissionFragment);
+    void inject(TestResultsFragment testResultsFragment);
 }

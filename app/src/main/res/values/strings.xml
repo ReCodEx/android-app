@@ -75,4 +75,5 @@
     <string name="assignment_submissions_loading_failed">Loading assignment submissions failed</string>
     <string name="new_assignment">New assignment in</string>
     <string name="submission_loading_failed">Submision loading failed</string>
+    <string name="display_detailed_test_results">Display detailed test results</string>
 </resources>

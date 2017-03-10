@@ -242,6 +242,15 @@
                     android:layout_height="wrap_content" />
             </LinearLayout>
 
+            <Button
+                android:id="@+id/display_test_results_button"
+                style="?android:textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/display_detailed_test_results"
+                android:textStyle="bold" />
+
         </LinearLayout>
 
     </LinearLayout>

@@ -49,7 +49,8 @@ public class NavigationDrawer extends AppCompatActivity
         GroupListFragment.OnGroupSelectedListener,
         GroupDetailFragment.OnAssignmentTextSelectedListener,
         GroupDetailFragment.OnAssignmentSolutionsSelectedListener,
-        AssignmentSolutionsFragment.OnSubmissionSelectedListener {
+        AssignmentSolutionsFragment.OnSubmissionSelectedListener,
+        SubmissionFragment.OnTestResultsSelectedListener {
 
     private final int MANAGE_ACCOUNTS_REQUEST = 666;
     private final String FRAGMENT_TAG = "drawer_fragment_tag";
@@ -230,6 +231,11 @@ public class NavigationDrawer extends AppCompatActivity
     @Override
     public void onSubmissionSelected(String submissionId) {
         replaceContent(SubmissionFragment.newInstance(submissionId));
+    }
+
+    @Override
+    public void onTestResultsSelected(String submissionId) {
+        replaceContent(TestResultsFragment.newInstance(submissionId));
     }
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
