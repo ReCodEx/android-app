@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,6 +18,8 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -30,6 +31,7 @@ import io.github.recodex.android.api.RecodexApi;
 import io.github.recodex.android.model.Assignment;
 import io.github.recodex.android.model.Envelope;
 import io.github.recodex.android.model.Group;
+import io.github.recodex.android.model.Submission;
 import io.github.recodex.android.users.UsersManager;
 import retrofit2.Response;
 
@@ -86,7 +88,27 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
     class GroupData {
         public Group group;
 
-        public List<Assignment> assignments;
+        List<AssignmentData> assignments;
+    }
+
+    class AssignmentData {
+        Assignment assignment;
+
+        Submission bestSolution;
+
+        AssignmentData(Assignment assignment, Submission bestSolution) {
+            this.assignment = assignment;
+            this.bestSolution = bestSolution;
+        }
+
+        boolean hasEvaluation() {
+            return bestSolution != null && bestSolution.getEvaluation() != null;
+        }
+
+        int getPointPercentage() {
+            final int pointsGained = bestSolution.getEvaluation().getPoints() + bestSolution.getEvaluation().getBonusPoints();
+            return (100 * pointsGained) / bestSolution.getMaxPoints();
+        }
     }
 
     private GroupData fetchGroupData(RecodexApi api) {
@@ -100,9 +122,21 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
 
                 for (String assignmentId : result.group.getAssignments().getPublic()) {
                     Response<Envelope<Assignment>> assignmentResponse = api.getAssignment(assignmentId).execute();
-                    if (checkApiResponse(assignmentResponse)) {
-                        result.assignments.add(assignmentResponse.body().getPayload());
+
+                    if (!checkApiResponse(assignmentResponse)) {
+                        continue;
                     }
+
+                    Response<Envelope<Submission>> solutionResponse = api.getBestAssignmentSubmission(assignmentId, users.getCurrentUser().getId()).execute();
+                    Submission bestSolution = null;
+                    if (checkApiResponse(solutionResponse)) {
+                        bestSolution = solutionResponse.body().getPayload();
+                    }
+
+                    result.assignments.add(new AssignmentData(
+                            assignmentResponse.body().getPayload(),
+                            bestSolution
+                    ));
                 }
 
                 return result;
@@ -114,7 +148,7 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
         return null;
     }
 
-    private void renderData(Group group, List<Assignment> assignments) {
+    private void renderData(Group group, List<AssignmentData> assignments) {
         if (getView() == null) {
             return;
         }
@@ -129,19 +163,20 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
         return response.isSuccessful() && response.body().isSuccess();
     }
 
-    class AssignmentListAdapter extends ArrayAdapter<Assignment> {
-        private List<Assignment> assignments;
+    class AssignmentListAdapter extends ArrayAdapter<AssignmentData> {
+        private List<AssignmentData> assignments;
 
         private LayoutInflater inflater;
 
-        AssignmentListAdapter(Context context, List<Assignment> assignments) {
+        AssignmentListAdapter(Context context, List<AssignmentData> assignments) {
             super(context, R.layout.fragment_group_detail);
-            this.assignments = assignments;
             this.inflater = LayoutInflater.from(context);
+            this.assignments = assignments;
             addAll(assignments);
         }
 
         @NonNull
+        @Override
         public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
             View view;
 
@@ -151,24 +186,31 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
                 view = convertView;
             }
 
+            AssignmentData data = assignments.get(position);
+            final Assignment assignment = data.assignment;
+
             ((TextView) view.findViewById(R.id.assignment_name))
-                    .setText(assignments.get(position).getName());
+                    .setText(assignment.getName());
 
             String firstDeadline = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.ENGLISH)
-                    .format(new Date(assignments.get(position).getFirstDeadline() * 1000));
+                    .format(new Date(assignment.getFirstDeadline() * 1000));
             ((TextView) view.findViewById(R.id.deadline1_text)).setText(firstDeadline);
 
-            if (assignments.get(position).isAllowedSecondDeadline()) {
+            if (assignment.isAllowedSecondDeadline()) {
                 String secondDeadline = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.ENGLISH)
-                        .format(new Date(assignments.get(position).getSecondDeadline() * 1000));
+                        .format(new Date(assignment.getSecondDeadline() * 1000));
                 ((TextView) view.findViewById(R.id.deadline2_text)).setText(secondDeadline);
+            }
+
+            if (data.hasEvaluation()) {
+                ((TextView) view.findViewById(R.id.percentage)).setText(String.format(Locale.ROOT, "%d%%", data.getPointPercentage()));
             }
 
             view.findViewById(R.id.assignment_button).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (textCallback != null) {
-                        textCallback.onAssignmentTextSelected(assignments.get(position).getId());
+                        textCallback.onAssignmentTextSelected(assignment.getId());
                     }
                 }
             });
@@ -177,7 +219,7 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
                 @Override
                 public void onClick(View v) {
                     if (solutionsCallback != null) {
-                        solutionsCallback.onAssignmentSolutionsSelected(assignments.get(position).getId());
+                        solutionsCallback.onAssignmentSolutionsSelected(assignment.getId());
                     }
                 }
             });

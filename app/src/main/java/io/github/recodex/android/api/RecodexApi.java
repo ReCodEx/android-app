@@ -42,6 +42,9 @@ public interface RecodexApi {
     @GET("exercise-assignments/{id}/users/{userId}/submissions")
     Call<Envelope<List<Submission>>> getAssignmentSubmissions(@Path("id") String id, @Path("userId") String userId);
 
+    @GET("exercise-assignments/{id}/users/{userId}/best-submission")
+    Call<Envelope<Submission>> getBestAssignmentSubmission(@Path("id") String id, @Path("userId") String userId);
+
     @GET("submissions/{id}")
     Call<Envelope<Submission>> getSubmission(@Path("id") String submissionId);
 }
