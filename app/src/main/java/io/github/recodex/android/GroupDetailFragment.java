@@ -195,8 +195,8 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
                 @Override
                 public int compare(AssignmentData first, AssignmentData second) {
                     // Unfinished assignments go first
-                    boolean firstDone = first.hasEvaluation() && first.getPointPercentage() == 100;
-                    boolean secondDone = second.hasEvaluation() && second.getPointPercentage() == 100;
+                    boolean firstDone = first.hasEvaluation() && first.getPointPercentage() >= 100;
+                    boolean secondDone = second.hasEvaluation() && second.getPointPercentage() >= 100;
 
                     if (!firstDone && secondDone) {
                         return -1;
