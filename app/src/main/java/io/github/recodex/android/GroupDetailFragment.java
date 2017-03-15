@@ -18,6 +18,7 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -73,12 +74,12 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
 
                 @Override
                 protected void onPostExecute(GroupData data) {
-                    if (data == null) {
+                    if (data != null) {
+                        renderData(data.group, data.assignments);
+                    } else {
                         Toast.makeText(getContext(), R.string.loading_group_detail_failed, Toast.LENGTH_SHORT).show();
-                        return;
                     }
 
-                    renderData(data.group, data.assignments);
                     swipeLayout.setRefreshing(false);
                 }
             }.execute();
@@ -108,6 +109,20 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
         int getPointPercentage() {
             final int pointsGained = bestSolution.getEvaluation().getPoints() + bestSolution.getEvaluation().getBonusPoints();
             return (100 * pointsGained) / bestSolution.getMaxPoints();
+        }
+
+        boolean isAfterDeadlines(Date now) {
+            return isAfterFirstDeadline(now) && isAfterSecondDeadline(now);
+        }
+
+        boolean isAfterFirstDeadline(Date now) {
+            return assignment.getFirstDeadline() * 1000 < now.getTime();
+        }
+
+        boolean isAfterSecondDeadline(Date now) {
+            return assignment.isAllowedSecondDeadline()
+                    ? assignment.getSecondDeadline() * 1000 < now.getTime()
+                    : isAfterFirstDeadline(now);
         }
     }
 
@@ -173,6 +188,60 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
             this.inflater = LayoutInflater.from(context);
             this.assignments = assignments;
             addAll(assignments);
+
+            Collections.sort(assignments, new Comparator<AssignmentData>() {
+                private Date now = Calendar.getInstance().getTime();
+
+                @Override
+                public int compare(AssignmentData first, AssignmentData second) {
+                    // Unfinished assignments go first
+                    boolean firstDone = first.hasEvaluation() && first.getPointPercentage() == 100;
+                    boolean secondDone = second.hasEvaluation() && second.getPointPercentage() == 100;
+
+                    if (!firstDone && secondDone) {
+                        return -1;
+                    }
+                    if (firstDone && !secondDone) {
+                        return 1;
+                    }
+
+                    // Missed assignments (no points and after deadline) go last
+                    boolean firstExpired = first.isAfterDeadlines(now);
+                    boolean secondExpired = second.isAfterDeadlines(now);
+
+                    boolean firstMissed = firstExpired && !firstDone;
+                    boolean secondMissed = secondExpired && !secondDone;
+
+                    if (!firstMissed && secondMissed) {
+                        return -1;
+                    }
+                    if (firstMissed && !secondMissed) {
+                        return 1;
+                    }
+
+                    // Missed assignments are sorted by creation date
+                    if (firstMissed && secondMissed) {
+                        return 0; // TODO missing in the response
+                    }
+
+                    // Equal items get sorted by earliest deadline
+                    long firstAssignmentDeadline = first.isAfterFirstDeadline(now)
+                            ? first.assignment.getSecondDeadline()
+                            : first.assignment.getFirstDeadline();
+                    long secondAssignmentDeadline = second.isAfterFirstDeadline(now)
+                            ? second.assignment.getSecondDeadline()
+                            : second.assignment.getFirstDeadline();
+
+                    if (firstAssignmentDeadline > secondAssignmentDeadline) {
+                        return 1;
+                    }
+                    if (firstAssignmentDeadline < secondAssignmentDeadline) {
+                        return -1;
+                    }
+
+                    return 0;
+                }
+            });
         }
 
         @NonNull
