@@ -3,37 +3,41 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/swipe_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <TableLayout
-        android:id="@+id/test_results_table"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:stretchColumns="*">
+        android:layout_height="match_parent">
 
-        <TableRow
+        <TableLayout
+            android:id="@+id/test_results_table"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp">
-            <TextView
-                android:layout_column="0"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:text="Test" />
-            <ImageView
-                android:layout_column="1"
-                app:srcCompat="@drawable/ic_check_black_24dp" />
-            <ImageView
-                android:layout_column="2"
-                app:srcCompat="@drawable/ic_memory_black_24dp" />
-            <ImageView
-                android:layout_column="3"
-                app:srcCompat="@drawable/ic_timer_black_24dp" />
-        </TableRow>
+            android:layout_height="match_parent"
+            android:stretchColumns="*">
 
-    </TableLayout>
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp">
+                <TextView
+                    android:layout_column="0"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"
+                    android:text="Test" />
+                <ImageView
+                    android:layout_column="1"
+                    app:srcCompat="@drawable/ic_check_black_24dp" />
+                <ImageView
+                    android:layout_column="2"
+                    app:srcCompat="@drawable/ic_memory_black_24dp" />
+                <ImageView
+                    android:layout_column="3"
+                    app:srcCompat="@drawable/ic_timer_black_24dp" />
+            </TableRow>
 
+        </TableLayout>
+
+    </ScrollView>
 
 </RelativeLayout>
