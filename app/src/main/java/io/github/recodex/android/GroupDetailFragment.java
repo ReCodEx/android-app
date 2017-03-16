@@ -1,6 +1,7 @@
 package io.github.recodex.android;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -251,6 +252,7 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
         @Override
         public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
             View view;
+            Date now = Calendar.getInstance().getTime();
 
             if (convertView == null) {
                 view = inflater.inflate(R.layout.assignment_list_item, parent, false);
@@ -258,24 +260,45 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
                 view = convertView;
             }
 
-            AssignmentData data = assignments.get(position);
+            final AssignmentData data = assignments.get(position);
             final Assignment assignment = data.assignment;
+            final boolean assignmentDone = data.hasEvaluation() && data.getPointPercentage() >= 100;
 
-            ((TextView) view.findViewById(R.id.assignment_name))
-                    .setText(assignment.getName());
+            TextView name = (TextView) view.findViewById(R.id.assignment_name);
+            name.setText(assignment.getName());
+            if (assignmentDone) {
+                name.setTextColor(getResources().getColor(R.color.colorAssignmentDone));
+            } else if (data.isAfterDeadlines(now)) {
+                name.setTextColor(getResources().getColor(R.color.colorAssignmentMissed));
+            }
 
             String firstDeadline = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.ENGLISH)
                     .format(new Date(assignment.getFirstDeadline() * 1000));
-            ((TextView) view.findViewById(R.id.deadline1_text)).setText(firstDeadline);
+            TextView firstDeadlineText = (TextView) view.findViewById(R.id.deadline1_text);
+            firstDeadlineText.setText(firstDeadline);
+            if (data.isAfterFirstDeadline(now)) {
+                firstDeadlineText.setPaintFlags(firstDeadlineText.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            } else {
+                firstDeadlineText.setPaintFlags(firstDeadlineText.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+            }
 
             if (assignment.isAllowedSecondDeadline()) {
                 String secondDeadline = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.ENGLISH)
                         .format(new Date(assignment.getSecondDeadline() * 1000));
-                ((TextView) view.findViewById(R.id.deadline2_text)).setText(secondDeadline);
+                TextView secondDeadlineText = (TextView) view.findViewById(R.id.deadline2_text);
+                secondDeadlineText.setText(secondDeadline);
+                if (data.isAfterSecondDeadline(now)) {
+                    secondDeadlineText.setPaintFlags(secondDeadlineText.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                } else {
+                    secondDeadlineText.setPaintFlags(secondDeadlineText.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+                }
             }
 
             TextView percentage = (TextView) view.findViewById(R.id.solutions_button);
             if (data.hasEvaluation()) {
+                if (assignmentDone) {
+                    percentage.setTextColor(getResources().getColor(R.color.colorAssignmentDone));
+                }
                 percentage.setText(String.format(Locale.ROOT, "%d%%", data.getPointPercentage()));
             } else {
                 percentage.setText("0%");
