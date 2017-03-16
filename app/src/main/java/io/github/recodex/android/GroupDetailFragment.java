@@ -274,7 +274,7 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
                 ((TextView) view.findViewById(R.id.deadline2_text)).setText(secondDeadline);
             }
 
-            TextView percentage = (TextView) view.findViewById(R.id.percentage);
+            TextView percentage = (TextView) view.findViewById(R.id.solutions_button);
             if (data.hasEvaluation()) {
                 percentage.setText(String.format(Locale.ROOT, "%d%%", data.getPointPercentage()));
             } else {
