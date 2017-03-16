@@ -1,6 +1,8 @@
 package io.github.recodex.android.api;
 
 
+import android.util.Log;
+
 import java.io.IOException;
 
 import io.github.recodex.android.users.UsersManager;
@@ -19,12 +21,19 @@ public class TokenInterceptor implements Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
 
+        if (chain.request().url().encodedPathSegments().contains("login")) {
+            return chain.proceed(chain.request());
+        }
+
         if (usersManager.getCurrentUser() != null) {
+            Log.d("recodex", "TokenInterceptor called");
+
             Request originalRequest = chain.request();
 
             String token = usersManager.blockingGetAuthToken();
 
             if (token.isEmpty() || alreadyHasAuthorizationHeader(originalRequest)) {
+                Log.d("recodex", "TokenInterceptor - token empty");
                 return chain.proceed(originalRequest);
             }
 

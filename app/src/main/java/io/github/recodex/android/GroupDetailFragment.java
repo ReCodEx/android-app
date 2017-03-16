@@ -1,6 +1,7 @@
 package io.github.recodex.android;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -73,12 +75,12 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
 
                 @Override
                 protected void onPostExecute(GroupData data) {
-                    if (data == null) {
+                    if (data != null) {
+                        renderData(data.group, data.assignments);
+                    } else {
                         Toast.makeText(getContext(), R.string.loading_group_detail_failed, Toast.LENGTH_SHORT).show();
-                        return;
                     }
 
-                    renderData(data.group, data.assignments);
                     swipeLayout.setRefreshing(false);
                 }
             }.execute();
@@ -108,6 +110,20 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
         int getPointPercentage() {
             final int pointsGained = bestSolution.getEvaluation().getPoints() + bestSolution.getEvaluation().getBonusPoints();
             return (100 * pointsGained) / bestSolution.getMaxPoints();
+        }
+
+        boolean isAfterDeadlines(Date now) {
+            return isAfterFirstDeadline(now) && isAfterSecondDeadline(now);
+        }
+
+        boolean isAfterFirstDeadline(Date now) {
+            return assignment.getFirstDeadline() * 1000 < now.getTime();
+        }
+
+        boolean isAfterSecondDeadline(Date now) {
+            return assignment.isAllowedSecondDeadline()
+                    ? assignment.getSecondDeadline() * 1000 < now.getTime()
+                    : isAfterFirstDeadline(now);
         }
     }
 
@@ -173,12 +189,70 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
             this.inflater = LayoutInflater.from(context);
             this.assignments = assignments;
             addAll(assignments);
+
+            Collections.sort(assignments, new Comparator<AssignmentData>() {
+                private Date now = Calendar.getInstance().getTime();
+
+                @Override
+                public int compare(AssignmentData first, AssignmentData second) {
+                    boolean firstExpired = first.isAfterDeadlines(now);
+                    boolean secondExpired = second.isAfterDeadlines(now);
+
+                    boolean firstDone = first.hasEvaluation() && first.getPointPercentage() >= 100;
+                    boolean secondDone = second.hasEvaluation() && second.getPointPercentage() >= 100;
+
+                    boolean firstToDo = !firstDone && !firstExpired;
+                    boolean secondToDo = !secondDone && !secondExpired;
+
+                    // Unfinished assignments go first
+                    if (firstToDo && !secondToDo) {
+                        return -1;
+                    }
+                    if (!firstToDo && secondToDo) {
+                        return 1;
+                    }
+
+                    // Missed assignments (no points and after deadline) go last
+                    boolean firstMissed = firstExpired && !firstDone;
+                    boolean secondMissed = secondExpired && !secondDone;
+
+                    if (!firstMissed && secondMissed) {
+                        return -1;
+                    }
+                    if (firstMissed && !secondMissed) {
+                        return 1;
+                    }
+
+                    // Missed assignments are sorted by creation date
+                    if (firstMissed && secondMissed) {
+                        return 0; // TODO missing in the response
+                    }
+
+                    // Equal items get sorted by earliest deadline
+                    long firstAssignmentDeadline = first.isAfterFirstDeadline(now)
+                            ? first.assignment.getSecondDeadline()
+                            : first.assignment.getFirstDeadline();
+                    long secondAssignmentDeadline = second.isAfterFirstDeadline(now)
+                            ? second.assignment.getSecondDeadline()
+                            : second.assignment.getFirstDeadline();
+
+                    if (firstAssignmentDeadline > secondAssignmentDeadline) {
+                        return 1;
+                    }
+                    if (firstAssignmentDeadline < secondAssignmentDeadline) {
+                        return -1;
+                    }
+
+                    return 0;
+                }
+            });
         }
 
         @NonNull
         @Override
         public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
             View view;
+            Date now = Calendar.getInstance().getTime();
 
             if (convertView == null) {
                 view = inflater.inflate(R.layout.assignment_list_item, parent, false);
@@ -186,24 +260,48 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
                 view = convertView;
             }
 
-            AssignmentData data = assignments.get(position);
+            final AssignmentData data = assignments.get(position);
             final Assignment assignment = data.assignment;
+            final boolean assignmentDone = data.hasEvaluation() && data.getPointPercentage() >= 100;
 
-            ((TextView) view.findViewById(R.id.assignment_name))
-                    .setText(assignment.getName());
+            TextView name = (TextView) view.findViewById(R.id.assignment_name);
+            name.setText(assignment.getName());
+            if (assignmentDone) {
+                name.setTextColor(getResources().getColor(R.color.colorAssignmentDone));
+            } else if (data.isAfterDeadlines(now)) {
+                name.setTextColor(getResources().getColor(R.color.colorAssignmentMissed));
+            }
 
             String firstDeadline = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.ENGLISH)
                     .format(new Date(assignment.getFirstDeadline() * 1000));
-            ((TextView) view.findViewById(R.id.deadline1_text)).setText(firstDeadline);
+            TextView firstDeadlineText = (TextView) view.findViewById(R.id.deadline1_text);
+            firstDeadlineText.setText(firstDeadline);
+            if (data.isAfterFirstDeadline(now)) {
+                firstDeadlineText.setPaintFlags(firstDeadlineText.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            } else {
+                firstDeadlineText.setPaintFlags(firstDeadlineText.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+            }
 
             if (assignment.isAllowedSecondDeadline()) {
                 String secondDeadline = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.ENGLISH)
                         .format(new Date(assignment.getSecondDeadline() * 1000));
-                ((TextView) view.findViewById(R.id.deadline2_text)).setText(secondDeadline);
+                TextView secondDeadlineText = (TextView) view.findViewById(R.id.deadline2_text);
+                secondDeadlineText.setText(secondDeadline);
+                if (data.isAfterSecondDeadline(now)) {
+                    secondDeadlineText.setPaintFlags(secondDeadlineText.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                } else {
+                    secondDeadlineText.setPaintFlags(secondDeadlineText.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+                }
             }
 
+            TextView percentage = (TextView) view.findViewById(R.id.solutions_button);
             if (data.hasEvaluation()) {
-                ((TextView) view.findViewById(R.id.percentage)).setText(String.format(Locale.ROOT, "%d%%", data.getPointPercentage()));
+                if (assignmentDone) {
+                    percentage.setTextColor(getResources().getColor(R.color.colorAssignmentDone));
+                }
+                percentage.setText(String.format(Locale.ROOT, "%d%%", data.getPointPercentage()));
+            } else {
+                percentage.setText("0%");
             }
 
             view.findViewById(R.id.assignment_button).setOnClickListener(new View.OnClickListener() {

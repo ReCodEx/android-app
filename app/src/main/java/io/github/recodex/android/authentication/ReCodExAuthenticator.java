@@ -102,6 +102,8 @@ public class ReCodExAuthenticator extends AbstractAccountAuthenticator {
                         response = recodexApi.externalLogin(LoginType.typeToString(user.getLoginType()), account.name, password).execute();
                     }
 
+                    Log.d(mContext.getString(R.string.recodex_log_tag), "*** after API response");
+
                     if (response.isSuccessful() && response.body().getCode() == 200) {
                         Login login = response.body().getPayload();
                         authToken = login.getAccessToken();
@@ -115,6 +117,8 @@ public class ReCodExAuthenticator extends AbstractAccountAuthenticator {
                 }
             }
         }
+
+        Log.d(mContext.getString(R.string.recodex_log_tag), "*** token after reauth: " + authToken);
 
         // If we get an authToken - we return it
         if (!TextUtils.isEmpty(authToken)) {

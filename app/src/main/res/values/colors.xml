@@ -17,4 +17,6 @@
     <color name="colorSplashBackground">#FFFFFF</color>
     <color name="colorEmphasis">#008d4c</color>
     <color name="colorTextBoxBackground">#e8f5e9</color>
+    <color name="colorAssignmentMissed">#888</color>
+    <color name="colorAssignmentDone">#008d4c</color>
 </resources>
