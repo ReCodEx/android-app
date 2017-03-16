@@ -38,7 +38,7 @@ public class ReCodExSyncAdapter extends AbstractThreadedSyncAdapter {
         Log.d(getContext().getString(R.string.recodex_log_tag), "onPerformSync for account: " + account.name);
         try {
             // Get the auth token for the current account
-            String authToken = accountManager.blockingGetAuthToken(account, ReCodExAuthenticator.AUTH_TOKEN_TYPE, true);
+            String authToken = usersManager.blockingGetAuthToken();
 
             // get user for given account and fetch all data
             UserWrapper user = usersManager.getUserForAccount(account);
