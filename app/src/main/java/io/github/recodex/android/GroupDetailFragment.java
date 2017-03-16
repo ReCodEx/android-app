@@ -194,21 +194,24 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
 
                 @Override
                 public int compare(AssignmentData first, AssignmentData second) {
-                    // Unfinished assignments go first
+                    boolean firstExpired = first.isAfterDeadlines(now);
+                    boolean secondExpired = second.isAfterDeadlines(now);
+
                     boolean firstDone = first.hasEvaluation() && first.getPointPercentage() >= 100;
                     boolean secondDone = second.hasEvaluation() && second.getPointPercentage() >= 100;
 
-                    if (!firstDone && secondDone) {
+                    boolean firstToDo = !firstDone && !firstExpired;
+                    boolean secondToDo = !secondDone && !secondExpired;
+
+                    // Unfinished assignments go first
+                    if (firstToDo && !secondToDo) {
                         return -1;
                     }
-                    if (firstDone && !secondDone) {
+                    if (!firstToDo && secondToDo) {
                         return 1;
                     }
 
                     // Missed assignments (no points and after deadline) go last
-                    boolean firstExpired = first.isAfterDeadlines(now);
-                    boolean secondExpired = second.isAfterDeadlines(now);
-
                     boolean firstMissed = firstExpired && !firstDone;
                     boolean secondMissed = secondExpired && !secondDone;
 
@@ -271,8 +274,11 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
                 ((TextView) view.findViewById(R.id.deadline2_text)).setText(secondDeadline);
             }
 
+            TextView percentage = (TextView) view.findViewById(R.id.percentage);
             if (data.hasEvaluation()) {
-                ((TextView) view.findViewById(R.id.percentage)).setText(String.format(Locale.ROOT, "%d%%", data.getPointPercentage()));
+                percentage.setText(String.format(Locale.ROOT, "%d%%", data.getPointPercentage()));
+            } else {
+                percentage.setText("0%");
             }
 
             view.findViewById(R.id.assignment_button).setOnClickListener(new View.OnClickListener() {
