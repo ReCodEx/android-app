@@ -54,6 +54,7 @@ public class NavigationDrawer extends AppCompatActivity
 
     private final int MANAGE_ACCOUNTS_REQUEST = 666;
     private final String FRAGMENT_TAG = "drawer_fragment_tag";
+    public static final String NOTIFICATION_GROUP = "notification_group";
 
     private AlertDialog mAlertDialog;
 
@@ -107,18 +108,21 @@ public class NavigationDrawer extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // display group list
+        // display content fragment
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_container);
         if (fragment == null) {
-            replaceContent(new GroupListFragment());
+            Bundle extras = getIntent().getExtras();
+            if (extras != null) {
+                String groupId = extras.getString(NOTIFICATION_GROUP);
+                onGroupSelected(groupId);
+            } else {
+                // display the default group list
+                replaceContent(new GroupListFragment());
+            }
         }
 
         // handle current user
         handleAccounts();
-
-        // clear pending notifications
-        ((NotificationManager) getApplicationContext()
-                .getSystemService(Context.NOTIFICATION_SERVICE)).cancelAll();
     }
 
     private void fillUserInfo() {

@@ -155,22 +155,24 @@ public class ApiDataFetcher {
                 Assignment a = getAssignment(apiWrapper.fromRemote(), assignmentId);
                 if (!oldAssignmentList.contains(assignmentId)) {
                     // make a notification
-                    makeNotification(a, g.getName());
+                    makeNotification(a, g);
                 }
             }
             setAssignmentList(assignmentList, g.getId());
         }
     }
 
-    private void makeNotification(Assignment a, String groupName) {
+    private void makeNotification(Assignment a, Group group) {
         Intent resultIntent = new Intent(applicationContext, NavigationDrawer.class);
+        resultIntent.putExtra(NavigationDrawer.NOTIFICATION_GROUP, group.getId());
+        resultIntent.setAction(Long.toString(System.currentTimeMillis()));
 
         PendingIntent resultPendingIntent = PendingIntent.getActivity(
-                applicationContext, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                applicationContext, 0, resultIntent, PendingIntent.FLAG_ONE_SHOT);
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(applicationContext)
                 .setSmallIcon(R.drawable.ic_logo_vector)
-                .setContentTitle(applicationContext.getString(R.string.new_assignment) + " '" + groupName + "'")
+                .setContentTitle(applicationContext.getString(R.string.new_assignment) + " '" + group.getName() + "'")
                 .setContentText(a.getName())
                 .setContentIntent(resultPendingIntent)
                 .setAutoCancel(true);
