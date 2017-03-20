@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.mukesh.MarkdownView;
+
 import java.io.IOException;
 
 import javax.inject.Inject;
@@ -19,7 +21,6 @@ import io.github.recodex.android.api.RecodexApi;
 import io.github.recodex.android.model.Assignment;
 import io.github.recodex.android.model.Envelope;
 import retrofit2.Response;
-import us.feras.mdv.MarkdownView;
 
 
 /**
@@ -84,7 +85,7 @@ public class AssignmentTextFragment extends Fragment implements SwipeRefreshLayo
 
         try {
             ((MarkdownView) fragment.getView().findViewById(R.id.assignment_text))
-                    .loadMarkdown(text, "file:///android_asset/markdown.css");
+                    .setMarkDownText(text);
         } catch (NullPointerException e) {}
     }
 

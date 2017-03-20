@@ -46,7 +46,7 @@ dependencies {
     compile 'com.squareup.okhttp3:logging-interceptor:3.6.0'
     compile 'com.google.dagger:dagger:2.8'
     compile 'com.android.support:recyclerview-v7:25.2.0'
-    compile 'us.feras.mdv:markdownview:1.1.0'
+    compile 'com.github.mukeshsolanki:MarkdownView-Android:1.0.3'
     testCompile 'junit:junit:4.12'
     apt 'com.google.dagger:dagger-compiler:2.8'
     provided 'javax.annotation:jsr250-api:1.0'
