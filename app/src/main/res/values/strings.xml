@@ -11,7 +11,7 @@
     <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->
-    <string name="pref_default_api_url">https://recodex.projekty.ms.mff.cuni.cz:4000</string>
+    <string name="pref_default_api_url">https://recodex.mff.cuni.cz/api</string>
     <string name="pref_title_api_uri">API base URI</string>
     <string name="pref_title_api_version">API version</string>
     <string-array name="pref_api_version_titles">

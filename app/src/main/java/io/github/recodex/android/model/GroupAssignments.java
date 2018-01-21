@@ -4,10 +4,6 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-/**
- * Created by teyras on 17.2.17.
- */
-
 public class GroupAssignments {
     private List<String> all;
 

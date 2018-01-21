@@ -3,8 +3,7 @@ package io.github.recodex.android.model;
 public class Group {
     private String id;
     private String name;
-    private String description;
-    private GroupAssignments assignments;
+    private GroupPrivateData privateData;
 
     public String getId() {
         return id;
@@ -15,10 +14,10 @@ public class Group {
     }
 
     public String getDescription() {
-        return description;
+        return privateData.getDescription();
     }
 
     public GroupAssignments getAssignments() {
-        return assignments;
+        return privateData.getAssignments();
     }
 }

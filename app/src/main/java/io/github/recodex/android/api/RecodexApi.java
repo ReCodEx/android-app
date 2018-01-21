@@ -23,7 +23,7 @@ public interface RecodexApi {
     @FormUrlEncoded
     Call<Envelope<Login>> login(@Field("username") String username, @Field("password") String password);
 
-    @POST("login/{serviceId}")
+    @POST("login/{serviceId}/default")
     @FormUrlEncoded
     Call<Envelope<Login>> externalLogin(@Path("serviceId") String serviceId, @Field("username") String username, @Field("password") String password);
 
@@ -39,7 +39,7 @@ public interface RecodexApi {
     @GET("exercise-assignments/{id}")
     Call<Envelope<Assignment>> getAssignment(@Path("id") String id);
 
-    @GET("exercise-assignments/{id}/users/{userId}/submissions")
+    @GET("exercise-assignments/{id}/users/{userId}/solutions")
     Call<Envelope<List<Submission>>> getAssignmentSubmissions(@Path("id") String id, @Path("userId") String userId);
 
     @GET("exercise-assignments/{id}/users/{userId}/best-submission")
