@@ -5,7 +5,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.AssetManager;
 import android.support.v4.app.NotificationCompat;
 
 import com.google.gson.Gson;
@@ -149,7 +148,7 @@ public class ApiDataFetcher {
     public void fetchAndStoreAll(UserWrapper user) {
         UserGroups groups = fetchAndStoreGroups(user);
         for (Group g : groups.getStudent()) {
-            List<String> assignmentList = g.getAssignments().getPublic();
+            List<String> assignmentList = g.getPrivateData().getAssignments();
             List<String> oldAssignmentList = getAssignmentList(g.getId());
             for (String assignmentId : assignmentList) {
                 Assignment a = getAssignment(apiWrapper.fromRemote(), assignmentId);

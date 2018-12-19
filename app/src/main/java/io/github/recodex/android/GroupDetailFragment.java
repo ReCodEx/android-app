@@ -136,7 +136,7 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
                 result.group = groupResponse.body().getPayload();
                 result.assignments = new ArrayList<>();
 
-                for (String assignmentId : result.group.getAssignments().getPublic()) {
+                for (String assignmentId : result.group.getPrivateData().getAssignments()) {
                     Response<Envelope<Assignment>> assignmentResponse = api.getAssignment(assignmentId).execute();
 
                     if (!checkApiResponse(assignmentResponse)) {

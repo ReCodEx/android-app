@@ -1,19 +1,20 @@
 package io.github.recodex.android.model;
 
 public class AssignmentStats {
-    private int total;
-    private int completed;
-    private int missed;
+    private String id;
+    private AssignmentPoints points;
+    private String status;
 
-    int getTotal() {
-        return total;
+
+    public String getId() {
+        return id;
     }
 
-    int getCompleted() {
-        return completed;
+    public AssignmentPoints getPoints() {
+        return points;
     }
 
-    int getMissed() {
-        return missed;
+    public String getStatus() {
+        return status;
     }
 }

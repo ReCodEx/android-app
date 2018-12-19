@@ -17,7 +17,7 @@ public class Group {
         return privateData.getDescription();
     }
 
-    public GroupAssignments getAssignments() {
-        return privateData.getAssignments();
+    public GroupPrivateData getPrivateData() {
+        return privateData;
     }
 }
