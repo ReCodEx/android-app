@@ -68,7 +68,8 @@ public class LoginActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new RegularLoginFragment(), getString(R.string.regular_login_tab_label));
-        adapter.addFragment(new CasLoginFragment(), getString(R.string.cas_login_tab_label));
+        // TODO: disable CAS auth for the time being
+        // adapter.addFragment(new CasLoginFragment(), getString(R.string.cas_login_tab_label));
         viewPager.setAdapter(adapter);
     }
 
