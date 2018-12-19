@@ -20,6 +20,8 @@ import io.github.recodex.android.api.ApiWrapper;
 import io.github.recodex.android.api.RecodexApi;
 import io.github.recodex.android.model.Assignment;
 import io.github.recodex.android.model.Envelope;
+import io.github.recodex.android.model.LocalizedAssignment;
+import io.github.recodex.android.utils.LocalizationHelper;
 import retrofit2.Response;
 
 
@@ -37,6 +39,9 @@ public class AssignmentTextFragment extends Fragment implements SwipeRefreshLayo
 
     @Inject
     ApiWrapper<RecodexApi> api;
+
+    @Inject
+    LocalizationHelper localizationHelper;
 
     private SwipeRefreshLayout swipeLayout = null;
 
@@ -78,10 +83,10 @@ public class AssignmentTextFragment extends Fragment implements SwipeRefreshLayo
     }
 
     private void renderData(Assignment assignment) {
-        getActivity().setTitle(assignment.getName());
+        LocalizedAssignment localizedAssignment = localizationHelper.getUserLocalizedText(assignment.getLocalizedTexts());
 
-        // TODO pick the correct locale
-        String text = assignment.getLocalizedTexts().get(0).getText();
+        getActivity().setTitle(localizedAssignment != null ? localizedAssignment.getName() : "");
+        String text = localizedAssignment != null ? localizedAssignment.getText() : "";
 
         try {
             ((MarkdownView) fragment.getView().findViewById(R.id.assignment_text))

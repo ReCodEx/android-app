@@ -21,10 +21,12 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import io.github.recodex.android.model.Assignment;
+import io.github.recodex.android.model.LocalizedAssignment;
 import io.github.recodex.android.model.SolutionEvaluation;
 import io.github.recodex.android.model.Submission;
 import io.github.recodex.android.model.User;
 import io.github.recodex.android.users.ApiDataFetcher;
+import io.github.recodex.android.utils.LocalizationHelper;
 
 
 public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -35,6 +37,9 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
     @Inject
     ApiDataFetcher apiDataFetcher;
 
+    @Inject
+    LocalizationHelper localizationHelper;
+
     private SwipeRefreshLayout swipeLayout = null;
     private OnTestResultsSelectedListener testResultsCallback = null;
 
@@ -43,7 +48,8 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
         Assignment assignment = asyncResultStruct.assignment;
         User user = asyncResultStruct.submittedBy;
 
-        getActivity().setTitle("Evaluation: " + assignment.getName());
+        LocalizedAssignment localizedAssignment = localizationHelper.getUserLocalizedText(assignment.getLocalizedTexts());
+        getActivity().setTitle("Evaluation: " + (localizedAssignment != null ? localizedAssignment.getName() : ""));
 
         String submittedAt = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.ENGLISH)
                 .format(new Date(submission.getSubmittedAt() * 1000));

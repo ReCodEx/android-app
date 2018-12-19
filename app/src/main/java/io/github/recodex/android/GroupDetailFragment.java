@@ -33,6 +33,7 @@ import io.github.recodex.android.api.RecodexApi;
 import io.github.recodex.android.model.Assignment;
 import io.github.recodex.android.model.Envelope;
 import io.github.recodex.android.model.Group;
+import io.github.recodex.android.model.LocalizedAssignment;
 import io.github.recodex.android.model.LocalizedGroup;
 import io.github.recodex.android.model.Submission;
 import io.github.recodex.android.users.UsersManager;
@@ -268,10 +269,11 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
 
             final AssignmentData data = assignments.get(position);
             final Assignment assignment = data.assignment;
+            final LocalizedAssignment localizedAssignment = localizationHelper.getUserLocalizedText(assignment.getLocalizedTexts());
             final boolean assignmentDone = data.hasEvaluation() && data.getPointPercentage() >= 100;
 
             TextView name = (TextView) view.findViewById(R.id.assignment_name);
-            name.setText(assignment.getName());
+            name.setText(localizedAssignment != null ? localizedAssignment.getName() : "");
             if (assignmentDone) {
                 name.setTextColor(getResources().getColor(R.color.colorAssignmentDone));
             } else if (data.isAfterDeadlines(now)) {

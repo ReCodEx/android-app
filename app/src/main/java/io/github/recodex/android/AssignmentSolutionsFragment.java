@@ -25,10 +25,12 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import io.github.recodex.android.model.Assignment;
+import io.github.recodex.android.model.LocalizedAssignment;
 import io.github.recodex.android.model.SolutionEvaluation;
 import io.github.recodex.android.model.Submission;
 import io.github.recodex.android.users.ApiDataFetcher;
 import io.github.recodex.android.users.UsersManager;
+import io.github.recodex.android.utils.LocalizationHelper;
 
 public class AssignmentSolutionsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     private static final String ASSIGNMENT_ID = "assignmentId";
@@ -37,6 +39,8 @@ public class AssignmentSolutionsFragment extends Fragment implements SwipeRefres
     UsersManager usersManager;
     @Inject
     ApiDataFetcher apiDataFetcher;
+    @Inject
+    LocalizationHelper localizationHelper;
 
     private String assignmentId;
     private OnSubmissionSelectedListener callback;
@@ -152,7 +156,10 @@ public class AssignmentSolutionsFragment extends Fragment implements SwipeRefres
     }
 
     private void renderData(SubmissionsAssignmentPair pair) {
-        getActivity().setTitle("Submissions: " + pair.assignment.getName());
+        LocalizedAssignment localizedAssignment = localizationHelper.getUserLocalizedText(pair.assignment.getLocalizedTexts());
+        String assignmentName = localizedAssignment != null ? localizedAssignment.getName() : "";
+
+        getActivity().setTitle("Submissions: " + assignmentName);
         ((ListView) getView().findViewById(R.id.assignment_solutions)).setAdapter(
                 new SubmissionsListAdapter(getContext(), pair.submissions));
     }

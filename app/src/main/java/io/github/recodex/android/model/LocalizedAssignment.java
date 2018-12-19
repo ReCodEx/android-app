@@ -1,15 +1,15 @@
 package io.github.recodex.android.model;
 
-public class AssignmentText {
+public class LocalizedAssignment extends LocalizedText {
     private String id;
-
-    private String locale;
-
+    private String name;
     private String text;
-
     private int createdAt;
-
     private String createdFrom;
+
+    public String getName() {
+        return name;
+    }
 
     public String getText() {
         return text;

@@ -3,22 +3,17 @@ package io.github.recodex.android.model;
 import java.util.List;
 
 public class Assignment {
-    private String name;
     private String id;
-    private List<AssignmentText> localizedTexts;
+    private List<LocalizedAssignment> localizedTexts;
     private long firstDeadline;
     private long secondDeadline;
     private boolean allowSecondDeadline;
-
-    public String getName() {
-        return name;
-    }
 
     public String getId() {
         return id;
     }
 
-    public List<AssignmentText> getLocalizedTexts() {
+    public List<LocalizedAssignment> getLocalizedTexts() {
         return localizedTexts;
     }
 

@@ -22,6 +22,7 @@ import io.github.recodex.android.api.RecodexApi;
 import io.github.recodex.android.model.Assignment;
 import io.github.recodex.android.model.Envelope;
 import io.github.recodex.android.model.Group;
+import io.github.recodex.android.model.LocalizedAssignment;
 import io.github.recodex.android.model.LocalizedGroup;
 import io.github.recodex.android.model.Submission;
 import io.github.recodex.android.model.User;
@@ -177,10 +178,12 @@ public class ApiDataFetcher {
 
         LocalizedGroup localizedGroup = localizationHelper.getUserLocalizedText(group.getLocalizedTexts());
         String groupName = localizedGroup != null ? localizedGroup.getName() : "";
+
+        LocalizedAssignment localizedAssignment = localizationHelper.getUserLocalizedText(a.getLocalizedTexts());
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(applicationContext)
                 .setSmallIcon(R.drawable.ic_logo_vector)
                 .setContentTitle(applicationContext.getString(R.string.new_assignment) + " '" + groupName + "'")
-                .setContentText(a.getName())
+                .setContentText(localizedAssignment != null ? localizedAssignment.getName() : "")
                 .setContentIntent(resultPendingIntent)
                 .setAutoCancel(true);
 

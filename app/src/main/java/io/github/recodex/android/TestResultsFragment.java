@@ -22,8 +22,10 @@ import javax.inject.Inject;
 
 import io.github.recodex.android.model.Assignment;
 import io.github.recodex.android.model.EvaluationTestResult;
+import io.github.recodex.android.model.LocalizedAssignment;
 import io.github.recodex.android.model.Submission;
 import io.github.recodex.android.users.ApiDataFetcher;
+import io.github.recodex.android.utils.LocalizationHelper;
 
 
 public class TestResultsFragment extends Fragment {
@@ -34,12 +36,16 @@ public class TestResultsFragment extends Fragment {
     @Inject
     ApiDataFetcher apiDataFetcher;
 
+    @Inject
+    LocalizationHelper localizationHelper;
+
     private void renderData(AsyncResultStruct asyncResultStruct) {
         Submission submission = asyncResultStruct.submission;
         Assignment assignment = asyncResultStruct.assignment;
         List<EvaluationTestResult> testResults = submission.getEvaluation().getTestResults();
 
-        getActivity().setTitle("Evaluation: " + assignment.getName());
+        LocalizedAssignment localizedAssignment = localizationHelper.getUserLocalizedText(assignment.getLocalizedTexts());
+        getActivity().setTitle("Evaluation: " + (localizedAssignment != null ? localizedAssignment.getName() : ""));
 
         TableLayout table = (TableLayout) getView().findViewById(R.id.test_results_table);
         for (EvaluationTestResult testResult : testResults) {
