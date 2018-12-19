@@ -26,6 +26,8 @@ public class UserWrapper {
     private static final String AVATAR_URL = "AVATAR_URL";
     private static final String GROUP_LIST = "GROUP_LIST";
     private static final String GROUPS_STATS = "GROUPS_STATS";
+    private static final String DEFAULT_LANGUAGE_KEY = "DEFAULT_LANGUAGE";
+    private static final String DEFAULT_LANGUAGE = "en";
 
     private Context context;
     private SharedPreferences preferences;
@@ -67,10 +69,15 @@ public class UserWrapper {
         return preferences.getString(AVATAR_URL, "");
     }
 
+    public String getDefaultLanguage() {
+        return preferences.getString(DEFAULT_LANGUAGE_KEY, DEFAULT_LANGUAGE);
+    }
+
     public void updateData(Login login) {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(FULL_NAME, login.getUser().getFullName());
         editor.putString(AVATAR_URL, login.getUser().getAvatarUrl());
+        editor.putString(DEFAULT_LANGUAGE_KEY, login.getUser().getPrivateData().getSettings().getDefaultLanguage());
         editor.commit();
     }
 

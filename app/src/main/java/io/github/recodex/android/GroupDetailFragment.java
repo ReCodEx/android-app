@@ -33,8 +33,10 @@ import io.github.recodex.android.api.RecodexApi;
 import io.github.recodex.android.model.Assignment;
 import io.github.recodex.android.model.Envelope;
 import io.github.recodex.android.model.Group;
+import io.github.recodex.android.model.LocalizedGroup;
 import io.github.recodex.android.model.Submission;
 import io.github.recodex.android.users.UsersManager;
+import io.github.recodex.android.utils.LocalizationHelper;
 import retrofit2.Response;
 
 
@@ -49,6 +51,9 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
 
     @Inject
     UsersManager users;
+
+    @Inject
+    LocalizationHelper localizationHelper;
 
     private String groupId;
 
@@ -169,8 +174,9 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
             return;
         }
 
+        LocalizedGroup localizedGroup = localizationHelper.getUserLocalizedText(group.getLocalizedTexts());
         ((TextView) getView().findViewById(R.id.group_description)).setText(group.getDescription());
-        getActivity().setTitle(group.getName());
+        getActivity().setTitle(localizedGroup != null ? localizedGroup.getName() : "");
 
         ((ListView) getView().findViewById(R.id.group_assignments)).setAdapter(new AssignmentListAdapter(getContext(), assignments));
     }

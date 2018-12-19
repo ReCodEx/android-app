@@ -14,6 +14,7 @@ import io.github.recodex.android.api.RecodexApi;
 import io.github.recodex.android.users.ApiDataFetcher;
 import io.github.recodex.android.users.LoginHelper;
 import io.github.recodex.android.users.UsersManager;
+import io.github.recodex.android.utils.LocalizationHelper;
 
 
 @Module
@@ -69,7 +70,13 @@ public class AppModule {
 
     @Provides
     @Singleton
-    ApiDataFetcher providesApiDataFetcher(ApiWrapper<RecodexApi> api) {
-        return new ApiDataFetcher(api.fromRemote(), api, mApplication.getApplicationContext());
+    ApiDataFetcher providesApiDataFetcher(ApiWrapper<RecodexApi> api, LocalizationHelper localizationHelper) {
+        return new ApiDataFetcher(api.fromRemote(), api, mApplication.getApplicationContext(), localizationHelper);
+    }
+
+    @Provides
+    @Singleton
+    LocalizationHelper providesLocalizationHelper(UsersManager users) {
+        return new LocalizationHelper(users);
     }
 }

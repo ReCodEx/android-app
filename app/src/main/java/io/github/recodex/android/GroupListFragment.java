@@ -22,11 +22,13 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import io.github.recodex.android.model.Group;
+import io.github.recodex.android.model.LocalizedGroup;
 import io.github.recodex.android.model.StudentGroupStats;
 import io.github.recodex.android.model.UserGroups;
 import io.github.recodex.android.users.ApiDataFetcher;
 import io.github.recodex.android.users.UserWrapper;
 import io.github.recodex.android.users.UsersManager;
+import io.github.recodex.android.utils.LocalizationHelper;
 
 /**
  * Displays groups the user belongs to, along with some useful information
@@ -35,6 +37,9 @@ public class GroupListFragment extends ListFragment implements SwipeRefreshLayou
 
     @Inject
     UsersManager users;
+
+    @Inject
+    LocalizationHelper localizationHelper;
 
     @Inject
     ApiDataFetcher userDataFetcher;
@@ -106,8 +111,9 @@ public class GroupListFragment extends ListFragment implements SwipeRefreshLayou
                 return view;
             }
 
+            LocalizedGroup localizedGroup = localizationHelper.getUserLocalizedText(group.getLocalizedTexts());
             TextView groupName = (TextView) view.findViewById(R.id.group_name);
-            groupName.setText(group.getName());
+            groupName.setText(localizedGroup != null ? localizedGroup.getName() : "");
 
             ProgressBar progress = (ProgressBar) view.findViewById(R.id.progress);
             progress.setMax(stats.getTotalPoints());

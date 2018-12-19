@@ -22,22 +22,28 @@ import io.github.recodex.android.api.RecodexApi;
 import io.github.recodex.android.model.Assignment;
 import io.github.recodex.android.model.Envelope;
 import io.github.recodex.android.model.Group;
+import io.github.recodex.android.model.LocalizedGroup;
 import io.github.recodex.android.model.Submission;
 import io.github.recodex.android.model.User;
 import io.github.recodex.android.model.UserGroups;
+import io.github.recodex.android.utils.LocalizationHelper;
 import retrofit2.Response;
 
 public class ApiDataFetcher {
 
+    private final String NOTIFICATION_DATA = "recodex_notification_data";
+
     private ApiWrapper<RecodexApi> apiWrapper;
     private RecodexApi recodexApi;
     private Context applicationContext;
-    private final String NOTIFICATION_DATA = "recodex_notification_data";
+    private LocalizationHelper localizationHelper;
 
-    public ApiDataFetcher(RecodexApi recodexApi, ApiWrapper<RecodexApi> apiWrapper, Context applicationContext) {
+    public ApiDataFetcher(RecodexApi recodexApi, ApiWrapper<RecodexApi> apiWrapper,
+                          Context applicationContext, LocalizationHelper localizationHelper) {
         this.recodexApi = recodexApi;
         this.apiWrapper = apiWrapper;
         this.applicationContext = applicationContext;
+        this.localizationHelper = localizationHelper;
     }
 
     public UserGroups fetchAndStoreGroups(UserWrapper user) {
@@ -169,9 +175,11 @@ public class ApiDataFetcher {
         PendingIntent resultPendingIntent = PendingIntent.getActivity(
                 applicationContext, 0, resultIntent, PendingIntent.FLAG_ONE_SHOT);
 
+        LocalizedGroup localizedGroup = localizationHelper.getUserLocalizedText(group.getLocalizedTexts());
+        String groupName = localizedGroup != null ? localizedGroup.getName() : "";
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(applicationContext)
                 .setSmallIcon(R.drawable.ic_logo_vector)
-                .setContentTitle(applicationContext.getString(R.string.new_assignment) + " '" + group.getName() + "'")
+                .setContentTitle(applicationContext.getString(R.string.new_assignment) + " '" + groupName + "'")
                 .setContentText(a.getName())
                 .setContentIntent(resultPendingIntent)
                 .setAutoCancel(true);
