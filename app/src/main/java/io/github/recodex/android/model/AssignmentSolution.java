@@ -3,6 +3,7 @@ package io.github.recodex.android.model;
 public class AssignmentSolution {
     private String id;
     private String note;
+    private Solution solution;
     private AssignmentSolutionSubmission lastSubmission;
     private int maxPoints;
     private String exerciseAssignmentId;
@@ -13,6 +14,10 @@ public class AssignmentSolution {
 
     public String getNote() {
         return note;
+    }
+
+    public Solution getSolution() {
+        return solution;
     }
 
     public AssignmentSolutionSubmission getLastSubmission() {

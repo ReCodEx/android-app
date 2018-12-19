@@ -161,7 +161,7 @@ public class AssignmentSolutionsFragment extends Fragment implements SwipeRefres
         LocalizedAssignment localizedAssignment = localizationHelper.getUserLocalizedText(pair.assignment.getLocalizedTexts());
         String assignmentName = localizedAssignment != null ? localizedAssignment.getName() : "";
 
-        getActivity().setTitle("Submissions: " + assignmentName);
+        getActivity().setTitle("Solutions: " + assignmentName);
         ((ListView) getView().findViewById(R.id.assignment_solutions)).setAdapter(
                 new SubmissionsListAdapter(getContext(), pair.assignmentSolutions));
     }

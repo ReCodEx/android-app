@@ -51,7 +51,7 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
         User user = asyncResultStruct.submittedBy;
 
         LocalizedAssignment localizedAssignment = localizationHelper.getUserLocalizedText(assignment.getLocalizedTexts());
-        getActivity().setTitle("Evaluation: " + (localizedAssignment != null ? localizedAssignment.getName() : ""));
+        getActivity().setTitle("Submission: " + (localizedAssignment != null ? localizedAssignment.getName() : ""));
 
         String submittedAt = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.ENGLISH)
                 .format(new Date(submission.getSubmittedAt() * 1000));
@@ -177,7 +177,7 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
                 User user = null;
                 if (assignmentSolution != null) {
                     assignment = apiDataFetcher.fetchRemoteAssignment(assignmentSolution.getExerciseAssignmentId());
-                    user = apiDataFetcher.fetchRemoteUser(assignmentSolution.getLastSubmission().getSubmittedBy());
+                    user = apiDataFetcher.fetchRemoteUser(assignmentSolution.getSolution().getUserId());
                 }
                 return new AsyncResultStruct(user, assignmentSolution, assignment);
             }
@@ -209,7 +209,7 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
                 User user = null;
                 if (assignmentSolution != null) {
                     assignment = apiDataFetcher.fetchCachedAssignment(assignmentSolution.getExerciseAssignmentId());
-                    user = apiDataFetcher.fetchCachedUser(assignmentSolution.getLastSubmission().getSubmittedBy());
+                    user = apiDataFetcher.fetchCachedUser(assignmentSolution.getSolution().getUserId());
                 }
                 return new AsyncResultStruct(user, assignmentSolution, assignment);
             }

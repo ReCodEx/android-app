@@ -45,7 +45,7 @@ public class TestResultsFragment extends Fragment {
         List<EvaluationTestResult> testResults = assignmentSolution.getLastSubmission().getEvaluation().getTestResults();
 
         LocalizedAssignment localizedAssignment = localizationHelper.getUserLocalizedText(assignment.getLocalizedTexts());
-        getActivity().setTitle("Evaluation: " + (localizedAssignment != null ? localizedAssignment.getName() : ""));
+        getActivity().setTitle("Results: " + (localizedAssignment != null ? localizedAssignment.getName() : ""));
 
         TableLayout table = (TableLayout) getView().findViewById(R.id.test_results_table);
         for (EvaluationTestResult testResult : testResults) {
