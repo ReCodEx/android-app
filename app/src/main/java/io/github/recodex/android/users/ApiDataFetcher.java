@@ -86,9 +86,9 @@ public class ApiDataFetcher {
         return getUser(apiWrapper.fromCache(), userId);
     }
 
-    private List<AssignmentSolution> getAssignmentSubmissions(RecodexApi api, UserWrapper user, String assignmentId) {
+    private List<AssignmentSolution> getAssignmentSolutions(RecodexApi api, UserWrapper user, String assignmentId) {
         try {
-            Response<Envelope<List<AssignmentSolution>>> response = api.getAssignmentSubmissions(assignmentId, user.getId()).execute();
+            Response<Envelope<List<AssignmentSolution>>> response = api.getAssignmentSolution(assignmentId, user.getId()).execute();
 
             if (!response.isSuccessful() || !response.body().isSuccess()) {
                 return null;
@@ -101,11 +101,11 @@ public class ApiDataFetcher {
     }
 
     public List<AssignmentSolution> fetchRemoteAssignmentSubmissions(UserWrapper user, String assignmentId) {
-        return getAssignmentSubmissions(apiWrapper.fromRemote(), user, assignmentId);
+        return getAssignmentSolutions(apiWrapper.fromRemote(), user, assignmentId);
     }
 
     public List<AssignmentSolution> fetchCachedAssignmentSubmissions(UserWrapper user, String assignmentId) {
-        return getAssignmentSubmissions(apiWrapper.fromCache(), user, assignmentId);
+        return getAssignmentSolutions(apiWrapper.fromCache(), user, assignmentId);
     }
 
     private Assignment getAssignment(RecodexApi api, String assignmentId) {
@@ -130,9 +130,9 @@ public class ApiDataFetcher {
         return getAssignment(apiWrapper.fromCache(), assignmentId);
     }
 
-    private AssignmentSolution getSubmission(RecodexApi api, String submissionId) {
+    private AssignmentSolution getAssignmentSolution(RecodexApi api, String submissionId) {
         try {
-            Response<Envelope<AssignmentSolution>> response = api.getSubmission(submissionId).execute();
+            Response<Envelope<AssignmentSolution>> response = api.getAssignmentSolution(submissionId).execute();
 
             if (!response.isSuccessful() || !response.body().isSuccess()) {
                 return null;
@@ -144,12 +144,12 @@ public class ApiDataFetcher {
         }
     }
 
-    public AssignmentSolution fetchRemoteSubmission(String submissionId) {
-        return getSubmission(apiWrapper.fromRemote(), submissionId);
+    public AssignmentSolution fetchRemoteAssignmentSolution(String solutionId) {
+        return getAssignmentSolution(apiWrapper.fromRemote(), solutionId);
     }
 
-    public AssignmentSolution fetchCachedSubmission(String submissionId) {
-        return getSubmission(apiWrapper.fromCache(), submissionId);
+    public AssignmentSolution fetchCachedAssignmentSolution(String solutionId) {
+        return getAssignmentSolution(apiWrapper.fromCache(), solutionId);
     }
 
     public void fetchAndStoreAll(UserWrapper user) {

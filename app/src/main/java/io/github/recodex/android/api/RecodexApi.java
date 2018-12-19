@@ -40,11 +40,11 @@ public interface RecodexApi {
     Call<Envelope<Assignment>> getAssignment(@Path("id") String id);
 
     @GET("exercise-assignments/{id}/users/{userId}/solutions")
-    Call<Envelope<List<AssignmentSolution>>> getAssignmentSubmissions(@Path("id") String id, @Path("userId") String userId);
+    Call<Envelope<List<AssignmentSolution>>> getAssignmentSolution(@Path("id") String id, @Path("userId") String userId);
 
-    @GET("exercise-assignments/{id}/users/{userId}/best-submission")
-    Call<Envelope<AssignmentSolution>> getBestAssignmentSubmission(@Path("id") String id, @Path("userId") String userId);
+    @GET("exercise-assignments/{id}/users/{userId}/best-solution")
+    Call<Envelope<AssignmentSolution>> getBestAssignmentSolution(@Path("id") String id, @Path("userId") String userId);
 
-    @GET("submissions/{id}")
-    Call<Envelope<AssignmentSolution>> getSubmission(@Path("id") String submissionId);
+    @GET("assignment-solutions/{id}")
+    Call<Envelope<AssignmentSolution>> getAssignmentSolution(@Path("id") String id);
 }

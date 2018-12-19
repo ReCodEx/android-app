@@ -151,7 +151,7 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
                         continue;
                     }
 
-                    Response<Envelope<AssignmentSolution>> solutionResponse = api.getBestAssignmentSubmission(assignmentId, users.getCurrentUser().getId()).execute();
+                    Response<Envelope<AssignmentSolution>> solutionResponse = api.getBestAssignmentSolution(assignmentId, users.getCurrentUser().getId()).execute();
                     AssignmentSolution bestSolution = null;
                     if (checkApiResponse(solutionResponse)) {
                         bestSolution = solutionResponse.body().getPayload();

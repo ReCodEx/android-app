@@ -172,7 +172,7 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
     public void onRefresh() {
         new AsyncTask<Void, Void, AsyncResultStruct>() {
             protected AsyncResultStruct doInBackground(Void... params) {
-                AssignmentSolution assignmentSolution = apiDataFetcher.fetchRemoteSubmission(submissionId);
+                AssignmentSolution assignmentSolution = apiDataFetcher.fetchRemoteAssignmentSolution(submissionId);
                 Assignment assignment = null;
                 User user = null;
                 if (assignmentSolution != null) {
@@ -204,7 +204,7 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
         new AsyncTask<Void, Void, AsyncResultStruct>() {
             @Override
             protected AsyncResultStruct doInBackground(Void... params) {
-                AssignmentSolution assignmentSolution = apiDataFetcher.fetchCachedSubmission(submissionId);
+                AssignmentSolution assignmentSolution = apiDataFetcher.fetchCachedAssignmentSolution(submissionId);
                 Assignment assignment = null;
                 User user = null;
                 if (assignmentSolution != null) {
