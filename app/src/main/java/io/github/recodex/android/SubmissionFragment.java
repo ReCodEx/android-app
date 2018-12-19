@@ -21,9 +21,9 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import io.github.recodex.android.model.Assignment;
+import io.github.recodex.android.model.AssignmentSolution;
 import io.github.recodex.android.model.LocalizedAssignment;
 import io.github.recodex.android.model.SolutionEvaluation;
-import io.github.recodex.android.model.Submission;
 import io.github.recodex.android.model.User;
 import io.github.recodex.android.users.ApiDataFetcher;
 import io.github.recodex.android.utils.LocalizationHelper;
@@ -44,7 +44,7 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
     private OnTestResultsSelectedListener testResultsCallback = null;
 
     private void renderData(AsyncResultStruct asyncResultStruct) {
-        final Submission submission = asyncResultStruct.submission;
+        final AssignmentSolution assignmentSolution = asyncResultStruct.assignmentSolution;
         Assignment assignment = asyncResultStruct.assignment;
         User user = asyncResultStruct.submittedBy;
 
@@ -52,7 +52,7 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
         getActivity().setTitle("Evaluation: " + (localizedAssignment != null ? localizedAssignment.getName() : ""));
 
         String submittedAt = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.ENGLISH)
-                .format(new Date(submission.getSubmittedAt() * 1000));
+                .format(new Date(assignmentSolution.getSubmittedAt() * 1000));
         TextView submittedAtView = (TextView) getView().findViewById(R.id.submission_submitted_at);
         submittedAtView.setText(submittedAt);
 
@@ -60,11 +60,11 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
         submissionAuthor.setText(user.getFullName());
 
         TextView submissionStatus = (TextView) getView().findViewById(R.id.submission_evaluation_status);
-        submissionStatus.setText(submission.getEvaluationStatus());
+        submissionStatus.setText(assignmentSolution.getEvaluationStatus());
 
         // display evaluation details if submission is evaluated
-        if (submission.getEvaluation() != null) {
-            SolutionEvaluation evaluation = submission.getEvaluation();
+        if (assignmentSolution.getEvaluation() != null) {
+            SolutionEvaluation evaluation = assignmentSolution.getEvaluation();
 
             // first hide and display appropriate layouts
             LinearLayout evaluationNotReady = (LinearLayout) getView().findViewById(R.id.submission_evaluation_not_complete_area);
@@ -82,7 +82,7 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
             score.setText(String.format(Locale.ROOT, "%d%%", percentual_score));
 
             TextView points = (TextView) getView().findViewById(R.id.submission_points);
-            points.setText(String.format(Locale.ROOT, "%d/%d", evaluation.getPoints(), submission.getMaxPoints()));
+            points.setText(String.format(Locale.ROOT, "%d/%d", evaluation.getPoints(), assignmentSolution.getMaxPoints()));
 
             TextView bonusPoints = (TextView) getView().findViewById(R.id.submission_bonus_points);
             bonusPoints.setText(String.format(Locale.ROOT, "+%d", evaluation.getBonusPoints()));
@@ -109,7 +109,7 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
                 @Override
                 public void onClick(View v) {
                     if (testResultsCallback != null) {
-                        testResultsCallback.onTestResultsSelected(submission.getId());
+                        testResultsCallback.onTestResultsSelected(assignmentSolution.getId());
                     }
                 }
             });
@@ -156,12 +156,12 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
 
     class AsyncResultStruct {
         public User submittedBy;
-        public Submission submission;
+        public AssignmentSolution assignmentSolution;
         public Assignment assignment;
 
-        public AsyncResultStruct(User submittedBy, Submission submission, Assignment assignment) {
+        public AsyncResultStruct(User submittedBy, AssignmentSolution assignmentSolution, Assignment assignment) {
             this.submittedBy = submittedBy;
-            this.submission = submission;
+            this.assignmentSolution = assignmentSolution;
             this.assignment = assignment;
         }
     }
@@ -170,18 +170,18 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
     public void onRefresh() {
         new AsyncTask<Void, Void, AsyncResultStruct>() {
             protected AsyncResultStruct doInBackground(Void... params) {
-                Submission submission = apiDataFetcher.fetchRemoteSubmission(submissionId);
+                AssignmentSolution assignmentSolution = apiDataFetcher.fetchRemoteSubmission(submissionId);
                 Assignment assignment = null;
                 User user = null;
-                if (submission != null) {
-                    assignment = apiDataFetcher.fetchRemoteAssignment(submission.getExerciseAssignmentId());
-                    user = apiDataFetcher.fetchRemoteUser(submission.getUserId());
+                if (assignmentSolution != null) {
+                    assignment = apiDataFetcher.fetchRemoteAssignment(assignmentSolution.getExerciseAssignmentId());
+                    user = apiDataFetcher.fetchRemoteUser(assignmentSolution.getUserId());
                 }
-                return new AsyncResultStruct(user, submission, assignment);
+                return new AsyncResultStruct(user, assignmentSolution, assignment);
             }
 
             protected void onPostExecute(AsyncResultStruct asyncResultStruct) {
-                if (asyncResultStruct.assignment == null || asyncResultStruct.submission == null ||
+                if (asyncResultStruct.assignment == null || asyncResultStruct.assignmentSolution == null ||
                         asyncResultStruct.submittedBy == null) {
                     Toast.makeText(getContext(), R.string.submission_loading_failed, Toast.LENGTH_SHORT).show();
                     swipeLayout.setRefreshing(false);
@@ -202,20 +202,20 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
         new AsyncTask<Void, Void, AsyncResultStruct>() {
             @Override
             protected AsyncResultStruct doInBackground(Void... params) {
-                Submission submission = apiDataFetcher.fetchCachedSubmission(submissionId);
+                AssignmentSolution assignmentSolution = apiDataFetcher.fetchCachedSubmission(submissionId);
                 Assignment assignment = null;
                 User user = null;
-                if (submission != null) {
-                    assignment = apiDataFetcher.fetchCachedAssignment(submission.getExerciseAssignmentId());
-                    user = apiDataFetcher.fetchCachedUser(submission.getUserId());
+                if (assignmentSolution != null) {
+                    assignment = apiDataFetcher.fetchCachedAssignment(assignmentSolution.getExerciseAssignmentId());
+                    user = apiDataFetcher.fetchCachedUser(assignmentSolution.getUserId());
                 }
-                return new AsyncResultStruct(user, submission, assignment);
+                return new AsyncResultStruct(user, assignmentSolution, assignment);
             }
 
             @Override
             protected void onPostExecute(AsyncResultStruct asyncResultStruct) {
                 if (asyncResultStruct.assignment != null && asyncResultStruct.submittedBy != null &&
-                        asyncResultStruct.submission != null) {
+                        asyncResultStruct.assignmentSolution != null) {
                     renderData(asyncResultStruct);
                 } else {
                     startForcedReload();

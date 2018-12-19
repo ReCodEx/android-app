@@ -7,7 +7,7 @@ import io.github.recodex.android.model.Assignment;
 import io.github.recodex.android.model.Envelope;
 import io.github.recodex.android.model.Group;
 import io.github.recodex.android.model.Login;
-import io.github.recodex.android.model.Submission;
+import io.github.recodex.android.model.AssignmentSolution;
 import io.github.recodex.android.model.User;
 import io.github.recodex.android.model.UserGroups;
 import retrofit2.Call;
@@ -40,11 +40,11 @@ public interface RecodexApi {
     Call<Envelope<Assignment>> getAssignment(@Path("id") String id);
 
     @GET("exercise-assignments/{id}/users/{userId}/solutions")
-    Call<Envelope<List<Submission>>> getAssignmentSubmissions(@Path("id") String id, @Path("userId") String userId);
+    Call<Envelope<List<AssignmentSolution>>> getAssignmentSubmissions(@Path("id") String id, @Path("userId") String userId);
 
     @GET("exercise-assignments/{id}/users/{userId}/best-submission")
-    Call<Envelope<Submission>> getBestAssignmentSubmission(@Path("id") String id, @Path("userId") String userId);
+    Call<Envelope<AssignmentSolution>> getBestAssignmentSubmission(@Path("id") String id, @Path("userId") String userId);
 
     @GET("submissions/{id}")
-    Call<Envelope<Submission>> getSubmission(@Path("id") String submissionId);
+    Call<Envelope<AssignmentSolution>> getSubmission(@Path("id") String submissionId);
 }

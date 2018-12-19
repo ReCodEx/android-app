@@ -1,6 +1,6 @@
 package io.github.recodex.android.model;
 
-public class Submission {
+public class AssignmentSolution {
     private String id;
     private String note;
     private long submittedAt;

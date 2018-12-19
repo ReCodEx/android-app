@@ -21,9 +21,9 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import io.github.recodex.android.model.Assignment;
+import io.github.recodex.android.model.AssignmentSolution;
 import io.github.recodex.android.model.EvaluationTestResult;
 import io.github.recodex.android.model.LocalizedAssignment;
-import io.github.recodex.android.model.Submission;
 import io.github.recodex.android.users.ApiDataFetcher;
 import io.github.recodex.android.utils.LocalizationHelper;
 
@@ -40,9 +40,9 @@ public class TestResultsFragment extends Fragment {
     LocalizationHelper localizationHelper;
 
     private void renderData(AsyncResultStruct asyncResultStruct) {
-        Submission submission = asyncResultStruct.submission;
+        AssignmentSolution assignmentSolution = asyncResultStruct.assignmentSolution;
         Assignment assignment = asyncResultStruct.assignment;
-        List<EvaluationTestResult> testResults = submission.getEvaluation().getTestResults();
+        List<EvaluationTestResult> testResults = assignmentSolution.getEvaluation().getTestResults();
 
         LocalizedAssignment localizedAssignment = localizationHelper.getUserLocalizedText(assignment.getLocalizedTexts());
         getActivity().setTitle("Evaluation: " + (localizedAssignment != null ? localizedAssignment.getName() : ""));
@@ -132,11 +132,11 @@ public class TestResultsFragment extends Fragment {
     }
 
     class AsyncResultStruct {
-        public Submission submission;
+        public AssignmentSolution assignmentSolution;
         public Assignment assignment;
 
-        public AsyncResultStruct(Submission submission, Assignment assignment) {
-            this.submission = submission;
+        public AsyncResultStruct(AssignmentSolution assignmentSolution, Assignment assignment) {
+            this.assignmentSolution = assignmentSolution;
             this.assignment = assignment;
         }
     }
@@ -149,17 +149,17 @@ public class TestResultsFragment extends Fragment {
         new AsyncTask<Void, Void, AsyncResultStruct>() {
             @Override
             protected AsyncResultStruct doInBackground(Void... params) {
-                Submission submission = apiDataFetcher.fetchCachedSubmission(submissionId);
+                AssignmentSolution assignmentSolution = apiDataFetcher.fetchCachedSubmission(submissionId);
                 Assignment assignment = null;
-                if (submission != null) {
-                    assignment = apiDataFetcher.fetchCachedAssignment(submission.getExerciseAssignmentId());
+                if (assignmentSolution != null) {
+                    assignment = apiDataFetcher.fetchCachedAssignment(assignmentSolution.getExerciseAssignmentId());
                 }
-                return new AsyncResultStruct(submission, assignment);
+                return new AsyncResultStruct(assignmentSolution, assignment);
             }
 
             @Override
             protected void onPostExecute(AsyncResultStruct asyncResultStruct) {
-                if (asyncResultStruct.assignment != null && asyncResultStruct.submission != null) {
+                if (asyncResultStruct.assignment != null && asyncResultStruct.assignmentSolution != null) {
                     renderData(asyncResultStruct);
                 } else {
                     startForcedReload();
@@ -171,16 +171,16 @@ public class TestResultsFragment extends Fragment {
     private void startForcedReload() {
         new AsyncTask<Void, Void, AsyncResultStruct>() {
             protected AsyncResultStruct doInBackground(Void... params) {
-                Submission submission = apiDataFetcher.fetchRemoteSubmission(submissionId);
+                AssignmentSolution assignmentSolution = apiDataFetcher.fetchRemoteSubmission(submissionId);
                 Assignment assignment = null;
-                if (submission != null) {
-                    assignment = apiDataFetcher.fetchRemoteAssignment(submission.getExerciseAssignmentId());
+                if (assignmentSolution != null) {
+                    assignment = apiDataFetcher.fetchRemoteAssignment(assignmentSolution.getExerciseAssignmentId());
                 }
-                return new AsyncResultStruct(submission, assignment);
+                return new AsyncResultStruct(assignmentSolution, assignment);
             }
 
             protected void onPostExecute(AsyncResultStruct asyncResultStruct) {
-                if (asyncResultStruct.assignment == null || asyncResultStruct.submission == null) {
+                if (asyncResultStruct.assignment == null || asyncResultStruct.assignmentSolution == null) {
                     Toast.makeText(getContext(), R.string.submission_loading_failed, Toast.LENGTH_SHORT).show();
                     return;
                 }

@@ -25,9 +25,9 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import io.github.recodex.android.model.Assignment;
+import io.github.recodex.android.model.AssignmentSolution;
 import io.github.recodex.android.model.LocalizedAssignment;
 import io.github.recodex.android.model.SolutionEvaluation;
-import io.github.recodex.android.model.Submission;
 import io.github.recodex.android.users.ApiDataFetcher;
 import io.github.recodex.android.users.UsersManager;
 import io.github.recodex.android.utils.LocalizationHelper;
@@ -46,16 +46,16 @@ public class AssignmentSolutionsFragment extends Fragment implements SwipeRefres
     private OnSubmissionSelectedListener callback;
     private SwipeRefreshLayout swipeLayout = null;
 
-    class SubmissionsListAdapter extends ArrayAdapter<Submission> {
-        private List<Submission> submissions;
+    class SubmissionsListAdapter extends ArrayAdapter<AssignmentSolution> {
+        private List<AssignmentSolution> assignmentSolutions;
 
         private LayoutInflater inflater;
 
-        SubmissionsListAdapter(Context context, List<Submission> submissions) {
+        SubmissionsListAdapter(Context context, List<AssignmentSolution> assignmentSolutions) {
             super(context, R.layout.fragment_assignment_solutions);
-            this.submissions = submissions;
+            this.assignmentSolutions = assignmentSolutions;
             this.inflater = LayoutInflater.from(context);
-            addAll(submissions);
+            addAll(assignmentSolutions);
         }
 
         @NonNull
@@ -70,16 +70,16 @@ public class AssignmentSolutionsFragment extends Fragment implements SwipeRefres
 
             // prepare vars
             LinearLayout submissionListItem = (LinearLayout) view.findViewById(R.id.assignment_submission_list_item);
-            final Submission submission = submissions.get(position);
+            final AssignmentSolution assignmentSolution = assignmentSolutions.get(position);
 
             // fill date
             String submittedAt = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.ENGLISH)
-                    .format(new Date(submission.getSubmittedAt() * 1000));
+                    .format(new Date(assignmentSolution.getSubmittedAt() * 1000));
             TextView submissionDate = (TextView) view.findViewById(R.id.assignment_submission_date);
             submissionDate.setText(submittedAt);
 
-            if (submission.getEvaluation() != null) {
-                SolutionEvaluation evaluation = submission.getEvaluation();
+            if (assignmentSolution.getEvaluation() != null) {
+                SolutionEvaluation evaluation = assignmentSolution.getEvaluation();
 
                 // prepare and fill percentual score of submission
                 int percentualScore = (int) evaluation.getScore() * 100;
@@ -87,9 +87,9 @@ public class AssignmentSolutionsFragment extends Fragment implements SwipeRefres
                 submissionValidity.setText(String.format(Locale.ROOT, "%d%%", percentualScore));
 
                 // get actual points and maybe bonus one and display them
-                String points = evaluation.getPoints() + "/" + submission.getMaxPoints();
+                String points = evaluation.getPoints() + "/" + assignmentSolution.getMaxPoints();
                 if (evaluation.getBonusPoints() > 0) {
-                    points = evaluation.getPoints() + "+" + evaluation.getBonusPoints() + "/" + submission.getMaxPoints();
+                    points = evaluation.getPoints() + "+" + evaluation.getBonusPoints() + "/" + assignmentSolution.getMaxPoints();
                 }
                 TextView submissionPoints = (TextView) view.findViewById(R.id.assignment_submission_points);
                 submissionPoints.setText(points);
@@ -109,7 +109,7 @@ public class AssignmentSolutionsFragment extends Fragment implements SwipeRefres
                 @Override
                 public void onClick(View view) {
                     if (callback != null) {
-                        callback.onSubmissionSelected(submission.getId());
+                        callback.onSubmissionSelected(assignmentSolution.getId());
                     }
                 }
             });
@@ -161,15 +161,15 @@ public class AssignmentSolutionsFragment extends Fragment implements SwipeRefres
 
         getActivity().setTitle("Submissions: " + assignmentName);
         ((ListView) getView().findViewById(R.id.assignment_solutions)).setAdapter(
-                new SubmissionsListAdapter(getContext(), pair.submissions));
+                new SubmissionsListAdapter(getContext(), pair.assignmentSolutions));
     }
 
     class SubmissionsAssignmentPair {
         public Assignment assignment;
-        public List<Submission> submissions;
-        public SubmissionsAssignmentPair(Assignment assignment, List<Submission> submissions) {
+        public List<AssignmentSolution> assignmentSolutions;
+        public SubmissionsAssignmentPair(Assignment assignment, List<AssignmentSolution> assignmentSolutions) {
             this.assignment = assignment;
-            this.submissions = submissions;
+            this.assignmentSolutions = assignmentSolutions;
         }
     }
 
@@ -179,13 +179,13 @@ public class AssignmentSolutionsFragment extends Fragment implements SwipeRefres
             new AsyncTask<Void, Void, SubmissionsAssignmentPair>() {
                 @Override
                 protected SubmissionsAssignmentPair doInBackground(Void... params) {
-                    List<Submission> submissions = apiDataFetcher.fetchRemoteAssignmentSubmissions(usersManager.getCurrentUser(), assignmentId);
+                    List<AssignmentSolution> assignmentSolutions = apiDataFetcher.fetchRemoteAssignmentSubmissions(usersManager.getCurrentUser(), assignmentId);
                     Assignment assignment = apiDataFetcher.fetchRemoteAssignment(assignmentId);
-                    return new SubmissionsAssignmentPair(assignment, submissions);
+                    return new SubmissionsAssignmentPair(assignment, assignmentSolutions);
                 }
 
                 protected void onPostExecute(SubmissionsAssignmentPair pair) {
-                    if (pair.submissions == null || pair.assignment == null) {
+                    if (pair.assignmentSolutions == null || pair.assignment == null) {
                         Toast.makeText(getContext(), R.string.assignment_submissions_loading_failed, Toast.LENGTH_SHORT).show();
                         swipeLayout.setRefreshing(false);
                         return;
@@ -205,14 +205,14 @@ public class AssignmentSolutionsFragment extends Fragment implements SwipeRefres
         new AsyncTask<Void, Void, SubmissionsAssignmentPair>() {
             @Override
             protected SubmissionsAssignmentPair doInBackground(Void... params) {
-                List<Submission> submissions = apiDataFetcher.fetchCachedAssignmentSubmissions(usersManager.getCurrentUser(), assignmentId);
+                List<AssignmentSolution> assignmentSolutions = apiDataFetcher.fetchCachedAssignmentSubmissions(usersManager.getCurrentUser(), assignmentId);
                 Assignment assignment = apiDataFetcher.fetchCachedAssignment(assignmentId);
-                return new SubmissionsAssignmentPair(assignment, submissions);
+                return new SubmissionsAssignmentPair(assignment, assignmentSolutions);
             }
 
             @Override
             protected void onPostExecute(SubmissionsAssignmentPair pair) {
-                if (pair.submissions != null && pair.assignment != null) {
+                if (pair.assignmentSolutions != null && pair.assignment != null) {
                     renderData(pair);
                 } else {
                     startForcedReload();

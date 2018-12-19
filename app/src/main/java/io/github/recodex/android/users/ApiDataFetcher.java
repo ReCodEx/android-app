@@ -20,11 +20,11 @@ import io.github.recodex.android.R;
 import io.github.recodex.android.api.ApiWrapper;
 import io.github.recodex.android.api.RecodexApi;
 import io.github.recodex.android.model.Assignment;
+import io.github.recodex.android.model.AssignmentSolution;
 import io.github.recodex.android.model.Envelope;
 import io.github.recodex.android.model.Group;
 import io.github.recodex.android.model.LocalizedAssignment;
 import io.github.recodex.android.model.LocalizedGroup;
-import io.github.recodex.android.model.Submission;
 import io.github.recodex.android.model.User;
 import io.github.recodex.android.model.UserGroups;
 import io.github.recodex.android.utils.LocalizationHelper;
@@ -86,9 +86,9 @@ public class ApiDataFetcher {
         return getUser(apiWrapper.fromCache(), userId);
     }
 
-    private List<Submission> getAssignmentSubmissions(RecodexApi api, UserWrapper user, String assignmentId) {
+    private List<AssignmentSolution> getAssignmentSubmissions(RecodexApi api, UserWrapper user, String assignmentId) {
         try {
-            Response<Envelope<List<Submission>>> response = api.getAssignmentSubmissions(assignmentId, user.getId()).execute();
+            Response<Envelope<List<AssignmentSolution>>> response = api.getAssignmentSubmissions(assignmentId, user.getId()).execute();
 
             if (!response.isSuccessful() || !response.body().isSuccess()) {
                 return null;
@@ -100,11 +100,11 @@ public class ApiDataFetcher {
         }
     }
 
-    public List<Submission> fetchRemoteAssignmentSubmissions(UserWrapper user, String assignmentId) {
+    public List<AssignmentSolution> fetchRemoteAssignmentSubmissions(UserWrapper user, String assignmentId) {
         return getAssignmentSubmissions(apiWrapper.fromRemote(), user, assignmentId);
     }
 
-    public List<Submission> fetchCachedAssignmentSubmissions(UserWrapper user, String assignmentId) {
+    public List<AssignmentSolution> fetchCachedAssignmentSubmissions(UserWrapper user, String assignmentId) {
         return getAssignmentSubmissions(apiWrapper.fromCache(), user, assignmentId);
     }
 
@@ -130,9 +130,9 @@ public class ApiDataFetcher {
         return getAssignment(apiWrapper.fromCache(), assignmentId);
     }
 
-    private Submission getSubmission(RecodexApi api, String submissionId) {
+    private AssignmentSolution getSubmission(RecodexApi api, String submissionId) {
         try {
-            Response<Envelope<Submission>> response = api.getSubmission(submissionId).execute();
+            Response<Envelope<AssignmentSolution>> response = api.getSubmission(submissionId).execute();
 
             if (!response.isSuccessful() || !response.body().isSuccess()) {
                 return null;
@@ -144,11 +144,11 @@ public class ApiDataFetcher {
         }
     }
 
-    public Submission fetchRemoteSubmission(String submissionId) {
+    public AssignmentSolution fetchRemoteSubmission(String submissionId) {
         return getSubmission(apiWrapper.fromRemote(), submissionId);
     }
 
-    public Submission fetchCachedSubmission(String submissionId) {
+    public AssignmentSolution fetchCachedSubmission(String submissionId) {
         return getSubmission(apiWrapper.fromCache(), submissionId);
     }
 

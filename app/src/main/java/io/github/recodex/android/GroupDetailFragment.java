@@ -31,11 +31,11 @@ import javax.inject.Inject;
 import io.github.recodex.android.api.ApiWrapper;
 import io.github.recodex.android.api.RecodexApi;
 import io.github.recodex.android.model.Assignment;
+import io.github.recodex.android.model.AssignmentSolution;
 import io.github.recodex.android.model.Envelope;
 import io.github.recodex.android.model.Group;
 import io.github.recodex.android.model.LocalizedAssignment;
 import io.github.recodex.android.model.LocalizedGroup;
-import io.github.recodex.android.model.Submission;
 import io.github.recodex.android.users.UsersManager;
 import io.github.recodex.android.utils.LocalizationHelper;
 import retrofit2.Response;
@@ -102,9 +102,9 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
     class AssignmentData {
         Assignment assignment;
 
-        Submission bestSolution;
+        AssignmentSolution bestSolution;
 
-        AssignmentData(Assignment assignment, Submission bestSolution) {
+        AssignmentData(Assignment assignment, AssignmentSolution bestSolution) {
             this.assignment = assignment;
             this.bestSolution = bestSolution;
         }
@@ -149,8 +149,8 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
                         continue;
                     }
 
-                    Response<Envelope<Submission>> solutionResponse = api.getBestAssignmentSubmission(assignmentId, users.getCurrentUser().getId()).execute();
-                    Submission bestSolution = null;
+                    Response<Envelope<AssignmentSolution>> solutionResponse = api.getBestAssignmentSubmission(assignmentId, users.getCurrentUser().getId()).execute();
+                    AssignmentSolution bestSolution = null;
                     if (checkApiResponse(solutionResponse)) {
                         bestSolution = solutionResponse.body().getPayload();
                     }
