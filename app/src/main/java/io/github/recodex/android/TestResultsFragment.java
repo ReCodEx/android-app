@@ -42,7 +42,7 @@ public class TestResultsFragment extends Fragment {
     private void renderData(AsyncResultStruct asyncResultStruct) {
         AssignmentSolution assignmentSolution = asyncResultStruct.assignmentSolution;
         Assignment assignment = asyncResultStruct.assignment;
-        List<EvaluationTestResult> testResults = assignmentSolution.getEvaluation().getTestResults();
+        List<EvaluationTestResult> testResults = assignmentSolution.getLastSubmission().getEvaluation().getTestResults();
 
         LocalizedAssignment localizedAssignment = localizationHelper.getUserLocalizedText(assignment.getLocalizedTexts());
         getActivity().setTitle("Evaluation: " + (localizedAssignment != null ? localizedAssignment.getName() : ""));

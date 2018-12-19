@@ -32,6 +32,7 @@ import io.github.recodex.android.api.ApiWrapper;
 import io.github.recodex.android.api.RecodexApi;
 import io.github.recodex.android.model.Assignment;
 import io.github.recodex.android.model.AssignmentSolution;
+import io.github.recodex.android.model.AssignmentSolutionSubmission;
 import io.github.recodex.android.model.Envelope;
 import io.github.recodex.android.model.Group;
 import io.github.recodex.android.model.LocalizedAssignment;
@@ -101,20 +102,21 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
 
     class AssignmentData {
         Assignment assignment;
-
         AssignmentSolution bestSolution;
+        AssignmentSolutionSubmission bestSolutionSubmission;
 
         AssignmentData(Assignment assignment, AssignmentSolution bestSolution) {
             this.assignment = assignment;
             this.bestSolution = bestSolution;
+            this.bestSolutionSubmission = bestSolution != null ? bestSolution.getLastSubmission(): null;
         }
 
         boolean hasEvaluation() {
-            return bestSolution != null && bestSolution.getEvaluation() != null;
+            return bestSolutionSubmission != null && bestSolutionSubmission.getEvaluation() != null;
         }
 
         int getPointPercentage() {
-            final int pointsGained = bestSolution.getEvaluation().getPoints() + bestSolution.getEvaluation().getBonusPoints();
+            final int pointsGained = bestSolutionSubmission.getEvaluation().getPoints() + bestSolutionSubmission.getEvaluation().getBonusPoints();
             return (100 * pointsGained) / bestSolution.getMaxPoints();
         }
 

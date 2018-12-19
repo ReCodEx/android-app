@@ -26,6 +26,7 @@ import javax.inject.Inject;
 
 import io.github.recodex.android.model.Assignment;
 import io.github.recodex.android.model.AssignmentSolution;
+import io.github.recodex.android.model.AssignmentSolutionSubmission;
 import io.github.recodex.android.model.LocalizedAssignment;
 import io.github.recodex.android.model.SolutionEvaluation;
 import io.github.recodex.android.users.ApiDataFetcher;
@@ -71,15 +72,16 @@ public class AssignmentSolutionsFragment extends Fragment implements SwipeRefres
             // prepare vars
             LinearLayout submissionListItem = (LinearLayout) view.findViewById(R.id.assignment_submission_list_item);
             final AssignmentSolution assignmentSolution = assignmentSolutions.get(position);
+            final AssignmentSolutionSubmission submission = assignmentSolution.getLastSubmission();
 
             // fill date
             String submittedAt = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.ENGLISH)
-                    .format(new Date(assignmentSolution.getSubmittedAt() * 1000));
+                    .format(new Date(submission.getSubmittedAt() * 1000));
             TextView submissionDate = (TextView) view.findViewById(R.id.assignment_submission_date);
             submissionDate.setText(submittedAt);
 
-            if (assignmentSolution.getEvaluation() != null) {
-                SolutionEvaluation evaluation = assignmentSolution.getEvaluation();
+            if (submission.getEvaluation() != null) {
+                SolutionEvaluation evaluation = submission.getEvaluation();
 
                 // prepare and fill percentual score of submission
                 int percentualScore = (int) evaluation.getScore() * 100;

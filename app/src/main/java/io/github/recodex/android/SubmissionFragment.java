@@ -22,6 +22,7 @@ import javax.inject.Inject;
 
 import io.github.recodex.android.model.Assignment;
 import io.github.recodex.android.model.AssignmentSolution;
+import io.github.recodex.android.model.AssignmentSolutionSubmission;
 import io.github.recodex.android.model.LocalizedAssignment;
 import io.github.recodex.android.model.SolutionEvaluation;
 import io.github.recodex.android.model.User;
@@ -45,6 +46,7 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
 
     private void renderData(AsyncResultStruct asyncResultStruct) {
         final AssignmentSolution assignmentSolution = asyncResultStruct.assignmentSolution;
+        final AssignmentSolutionSubmission submission = assignmentSolution.getLastSubmission();
         Assignment assignment = asyncResultStruct.assignment;
         User user = asyncResultStruct.submittedBy;
 
@@ -52,7 +54,7 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
         getActivity().setTitle("Evaluation: " + (localizedAssignment != null ? localizedAssignment.getName() : ""));
 
         String submittedAt = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.ENGLISH)
-                .format(new Date(assignmentSolution.getSubmittedAt() * 1000));
+                .format(new Date(submission.getSubmittedAt() * 1000));
         TextView submittedAtView = (TextView) getView().findViewById(R.id.submission_submitted_at);
         submittedAtView.setText(submittedAt);
 
@@ -60,11 +62,11 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
         submissionAuthor.setText(user.getFullName());
 
         TextView submissionStatus = (TextView) getView().findViewById(R.id.submission_evaluation_status);
-        submissionStatus.setText(assignmentSolution.getEvaluationStatus());
+        submissionStatus.setText(submission.getEvaluationStatus());
 
         // display evaluation details if submission is evaluated
-        if (assignmentSolution.getEvaluation() != null) {
-            SolutionEvaluation evaluation = assignmentSolution.getEvaluation();
+        if (submission.getEvaluation() != null) {
+            SolutionEvaluation evaluation = submission.getEvaluation();
 
             // first hide and display appropriate layouts
             LinearLayout evaluationNotReady = (LinearLayout) getView().findViewById(R.id.submission_evaluation_not_complete_area);
@@ -175,7 +177,7 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
                 User user = null;
                 if (assignmentSolution != null) {
                     assignment = apiDataFetcher.fetchRemoteAssignment(assignmentSolution.getExerciseAssignmentId());
-                    user = apiDataFetcher.fetchRemoteUser(assignmentSolution.getUserId());
+                    user = apiDataFetcher.fetchRemoteUser(assignmentSolution.getLastSubmission().getSubmittedBy());
                 }
                 return new AsyncResultStruct(user, assignmentSolution, assignment);
             }
@@ -207,7 +209,7 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
                 User user = null;
                 if (assignmentSolution != null) {
                     assignment = apiDataFetcher.fetchCachedAssignment(assignmentSolution.getExerciseAssignmentId());
-                    user = apiDataFetcher.fetchCachedUser(assignmentSolution.getUserId());
+                    user = apiDataFetcher.fetchCachedUser(assignmentSolution.getLastSubmission().getSubmittedBy());
                 }
                 return new AsyncResultStruct(user, assignmentSolution, assignment);
             }
