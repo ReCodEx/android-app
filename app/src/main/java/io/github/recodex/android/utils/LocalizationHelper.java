@@ -1,6 +1,12 @@
 package io.github.recodex.android.utils;
 
+import android.icu.text.DateFormat;
+import android.os.Build;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import io.github.recodex.android.model.LocalizedText;
 import io.github.recodex.android.users.UsersManager;
@@ -16,6 +22,15 @@ public class LocalizationHelper {
     }
 
 
+    private String getUserLocale() {
+        String locale = DEFAULT_LOCALE;
+        if (users.getCurrentUser() != null) {
+            locale = users.getCurrentUser().getDefaultLanguage();
+        }
+
+        return locale;
+    }
+
     /**
      * For given texts pick up the text which corresponds to the current user locale.
      * @param texts texts which will be iterated over
@@ -27,11 +42,7 @@ public class LocalizationHelper {
             return null;
         }
 
-        String userLocale = DEFAULT_LOCALE;
-        if (users.getCurrentUser() != null) {
-            userLocale = users.getCurrentUser().getDefaultLanguage();
-        }
-
+        String userLocale = getUserLocale();
         for (T text : texts) {
             if (userLocale.equals(text.getLocale())) {
                 return text;
@@ -39,5 +50,17 @@ public class LocalizationHelper {
         }
 
         return texts.get(0);
+    }
+
+    public String getDateTime(long datetime) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            String userLocale = getUserLocale();
+            Locale locale = Locale.forLanguageTag(userLocale);
+            DateFormat format = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, locale);
+            return format.format(new Date(datetime * 1000));
+        } else {
+            return new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.ENGLISH)
+                    .format(datetime * 1000);
+        }
     }
 }

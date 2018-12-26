@@ -75,8 +75,7 @@ public class AssignmentSolutionsFragment extends Fragment implements SwipeRefres
             final AssignmentSolutionSubmission submission = assignmentSolution.getLastSubmission();
 
             // fill date
-            String submittedAt = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.ENGLISH)
-                    .format(new Date(assignmentSolution.getSolution().getCreatedAt() * 1000));
+            String submittedAt = localizationHelper.getDateTime(assignmentSolution.getSolution().getCreatedAt());
             TextView submissionDate = (TextView) view.findViewById(R.id.assignment_submission_date);
             submissionDate.setText(submittedAt);
 

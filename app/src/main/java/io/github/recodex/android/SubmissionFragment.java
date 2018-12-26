@@ -53,8 +53,7 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
         LocalizedAssignment localizedAssignment = localizationHelper.getUserLocalizedText(assignment.getLocalizedTexts());
         getActivity().setTitle("Submission: " + (localizedAssignment != null ? localizedAssignment.getName() : ""));
 
-        String submittedAt = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.ENGLISH)
-                .format(new Date(assignmentSolution.getSolution().getCreatedAt() * 1000));
+        String submittedAt = localizationHelper.getDateTime(assignmentSolution.getSolution().getCreatedAt());
         TextView submittedAtView = (TextView) getView().findViewById(R.id.submission_submitted_at);
         submittedAtView.setText(submittedAt);
 
@@ -74,8 +73,7 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
             evaluationNotReady.setVisibility(View.GONE);
             evaluationReady.setVisibility(View.VISIBLE);
 
-            String evaluatedAt = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.ENGLISH)
-                    .format(new Date(evaluation.getEvaluatedAt() * 1000));
+            String evaluatedAt = localizationHelper.getDateTime(evaluation.getEvaluatedAt());
             TextView evaluatedAtView = (TextView) getView().findViewById(R.id.submission_evaluated_at);
             evaluatedAtView.setText(evaluatedAt);
 

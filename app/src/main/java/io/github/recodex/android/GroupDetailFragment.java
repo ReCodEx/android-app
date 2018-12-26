@@ -283,8 +283,7 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
                 name.setTextColor(getResources().getColor(R.color.colorAssignmentMissed));
             }
 
-            String firstDeadline = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.ENGLISH)
-                    .format(new Date(assignment.getFirstDeadline() * 1000));
+            String firstDeadline = localizationHelper.getDateTime(assignment.getFirstDeadline());
             TextView firstDeadlineText = (TextView) view.findViewById(R.id.deadline1_text);
             firstDeadlineText.setText(firstDeadline);
             if (data.isAfterFirstDeadline(now)) {
@@ -294,8 +293,7 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
             }
 
             if (assignment.isAllowedSecondDeadline()) {
-                String secondDeadline = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.ENGLISH)
-                        .format(new Date(assignment.getSecondDeadline() * 1000));
+                String secondDeadline = localizationHelper.getDateTime(assignment.getSecondDeadline());
                 TextView secondDeadlineText = (TextView) view.findViewById(R.id.deadline2_text);
                 secondDeadlineText.setText(secondDeadline);
                 if (data.isAfterSecondDeadline(now)) {
