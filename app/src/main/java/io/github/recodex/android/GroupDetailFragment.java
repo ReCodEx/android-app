@@ -178,7 +178,8 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
         }
 
         LocalizedGroup localizedGroup = localizationHelper.getUserLocalizedText(group.getLocalizedTexts());
-        ((TextView) getView().findViewById(R.id.group_description)).setText(group.getDescription());
+        ((TextView) getView().findViewById(R.id.group_description))
+                .setText(localizedGroup != null ? localizedGroup.getDescription() : "");
         getActivity().setTitle(localizedGroup != null ? localizedGroup.getName() : "");
 
         ((ListView) getView().findViewById(R.id.group_assignments)).setAdapter(new AssignmentListAdapter(getContext(), assignments));

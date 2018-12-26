@@ -11,10 +11,6 @@ public class Group {
         return id;
     }
 
-    public String getDescription() {
-        return privateData.getDescription();
-    }
-
     public List<LocalizedGroup> getLocalizedTexts() {
         return localizedTexts;
     }
