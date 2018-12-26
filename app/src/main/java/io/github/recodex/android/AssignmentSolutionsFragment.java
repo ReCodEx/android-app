@@ -76,7 +76,7 @@ public class AssignmentSolutionsFragment extends Fragment implements SwipeRefres
 
             // fill date
             String submittedAt = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.ENGLISH)
-                    .format(new Date(submission.getSubmittedAt() * 1000));
+                    .format(new Date(assignmentSolution.getSolution().getCreatedAt() * 1000));
             TextView submissionDate = (TextView) view.findViewById(R.id.assignment_submission_date);
             submissionDate.setText(submittedAt);
 
@@ -84,14 +84,14 @@ public class AssignmentSolutionsFragment extends Fragment implements SwipeRefres
                 SolutionEvaluation evaluation = submission.getEvaluation();
 
                 // prepare and fill percentual score of submission
-                int percentualScore = (int) evaluation.getScore() * 100;
+                int percentualScore = (int) (evaluation.getScore() * 100);
                 TextView submissionValidity = (TextView) view.findViewById(R.id.assignment_submission_validity);
                 submissionValidity.setText(String.format(Locale.ROOT, "%d%%", percentualScore));
 
                 // get actual points and maybe bonus one and display them
                 String points = evaluation.getPoints() + "/" + assignmentSolution.getMaxPoints();
-                if (evaluation.getBonusPoints() > 0) {
-                    points = evaluation.getPoints() + "+" + evaluation.getBonusPoints() + "/" + assignmentSolution.getMaxPoints();
+                if (assignmentSolution.getBonusPoints() > 0) {
+                    points = evaluation.getPoints() + "+" + assignmentSolution.getBonusPoints() + "/" + assignmentSolution.getMaxPoints();
                 }
                 TextView submissionPoints = (TextView) view.findViewById(R.id.assignment_submission_points);
                 submissionPoints.setText(points);

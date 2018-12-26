@@ -6,6 +6,7 @@ public class AssignmentSolution {
     private Solution solution;
     private AssignmentSolutionSubmission lastSubmission;
     private int maxPoints;
+    private int bonusPoints;
     private String exerciseAssignmentId;
 
     public String getId() {
@@ -26,6 +27,10 @@ public class AssignmentSolution {
 
     public int getMaxPoints() {
         return maxPoints;
+    }
+
+    public int getBonusPoints() {
+        return bonusPoints;
     }
 
     public String getExerciseAssignmentId() {

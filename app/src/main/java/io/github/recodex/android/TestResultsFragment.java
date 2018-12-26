@@ -65,7 +65,7 @@ public class TestResultsFragment extends Fragment {
 
             TableRow.LayoutParams secondParams = new TableRow.LayoutParams(1);
             secondParams.gravity = Gravity.CENTER;
-            int percentualScore = (int) testResult.getScore() * 100;
+            int percentualScore = (int) (testResult.getScore() * 100);
             TextView score = new TextView(getActivity());
             score.setText(String.format(Locale.ROOT, "%d%%", percentualScore));
             score.setLayoutParams(secondParams);

@@ -6,7 +6,8 @@ public class EvaluationTestResult {
     private String status;
     private double score;
     private boolean memoryExceeded;
-    private boolean timeExceeded;
+    private boolean wallTimeExceeded;
+    private boolean cpuTimeExceeded;
     private String message;
 
     public String getId() {
@@ -30,7 +31,7 @@ public class EvaluationTestResult {
     }
 
     public boolean getTimeExceeded() {
-        return timeExceeded;
+        return wallTimeExceeded || cpuTimeExceeded;
     }
 
     public String getMessage() {

@@ -116,7 +116,7 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
         }
 
         int getPointPercentage() {
-            final int pointsGained = bestSolutionSubmission.getEvaluation().getPoints() + bestSolutionSubmission.getEvaluation().getBonusPoints();
+            final int pointsGained = bestSolutionSubmission.getEvaluation().getPoints() + bestSolution.getBonusPoints();
             return (100 * pointsGained) / bestSolution.getMaxPoints();
         }
 

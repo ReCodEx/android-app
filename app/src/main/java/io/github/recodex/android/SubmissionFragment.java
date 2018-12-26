@@ -54,7 +54,7 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
         getActivity().setTitle("Submission: " + (localizedAssignment != null ? localizedAssignment.getName() : ""));
 
         String submittedAt = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.ENGLISH)
-                .format(new Date(submission.getSubmittedAt() * 1000));
+                .format(new Date(assignmentSolution.getSolution().getCreatedAt() * 1000));
         TextView submittedAtView = (TextView) getView().findViewById(R.id.submission_submitted_at);
         submittedAtView.setText(submittedAt);
 
@@ -79,32 +79,26 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
             TextView evaluatedAtView = (TextView) getView().findViewById(R.id.submission_evaluated_at);
             evaluatedAtView.setText(evaluatedAt);
 
-            int percentual_score = (int) evaluation.getScore() * 100;
+            int percentual_score = (int) (evaluation.getScore() * 100);
             TextView score = (TextView) getView().findViewById(R.id.submission_score);
             score.setText(String.format(Locale.ROOT, "%d%%", percentual_score));
+            if (percentual_score > 0) {
+                score.setTextColor(getResources().getColor(R.color.colorAssignmentDone));
+            }
 
             TextView points = (TextView) getView().findViewById(R.id.submission_points);
             points.setText(String.format(Locale.ROOT, "%d/%d", evaluation.getPoints(), assignmentSolution.getMaxPoints()));
+            if (evaluation.getPoints() > 0) {
+                points.setTextColor(getResources().getColor(R.color.colorAssignmentDone));
+            }
 
             TextView bonusPoints = (TextView) getView().findViewById(R.id.submission_bonus_points);
-            bonusPoints.setText(String.format(Locale.ROOT, "+%d", evaluation.getBonusPoints()));
-
-            if (!evaluation.getEvaluationFailed()) {
-                ImageView evaluationFailed = (ImageView) getView().findViewById(R.id.submission_evaluation_finished);
-                evaluationFailed.setImageResource(R.drawable.ic_check_black_24dp);
-                evaluationFailed.setColorFilter(getResources().getColor(R.color.colorGreen));
-            }
+            bonusPoints.setText(String.format(Locale.ROOT, "+%d", assignmentSolution.getBonusPoints()));
 
             if (!evaluation.getInitFailed()) {
                 ImageView buildSucceeded = (ImageView) getView().findViewById(R.id.submission_build_succeeded);
                 buildSucceeded.setImageResource(R.drawable.ic_check_black_24dp);
                 buildSucceeded.setColorFilter(getResources().getColor(R.color.colorGreen));
-            }
-
-            if (evaluation.getIsValid()) {
-                ImageView evaluationValid = (ImageView) getView().findViewById(R.id.submission_evaluation_valid);
-                evaluationValid.setImageResource(R.drawable.ic_check_black_24dp);
-                evaluationValid.setColorFilter(getResources().getColor(R.color.colorGreen));
             }
 
             getView().findViewById(R.id.display_test_results_button).setOnClickListener(new View.OnClickListener() {
