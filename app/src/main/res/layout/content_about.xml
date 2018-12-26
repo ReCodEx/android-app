@@ -50,7 +50,7 @@
                 android:paddingBottom="30dp">
 
                 <TextView
-                    android:text="ReCodEx"
+                    android:text="@string/recodex"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/about_recodex_title"
@@ -63,7 +63,7 @@
                     android:paddingBottom="5dp" />
 
                 <TextView
-                    android:text="android-app"
+                    android:text="@string/android_app"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/about_android_app"
@@ -104,7 +104,7 @@
                     android:textStyle="normal|bold" />
 
                 <TextView
-                    android:text="Jan Buchar\nMartin Polanka\nPetr Stefan"
+                    android:text="@string/hall_of_fame_names"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/author_names"

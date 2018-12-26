@@ -28,7 +28,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Submitted at"
+                        android:text="@string/submitted_at"
                         android:textStyle="bold"/>
                     <Space
                         android:layout_width="wrap_content"
@@ -49,7 +49,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Submitted by"
+                        android:text="@string/submitted_by"
                         android:textStyle="bold"/>
                     <Space
                         android:layout_width="wrap_content"
@@ -70,7 +70,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Evaluation status"
+                        android:text="@string/evaluation_status"
                         android:textStyle="bold"/>
                     <Space
                         android:layout_width="wrap_content"
@@ -96,7 +96,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/colorDarkOrange"
                     android:textStyle="bold"
-                    android:text="Evaluation is not ready yet" />
+                    android:text="@string/evaluation_not_ready" />
             </LinearLayout>
 
             <LinearLayout
@@ -114,7 +114,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Evaluated at"
+                        android:text="@string/evaluated_at"
                         android:textStyle="bold"/>
                     <Space
                         android:layout_width="wrap_content"
@@ -135,7 +135,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Build succeeded"
+                        android:text="@string/build_succeeded"
                         android:textStyle="bold"/>
                     <Space
                         android:layout_width="wrap_content"
@@ -157,7 +157,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Score"
+                        android:text="@string/score"
                         android:textStyle="bold"/>
                     <Space
                         android:layout_width="wrap_content"
@@ -177,7 +177,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Points"
+                        android:text="@string/points"
                         android:textStyle="bold"/>
                     <Space
                         android:layout_width="wrap_content"
@@ -197,7 +197,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Bonus points"
+                        android:text="@string/bonus_points"
                         android:textStyle="bold"/>
                     <Space
                         android:layout_width="wrap_content"

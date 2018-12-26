@@ -76,4 +76,18 @@
     <string name="new_assignment">New assignment in</string>
     <string name="submission_loading_failed">Submision loading failed</string>
     <string name="display_detailed_test_results">Display detailed test results</string>
+    <string name="local_account_notification">Sign in with your local ReCodEx credentials. To create local account, please visit ReCodEx web application.</string>
+    <string name="recodex">ReCodEx</string>
+    <string name="android_app">android-app</string>
+    <string name="hall_of_fame_names">Jan Buchar Martin Polanka Petr Stefan</string>
+    <string name="submitted_at">Submitted at</string>
+    <string name="submitted_by">Submitted by</string>
+    <string name="evaluation_status">Evaluation status</string>
+    <string name="evaluation_not_ready">Evaluation is not ready yet</string>
+    <string name="evaluated_at">Evaluated at</string>
+    <string name="build_succeeded">Build succeeded</string>
+    <string name="score">Score</string>
+    <string name="points">Points</string>
+    <string name="bonus_points">Bonus points</string>
+    <string name="test">Test</string>
 </resources>

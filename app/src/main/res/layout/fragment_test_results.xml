@@ -24,7 +24,7 @@
                     android:layout_column="0"
                     android:textStyle="bold"
                     android:layout_gravity="center"
-                    android:text="Test" />
+                    android:text="@string/test" />
                 <ImageView
                     android:layout_column="1"
                     app:srcCompat="@drawable/ic_check_black_24dp" />

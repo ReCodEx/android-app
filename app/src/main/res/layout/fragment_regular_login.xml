@@ -50,7 +50,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sign in with your local ReCodEx credentials. To create local account, please visit ReCodEx web application."
+                android:text="@string/local_account_notification"
                 android:textStyle="bold"
                 android:textAlignment="center"
                 android:textColor="@color/colorDarkOrange"
