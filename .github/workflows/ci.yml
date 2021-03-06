@@ -3,7 +3,7 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-  build:
+  tests:
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v2
@@ -14,3 +14,7 @@ jobs:
         
     - name: Build Android application
       run: ./gradlew build
+
+    - name: Run application tests
+      run: ./gradlew test
+
