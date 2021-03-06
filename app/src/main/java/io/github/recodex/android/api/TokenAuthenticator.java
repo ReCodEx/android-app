@@ -5,7 +5,6 @@ import android.util.Log;
 
 import java.io.IOException;
 
-import io.github.recodex.android.R;
 import io.github.recodex.android.users.UsersManager;
 import okhttp3.Authenticator;
 import okhttp3.Request;
@@ -14,7 +13,7 @@ import okhttp3.Route;
 
 public class TokenAuthenticator implements Authenticator {
 
-    private UsersManager usersManager;
+    private final UsersManager usersManager;
 
     public TokenAuthenticator(UsersManager usersManager) {
         this.usersManager = usersManager;

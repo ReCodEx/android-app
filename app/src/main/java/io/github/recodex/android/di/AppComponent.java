@@ -22,19 +22,31 @@ import io.github.recodex.android.sync.ReCodExSyncAdapter;
  */
 
 @Singleton
-@Component(modules={AppModule.class})
+@Component(modules = {AppModule.class})
 public interface AppComponent {
     void inject(LoginActivity activity);
+
     void inject(GroupListFragment fragment);
+
     void inject(GroupDetailFragment fragment);
+
     void inject(ReCodExAuthenticator activity);
+
     void inject(NavigationDrawer activity);
+
     void inject(RegularLoginFragment fragment);
+
     void inject(CasLoginFragment fragment);
+
     void inject(ReCodExSyncAdapter adapter);
+
     void inject(SettingsActivity.GeneralPreferenceFragment fragment);
+
     void inject(AssignmentTextFragment assignmentTextFragment);
+
     void inject(AssignmentSolutionsFragment assignmentSolutionsFragment);
+
     void inject(SubmissionFragment submissionFragment);
+
     void inject(TestResultsFragment testResultsFragment);
 }

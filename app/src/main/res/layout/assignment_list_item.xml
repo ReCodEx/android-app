@@ -10,6 +10,7 @@
     android:orientation="vertical"
     android:paddingBottom="10dp"
     android:paddingRight="10dp"
+    android:paddingLeft="10dp"
     android:paddingTop="10dp">
 
     <LinearLayout
@@ -22,13 +23,14 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:paddingLeft="25dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
             android:textColor="@color/contentForeground"
             android:textSize="17sp"
             tools:text="Formula Evaluation" />
 
         <Space
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
@@ -42,7 +44,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="horizontal">
 
@@ -50,7 +52,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingLeft="25dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
             android:layout_gravity="center_vertical">
 
             <TextView
@@ -75,7 +78,7 @@
         </LinearLayout>
 
         <Space
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
@@ -84,7 +87,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/solutions_button"
             android:drawableRight="@drawable/ic_solutions"
-            tools:text="0%"/>
+            tools:text="0%" />
     </LinearLayout>
 
 </LinearLayout>

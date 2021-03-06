@@ -65,7 +65,7 @@
             android:name="io.github.recodex.android.sync.StubProvider"
             android:authorities="io.github.recodex.android.sync.provider"
             android:exported="false"
-            android:syncable="true"/>
+            android:syncable="true" />
 
         <activity
             android:name=".AboutActivity"

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="integer" name="password_cas_login_action" format="integer">1001</item>
+    <item type="integer" name="password_regular_login_action" format="integer">1001</item>
+</resources>

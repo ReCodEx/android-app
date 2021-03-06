@@ -9,9 +9,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
-import androidx.core.app.NavUtils;
-import androidx.appcompat.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.view.MenuItem;
@@ -20,6 +19,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import androidx.appcompat.app.ActionBar;
 import io.github.recodex.android.users.UsersManager;
 
 /**
@@ -55,7 +55,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     }
 
     /**
-     * Set up the {@link android.app.ActionBar}, if the API is available.
+     * Set up the {@link ActionBar}, if the API is available.
      */
     private void setupActionBar() {
         ActionBar actionBar = getSupportActionBar();
@@ -133,7 +133,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
          * A preference value change listener that updates the preference's summary
          * to reflect its new value.
          */
-        private Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
+        private final OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object value) {
                 String stringValue = value.toString();
@@ -181,7 +181,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
 
         private void bindSyncPreferenceSummaryToValue(Preference preference) {
-            Preference.OnPreferenceChangeListener onPreferenceChangeListener = new Preference.OnPreferenceChangeListener() {
+            OnPreferenceChangeListener onPreferenceChangeListener = new OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object value) {
                     String stringValue = value.toString();

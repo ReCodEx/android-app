@@ -2,6 +2,7 @@ package io.github.recodex.android.users;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Activity;
 import android.app.Application;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -152,7 +153,7 @@ public class LoginHelper {
             Intent result = new Intent();
 
             try {
-                Response<Envelope<Login>> response = null;
+                Response<Envelope<Login>> response;
                 if (loginType == LoginType.REGULAR) {
                     response = recodexApi.login(mEmail, mPassword).execute();
                 } else {
@@ -199,13 +200,13 @@ public class LoginHelper {
             Log.d(context.getString(R.string.recodex_log_tag), "On post execute after login...");
 
             if (intent.getBooleanExtra(KEY_LOGIN_RESULT, false)) {
-                Log.d(context.getString(R.string.recodex_log_tag), "Login successfull...");
+                Log.d(context.getString(R.string.recodex_log_tag), "Login successful...");
 
                 activity.setAccountAuthenticatorResult(intent.getExtras());
-                activity.setResult(activity.RESULT_OK, intent);
+                activity.setResult(Activity.RESULT_OK, intent);
                 activity.finish();
             } else {
-                Log.d(context.getString(R.string.recodex_log_tag), "Login unsuccessfull...");
+                Log.d(context.getString(R.string.recodex_log_tag), "Login unsuccessful...");
 
                 mPasswordView.setError(context.getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();

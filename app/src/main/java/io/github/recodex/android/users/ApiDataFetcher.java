@@ -5,7 +5,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import androidx.core.app.NotificationCompat;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -15,6 +14,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.core.app.NotificationCompat;
 import io.github.recodex.android.NavigationDrawer;
 import io.github.recodex.android.R;
 import io.github.recodex.android.api.ApiWrapper;
@@ -34,10 +34,10 @@ public class ApiDataFetcher {
 
     private final String NOTIFICATION_DATA = "recodex_notification_data";
 
-    private ApiWrapper<RecodexApi> apiWrapper;
-    private RecodexApi recodexApi;
-    private Context applicationContext;
-    private LocalizationHelper localizationHelper;
+    private final ApiWrapper<RecodexApi> apiWrapper;
+    private final RecodexApi recodexApi;
+    private final Context applicationContext;
+    private final LocalizationHelper localizationHelper;
 
     public ApiDataFetcher(RecodexApi recodexApi, ApiWrapper<RecodexApi> apiWrapper,
                           Context applicationContext, LocalizationHelper localizationHelper) {
@@ -198,7 +198,7 @@ public class ApiDataFetcher {
         SharedPreferences preferences = applicationContext.getSharedPreferences(NOTIFICATION_DATA, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(groupId, new Gson().toJson(assignmentIds));
-        editor.commit();
+        editor.apply();
     }
 
     private List<String> getAssignmentList(String groupId) {
@@ -207,7 +207,8 @@ public class ApiDataFetcher {
             return new ArrayList<>();
         }
         String groupsJson = preferences.getString(groupId, "");
-        Type type = new TypeToken<List<String>>() {}.getType();
+        Type type = new TypeToken<List<String>>() {
+        }.getType();
         return new Gson().fromJson(groupsJson, type);
     }
 }

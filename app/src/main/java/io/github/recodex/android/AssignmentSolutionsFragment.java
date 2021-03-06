@@ -3,10 +3,6 @@ package io.github.recodex.android;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +18,10 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import io.github.recodex.android.model.Assignment;
 import io.github.recodex.android.model.AssignmentSolution;
 import io.github.recodex.android.model.AssignmentSolutionSubmission;
@@ -46,9 +46,9 @@ public class AssignmentSolutionsFragment extends Fragment implements SwipeRefres
     private SwipeRefreshLayout swipeLayout = null;
 
     class SubmissionsListAdapter extends ArrayAdapter<AssignmentSolution> {
-        private List<AssignmentSolution> assignmentSolutions;
 
-        private LayoutInflater inflater;
+        private final List<AssignmentSolution> assignmentSolutions;
+        private final LayoutInflater inflater;
 
         SubmissionsListAdapter(Context context, List<AssignmentSolution> assignmentSolutions) {
             super(context, R.layout.fragment_assignment_solutions);
@@ -97,10 +97,10 @@ public class AssignmentSolutionsFragment extends Fragment implements SwipeRefres
                 ImageView stateImage = (ImageView) view.findViewById(R.id.assignment_submission_state_icon);
                 if (evaluation.getScore() > 0) {
                     stateImage.setImageResource(R.drawable.ic_check_black_24dp);
-                    stateImage.setColorFilter(getResources().getColor(R.color.colorGreen));
+                    stateImage.setColorFilter(getResources().getColor(R.color.colorGreen, null));
                 } else {
                     stateImage.setImageResource(R.drawable.ic_clear_black_24dp);
-                    stateImage.setColorFilter(getResources().getColor(R.color.colorRed));
+                    stateImage.setColorFilter(getResources().getColor(R.color.colorRed, null));
                 }
             }
 
@@ -163,9 +163,10 @@ public class AssignmentSolutionsFragment extends Fragment implements SwipeRefres
                 new SubmissionsListAdapter(getContext(), pair.assignmentSolutions));
     }
 
-    class SubmissionsAssignmentPair {
-        public Assignment assignment;
-        public List<AssignmentSolution> assignmentSolutions;
+    private static class SubmissionsAssignmentPair {
+        public final Assignment assignment;
+        public final List<AssignmentSolution> assignmentSolutions;
+
         public SubmissionsAssignmentPair(Assignment assignment, List<AssignmentSolution> assignmentSolutions) {
             this.assignment = assignment;
             this.assignmentSolutions = assignmentSolutions;
@@ -183,6 +184,7 @@ public class AssignmentSolutionsFragment extends Fragment implements SwipeRefres
                     return new SubmissionsAssignmentPair(assignment, assignmentSolutions);
                 }
 
+                @Override
                 protected void onPostExecute(SubmissionsAssignmentPair pair) {
                     if (pair.assignmentSolutions == null || pair.assignment == null) {
                         Toast.makeText(getContext(), R.string.assignment_submissions_loading_failed, Toast.LENGTH_SHORT).show();
@@ -221,7 +223,7 @@ public class AssignmentSolutionsFragment extends Fragment implements SwipeRefres
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof OnSubmissionSelectedListener) {
             callback = (OnSubmissionSelectedListener) context;

@@ -3,12 +3,15 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:drawable="@color/colorSplashBackground" android:gravity="fill"/>
+        android:drawable="@color/colorSplashBackground"
+        android:gravity="fill" />
 
-    <item android:left="10dp" android:right="10dp">
+    <item
+        android:left="10dp"
+        android:right="10dp">
         <bitmap
             android:gravity="clip_horizontal|clip_vertical|center"
-            android:src="@drawable/logo"/>
+            android:src="@drawable/logo" />
     </item>
 
 

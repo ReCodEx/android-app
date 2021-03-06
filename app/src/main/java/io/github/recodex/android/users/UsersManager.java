@@ -3,10 +3,8 @@ package io.github.recodex.android.users;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
-import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
-import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -16,11 +14,9 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.IOException;
-import java.security.InvalidParameterException;
-import java.util.List;
 
+import androidx.appcompat.app.AppCompatActivity;
 import io.github.recodex.android.authentication.ReCodExAuthenticator;
-import io.github.recodex.android.model.Login;
 
 public class UsersManager {
 
@@ -28,14 +24,12 @@ public class UsersManager {
     public static final String KEY_LOGIN_TYPE = "LOGIN_TYPE";
     public static final String KEY_USERNAME = "USERNAME";
 
-    private Application application;
-    private Context context;
-    private SharedPreferences sharedPreferences;
-    private AccountManager accountManager;
+    private final Context context;
+    private final SharedPreferences sharedPreferences;
+    private final AccountManager accountManager;
     private UserWrapper currentUser;
 
     public UsersManager(Application application, AccountManager accountManager) {
-        this.application = application;
         this.context = application.getBaseContext();
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         this.accountManager = accountManager;
@@ -114,8 +108,7 @@ public class UsersManager {
     }
 
     public Account[] getAvailableAccounts() throws SecurityException {
-        Account result[] = accountManager.getAccountsByType(ReCodExAuthenticator.ACCOUNT_TYPE);
-        return result;
+        return accountManager.getAccountsByType(ReCodExAuthenticator.ACCOUNT_TYPE);
     }
 
     public UserWrapper addUserExplicitly(Account account, String accessToken, String id, String password, LoginType loginType) {
@@ -130,9 +123,8 @@ public class UsersManager {
         return switchCurrentUser(account);
     }
 
-    public void addAccount(Activity activity, AccountManagerCallback<Bundle> callback) {
-        final AccountManagerFuture<Bundle> future =
-                accountManager.addAccount(ReCodExAuthenticator.ACCOUNT_TYPE,
-                        ReCodExAuthenticator.AUTH_TOKEN_TYPE, null, null, activity, callback, null);
+    public void addAccount(AppCompatActivity activity, AccountManagerCallback<Bundle> callback) {
+        accountManager.addAccount(ReCodExAuthenticator.ACCOUNT_TYPE,
+                ReCodExAuthenticator.AUTH_TOKEN_TYPE, null, null, activity, callback, null);
     }
 }

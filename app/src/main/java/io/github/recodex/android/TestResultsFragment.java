@@ -2,8 +2,6 @@ package io.github.recodex.android;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +18,8 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import io.github.recodex.android.model.Assignment;
 import io.github.recodex.android.model.AssignmentSolution;
 import io.github.recodex.android.model.EvaluationTestResult;
@@ -53,7 +53,7 @@ public class TestResultsFragment extends Fragment {
             TableRow row = new TableRow(getActivity());
             row.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
             row.setPadding(padding, padding, padding, padding);
-            row.setBackgroundColor(getResources().getColor(R.color.colorWhite));
+            row.setBackgroundColor(getResources().getColor(R.color.colorWhite, null));
             table.addView(row);
 
             TableRow.LayoutParams firstParams = new TableRow.LayoutParams(0);
@@ -76,10 +76,10 @@ public class TestResultsFragment extends Fragment {
             ImageView memory = new ImageView(getActivity());
             if (testResult.getMemoryExceeded()) {
                 memory.setImageResource(R.drawable.ic_clear_black_24dp);
-                memory.setColorFilter(getResources().getColor(R.color.colorRed));
+                memory.setColorFilter(getResources().getColor(R.color.colorRed, null));
             } else {
                 memory.setImageResource(R.drawable.ic_check_black_24dp);
-                memory.setColorFilter(getResources().getColor(R.color.colorGreen));
+                memory.setColorFilter(getResources().getColor(R.color.colorGreen, null));
             }
             memory.setLayoutParams(thirdParams);
             row.addView(memory);
@@ -89,10 +89,10 @@ public class TestResultsFragment extends Fragment {
             ImageView time = new ImageView(getActivity());
             if (testResult.getTimeExceeded()) {
                 time.setImageResource(R.drawable.ic_clear_black_24dp);
-                time.setColorFilter(getResources().getColor(R.color.colorRed));
+                time.setColorFilter(getResources().getColor(R.color.colorRed, null));
             } else {
                 time.setImageResource(R.drawable.ic_check_black_24dp);
-                time.setColorFilter(getResources().getColor(R.color.colorGreen));
+                time.setColorFilter(getResources().getColor(R.color.colorGreen, null));
             }
             time.setLayoutParams(fourthParams);
             row.addView(time);
@@ -127,13 +127,12 @@ public class TestResultsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup view = (ViewGroup) inflater.inflate(R.layout.fragment_test_results, container, false);
-        return view;
+        return (ViewGroup) inflater.inflate(R.layout.fragment_test_results, container, false);
     }
 
-    class AsyncResultStruct {
-        public AssignmentSolution assignmentSolution;
-        public Assignment assignment;
+    private static class AsyncResultStruct {
+        public final AssignmentSolution assignmentSolution;
+        public final Assignment assignment;
 
         public AsyncResultStruct(AssignmentSolution assignmentSolution, Assignment assignment) {
             this.assignmentSolution = assignmentSolution;

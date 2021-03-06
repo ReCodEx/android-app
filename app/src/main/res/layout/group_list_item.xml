@@ -17,14 +17,12 @@
         <ImageView
             android:layout_width="35dp"
             android:layout_height="35dp"
-            android:tint="@color/contentForegroundMuted"
             app:srcCompat="@drawable/ic_info"
             android:id="@+id/assignmentInfoIcon"
             android:layout_centerVertical="true"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_marginLeft="15dp"
-            android:layout_marginStart="15dp" />
+            android:layout_marginStart="15dp"
+            app:tint="@color/contentForegroundMuted" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -35,17 +33,16 @@
             android:paddingTop="25dp"
             android:paddingBottom="25dp"
             android:paddingLeft="20dp"
+            android:paddingRight="20dp"
             android:textColor="@color/contentForeground"
-            android:layout_weight="1"
             android:layout_toRightOf="@+id/assignmentInfoIcon"
-            android:layout_toLeftOf="@+id/percent"/>
+            android:layout_toLeftOf="@+id/percent" />
 
         <TextView
             tools:text="0%"
             android:layout_height="wrap_content"
             android:id="@+id/percent"
             android:layout_alignBottom="@+id/group_name"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
             android:layout_width="wrap_content"
@@ -56,6 +53,7 @@
             android:textAlignment="textEnd"
             android:layout_gravity="end"
             android:paddingTop="20dp"
+            android:paddingLeft="20dp"
             android:paddingRight="20dp" />
     </RelativeLayout>
 

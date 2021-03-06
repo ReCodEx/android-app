@@ -4,10 +4,8 @@ import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorResponse;
 import android.accounts.AccountManager;
-import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -17,7 +15,6 @@ import javax.inject.Inject;
 import io.github.recodex.android.LoginActivity;
 import io.github.recodex.android.MyApp;
 import io.github.recodex.android.R;
-import io.github.recodex.android.api.Constants;
 import io.github.recodex.android.api.RecodexApi;
 import io.github.recodex.android.model.Envelope;
 import io.github.recodex.android.model.Login;
@@ -54,8 +51,8 @@ public class ReCodExAuthenticator extends AbstractAccountAuthenticator {
     }
 
     @Override
-    public Bundle addAccount(AccountAuthenticatorResponse accountAuthenticatorResponse, String s, String s1, String[] strings, Bundle bundle) throws NetworkErrorException {
-        Log.d(mContext.getString(R.string.recodex_log_tag),"*** addAccount method called");
+    public Bundle addAccount(AccountAuthenticatorResponse accountAuthenticatorResponse, String s, String s1, String[] strings, Bundle bundle) {
+        Log.d(mContext.getString(R.string.recodex_log_tag), "*** addAccount method called");
 
         final Intent intent = new Intent(mContext, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_TASK_ON_HOME);
@@ -69,7 +66,7 @@ public class ReCodExAuthenticator extends AbstractAccountAuthenticator {
     }
 
     @Override
-    public Bundle getAuthToken(AccountAuthenticatorResponse accountAuthenticatorResponse, Account account, String authTokenType, Bundle bundle) throws NetworkErrorException {
+    public Bundle getAuthToken(AccountAuthenticatorResponse accountAuthenticatorResponse, Account account, String authTokenType, Bundle bundle) {
         Log.d(mContext.getString(R.string.recodex_log_tag), "*** getAuthToken method called");
 
         // If the caller requested an authToken type we don't support, then
@@ -94,7 +91,7 @@ public class ReCodExAuthenticator extends AbstractAccountAuthenticator {
                 try {
                     Log.d(mContext.getString(R.string.recodex_log_tag), "*** re-authenticating with the existing password");
                     UserWrapper user = usersManager.switchCurrentUser(account);
-                    Response<Envelope<Login>> response = null;
+                    Response<Envelope<Login>> response;
 
                     if (user.getLoginType() == LoginType.REGULAR) {
                         response = recodexApi.login(account.name, password).execute();
@@ -148,7 +145,7 @@ public class ReCodExAuthenticator extends AbstractAccountAuthenticator {
     }
 
     @Override
-    public Bundle hasFeatures(AccountAuthenticatorResponse accountAuthenticatorResponse, Account account, String[] strings) throws NetworkErrorException {
+    public Bundle hasFeatures(AccountAuthenticatorResponse accountAuthenticatorResponse, Account account, String[] strings) {
         final Bundle result = new Bundle();
         result.putBoolean(AccountManager.KEY_BOOLEAN_RESULT, false);
         return result;
@@ -160,12 +157,12 @@ public class ReCodExAuthenticator extends AbstractAccountAuthenticator {
     }
 
     @Override
-    public Bundle confirmCredentials(AccountAuthenticatorResponse accountAuthenticatorResponse, Account account, Bundle bundle) throws NetworkErrorException {
+    public Bundle confirmCredentials(AccountAuthenticatorResponse accountAuthenticatorResponse, Account account, Bundle bundle) {
         return null;
     }
 
     @Override
-    public Bundle updateCredentials(AccountAuthenticatorResponse accountAuthenticatorResponse, Account account, String s, Bundle bundle) throws NetworkErrorException {
+    public Bundle updateCredentials(AccountAuthenticatorResponse accountAuthenticatorResponse, Account account, String s, Bundle bundle) {
         return null;
     }
 }

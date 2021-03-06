@@ -12,32 +12,33 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.core.graphics.drawable.RoundedBitmapDrawable;
-import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
-import androidx.appcompat.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
-import android.view.View;
-import com.google.android.material.navigation.NavigationView;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.navigation.NavigationView;
+
 import java.io.InputStream;
 
 import javax.inject.Inject;
 
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import io.github.recodex.android.authentication.ReCodExAuthenticator;
 import io.github.recodex.android.users.UserWrapper;
 import io.github.recodex.android.users.UsersManager;
@@ -63,7 +64,7 @@ public class NavigationDrawer extends AppCompatActivity
      * SyncAdapter status observer. If sync is finished fragment is refreshed... which should cause
      * reloading of data.
      */
-    SyncStatusObserver syncObserver = new SyncStatusObserver() {
+    final SyncStatusObserver syncObserver = new SyncStatusObserver() {
         @Override
         public void onStatusChanged(final int which) {
             runOnUiThread(new Runnable() {
@@ -100,7 +101,7 @@ public class NavigationDrawer extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -145,7 +146,7 @@ public class NavigationDrawer extends AppCompatActivity
             return;
         }
 
-        Account accounts[] = usersManager.getAvailableAccounts();
+        Account[] accounts = usersManager.getAvailableAccounts();
 
         if (accounts.length == 0) {
             // we have to login new user
@@ -176,7 +177,7 @@ public class NavigationDrawer extends AppCompatActivity
         });
     }
 
-    private void showAccountPicker(final Account accounts[]) {
+    private void showAccountPicker(final Account[] accounts) {
         String[] names = new String[accounts.length];
         for (int i = 0; i < accounts.length; i++) {
             names[i] = accounts[i].name;
@@ -185,14 +186,14 @@ public class NavigationDrawer extends AppCompatActivity
         // Account picker
         mAlertDialog = new AlertDialog.Builder(this).setTitle(R.string.pick_account)
                 .setAdapter(new ArrayAdapter<>(getBaseContext(), android.R.layout.simple_list_item_1, names), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                UserWrapper user = usersManager.switchCurrentUser(accounts[which]);
-                showMessage("User '" + user.getFullName() + "' chosen");
-                fillUserInfo();
-                refreshFragment();
-            }
-        }).create();
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        UserWrapper user = usersManager.switchCurrentUser(accounts[which]);
+                        showMessage("User '" + user.getFullName() + "' chosen");
+                        fillUserInfo();
+                        refreshFragment();
+                    }
+                }).create();
         mAlertDialog.show();
     }
 
@@ -241,7 +242,7 @@ public class NavigationDrawer extends AppCompatActivity
     }
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
+        final ImageView bmImage;
 
         public DownloadImageTask(ImageView bmImage) {
             this.bmImage = bmImage;
@@ -271,12 +272,10 @@ public class NavigationDrawer extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case MANAGE_ACCOUNTS_REQUEST:
-                handleAccounts();
-            default:
-                super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == MANAGE_ACCOUNTS_REQUEST) {
+            handleAccounts();
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -355,6 +354,7 @@ public class NavigationDrawer extends AppCompatActivity
     }
 
     Object handleSyncObserver;
+
     @Override
     protected void onResume() {
         super.onResume();

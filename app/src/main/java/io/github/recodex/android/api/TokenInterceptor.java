@@ -5,6 +5,7 @@ import android.util.Log;
 
 import java.io.IOException;
 
+import androidx.annotation.NonNull;
 import io.github.recodex.android.users.UsersManager;
 import okhttp3.Interceptor;
 import okhttp3.Request;
@@ -12,12 +13,13 @@ import okhttp3.Response;
 
 public class TokenInterceptor implements Interceptor {
 
-    private UsersManager usersManager;
+    private final UsersManager usersManager;
 
     public TokenInterceptor(UsersManager usersManager) {
         this.usersManager = usersManager;
     }
 
+    @NonNull
     @Override
     public Response intercept(Chain chain) throws IOException {
 

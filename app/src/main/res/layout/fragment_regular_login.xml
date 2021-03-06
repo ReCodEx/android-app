@@ -39,7 +39,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_password"
-                    android:imeActionId="@+id/login"
+                    android:imeActionId="@integer/password_regular_login_action"
                     android:imeActionLabel="@string/action_sign_in"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textPassword"
@@ -54,7 +54,7 @@
                 android:textStyle="bold"
                 android:textAlignment="center"
                 android:textColor="@color/colorDarkOrange"
-                android:padding="10dp"/>
+                android:padding="10dp" />
 
             <Button
                 android:id="@+id/sign_in_button_regular_login"

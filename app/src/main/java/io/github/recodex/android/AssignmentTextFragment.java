@@ -2,9 +2,6 @@ package io.github.recodex.android;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +13,9 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import io.github.recodex.android.api.ApiWrapper;
 import io.github.recodex.android.api.RecodexApi;
 import io.github.recodex.android.model.Assignment;
@@ -91,7 +91,8 @@ public class AssignmentTextFragment extends Fragment implements SwipeRefreshLayo
         try {
             ((MarkdownView) fragment.getView().findViewById(R.id.assignment_text))
                     .setMarkDownText(text);
-        } catch (NullPointerException e) {}
+        } catch (NullPointerException ignored) {
+        }
     }
 
     /**

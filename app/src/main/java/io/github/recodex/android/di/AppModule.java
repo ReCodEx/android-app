@@ -20,7 +20,7 @@ import io.github.recodex.android.utils.LocalizationHelper;
 @Module
 public class AppModule {
 
-    Application mApplication;
+    final Application mApplication;
 
     public AppModule(Application application) {
         mApplication = application;

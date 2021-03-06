@@ -4,10 +4,10 @@ package io.github.recodex.android.api;
 import java.util.List;
 
 import io.github.recodex.android.model.Assignment;
+import io.github.recodex.android.model.AssignmentSolution;
 import io.github.recodex.android.model.Envelope;
 import io.github.recodex.android.model.Group;
 import io.github.recodex.android.model.Login;
-import io.github.recodex.android.model.AssignmentSolution;
 import io.github.recodex.android.model.User;
 import io.github.recodex.android.model.UserGroups;
 import retrofit2.Call;

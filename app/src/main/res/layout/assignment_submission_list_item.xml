@@ -14,23 +14,26 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:paddingLeft="25dp">
+        android:paddingLeft="25dp"
+        android:paddingRight="25dp">
 
         <ImageView
             android:layout_width="35dp"
             android:layout_height="match_parent"
-            android:tint="@color/colorDarkOrange"
             app:srcCompat="@drawable/ic_build_black_24dp"
-            android:id="@+id/assignment_submission_state_icon" />
+            android:id="@+id/assignment_submission_state_icon"
+            app:tint="@color/colorDarkOrange" />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingLeft="25dp">
+            android:paddingLeft="25dp"
+            android:paddingRight="25dp">
+
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:id="@+id/assignment_submission_date"
                 android:textColor="@color/contentForeground"
                 android:layout_weight="1"
@@ -44,6 +47,7 @@
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
                 android:paddingBottom="10dp">
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -51,6 +55,7 @@
                     android:textColor="@color/contentForeground"
                     android:layout_weight="1"
                     tools:text="100%" />
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

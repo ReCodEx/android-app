@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <group android:checkableBehavior="single" android:id="@+id/menu_groups">
+    <group
+        android:checkableBehavior="single"
+        android:id="@+id/menu_groups">
         <item
             android:id="@+id/action_dashboard"
             android:icon="@drawable/ic_dashboard"

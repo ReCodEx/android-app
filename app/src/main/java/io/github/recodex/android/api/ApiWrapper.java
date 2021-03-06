@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 import java.io.IOException;
 
+import androidx.annotation.NonNull;
 import io.github.recodex.android.R;
 import io.github.recodex.android.users.UsersManager;
 import okhttp3.Cache;
@@ -18,8 +19,9 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiWrapper<T> {
-    private T cacheOnlyApi;
-    private T realApi;
+
+    private final T cacheOnlyApi;
+    private final T realApi;
 
     public ApiWrapper(Class<T> cls, Application application, UsersManager usersManager, SharedPreferences preferences) {
         Cache cache = new Cache(application.getCacheDir(), 10 * 1024 * 1024);
@@ -77,6 +79,7 @@ public class ApiWrapper<T> {
 }
 
 class ForcedCacheInterceptor implements Interceptor {
+    @NonNull
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request().newBuilder()

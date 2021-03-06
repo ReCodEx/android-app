@@ -29,11 +29,11 @@ public class UserWrapper {
     private static final String DEFAULT_LANGUAGE_KEY = "DEFAULT_LANGUAGE";
     private static final String DEFAULT_LANGUAGE = "en";
 
-    private Context context;
-    private SharedPreferences preferences;
-    private Account account;
-    private String id;
-    private LoginType loginType;
+    private final Context context;
+    private final SharedPreferences preferences;
+    private final Account account;
+    private final String id;
+    private final LoginType loginType;
 
     public UserWrapper(Context context, String id, Account account, String loginType) {
         this.context = context;
@@ -43,7 +43,9 @@ public class UserWrapper {
         this.preferences = context.getSharedPreferences(context.getString(R.string.user_preferences_prefix) + id, Context.MODE_PRIVATE);
     }
 
-    public Account getAccount() { return account; }
+    public Account getAccount() {
+        return account;
+    }
 
     public void requestSync() {
         Bundle bundle = new Bundle();
@@ -57,9 +59,13 @@ public class UserWrapper {
         Log.d(context.getString(R.string.recodex_log_tag), "Sync interval changed: " + minutes + " min");
     }
 
-    public String getId() { return id; }
+    public String getId() {
+        return id;
+    }
 
-    public LoginType getLoginType() { return loginType; }
+    public LoginType getLoginType() {
+        return loginType;
+    }
 
     public String getFullName() {
         return preferences.getString(FULL_NAME, context.getString(R.string.john_doe));
@@ -78,14 +84,14 @@ public class UserWrapper {
         editor.putString(FULL_NAME, login.getUser().getFullName());
         editor.putString(AVATAR_URL, login.getUser().getAvatarUrl());
         editor.putString(DEFAULT_LANGUAGE_KEY, login.getUser().getPrivateData().getSettings().getDefaultLanguage());
-        editor.commit();
+        editor.apply();
     }
 
     public void setGroupsInfo(List<Group> groups, List<StudentGroupStats> stats) {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(GROUP_LIST, new Gson().toJson(groups));
         editor.putString(GROUPS_STATS, new Gson().toJson(stats));
-        editor.commit();
+        editor.apply();
     }
 
     public List<StudentGroupStats> getGroupStats() {
@@ -93,7 +99,8 @@ public class UserWrapper {
             return null;
         }
         String groupsJson = preferences.getString(GROUPS_STATS, "");
-        Type type = new TypeToken<List<StudentGroupStats>>() {}.getType();
+        Type type = new TypeToken<List<StudentGroupStats>>() {
+        }.getType();
         return new Gson().fromJson(groupsJson, type);
     }
 
@@ -102,7 +109,8 @@ public class UserWrapper {
             return null;
         }
         String groupsJson = preferences.getString(GROUP_LIST, "");
-        Type type = new TypeToken<List<Group>>() {}.getType();
+        Type type = new TypeToken<List<Group>>() {
+        }.getType();
         return new Gson().fromJson(groupsJson, type);
     }
 
@@ -111,7 +119,8 @@ public class UserWrapper {
             return null;
         }
         String groupsJson = preferences.getString(GROUP_LIST, "");
-        Type type = new TypeToken<List<Group>>() {}.getType();
+        Type type = new TypeToken<List<Group>>() {
+        }.getType();
         List<Group> groups = new Gson().fromJson(groupsJson, type);
 
         for (Group group : groups) {

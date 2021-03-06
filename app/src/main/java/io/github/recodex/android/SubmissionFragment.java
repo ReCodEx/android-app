@@ -3,9 +3,6 @@ package io.github.recodex.android;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +15,10 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import io.github.recodex.android.model.Assignment;
 import io.github.recodex.android.model.AssignmentSolution;
 import io.github.recodex.android.model.AssignmentSolutionSubmission;
@@ -79,13 +80,13 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
             TextView score = (TextView) getView().findViewById(R.id.submission_score);
             score.setText(String.format(Locale.ROOT, "%d%%", percentual_score));
             if (percentual_score > 0) {
-                score.setTextColor(getResources().getColor(R.color.colorAssignmentDone));
+                score.setTextColor(getResources().getColor(R.color.colorAssignmentDone, null));
             }
 
             TextView points = (TextView) getView().findViewById(R.id.submission_points);
             points.setText(String.format(Locale.ROOT, "%d/%d", evaluation.getPoints(), assignmentSolution.getMaxPoints()));
             if (evaluation.getPoints() > 0) {
-                points.setTextColor(getResources().getColor(R.color.colorAssignmentDone));
+                points.setTextColor(getResources().getColor(R.color.colorAssignmentDone, null));
             }
 
             TextView bonusPoints = (TextView) getView().findViewById(R.id.submission_bonus_points);
@@ -94,7 +95,7 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
             if (!evaluation.getInitFailed()) {
                 ImageView buildSucceeded = (ImageView) getView().findViewById(R.id.submission_build_succeeded);
                 buildSucceeded.setImageResource(R.drawable.ic_check_black_24dp);
-                buildSucceeded.setColorFilter(getResources().getColor(R.color.colorGreen));
+                buildSucceeded.setColorFilter(getResources().getColor(R.color.colorGreen, null));
             }
 
             getView().findViewById(R.id.display_test_results_button).setOnClickListener(new View.OnClickListener() {
@@ -146,10 +147,10 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
         return view;
     }
 
-    class AsyncResultStruct {
-        public User submittedBy;
-        public AssignmentSolution assignmentSolution;
-        public Assignment assignment;
+    private static class AsyncResultStruct {
+        public final User submittedBy;
+        public final AssignmentSolution assignmentSolution;
+        public final Assignment assignment;
 
         public AsyncResultStruct(User submittedBy, AssignmentSolution assignmentSolution, Assignment assignment) {
             this.submittedBy = submittedBy;
@@ -222,7 +223,7 @@ public class SubmissionFragment extends Fragment implements SwipeRefreshLayout.O
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof OnTestResultsSelectedListener) {
             testResultsCallback = (OnTestResultsSelectedListener) context;

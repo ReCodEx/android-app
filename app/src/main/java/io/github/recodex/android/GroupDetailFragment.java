@@ -4,10 +4,6 @@ import android.content.Context;
 import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +23,10 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import io.github.recodex.android.api.ApiWrapper;
 import io.github.recodex.android.api.RecodexApi;
 import io.github.recodex.android.model.Assignment;
@@ -93,21 +93,21 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
         }
     }
 
-    class GroupData {
+    private static class GroupData {
         public Group group;
 
         List<AssignmentData> assignments;
     }
 
-    class AssignmentData {
-        Assignment assignment;
-        AssignmentSolution bestSolution;
-        AssignmentSolutionSubmission bestSolutionSubmission;
+    private static class AssignmentData {
+        final Assignment assignment;
+        final AssignmentSolution bestSolution;
+        final AssignmentSolutionSubmission bestSolutionSubmission;
 
         AssignmentData(Assignment assignment, AssignmentSolution bestSolution) {
             this.assignment = assignment;
             this.bestSolution = bestSolution;
-            this.bestSolutionSubmission = bestSolution != null ? bestSolution.getLastSubmission(): null;
+            this.bestSolutionSubmission = bestSolution != null ? bestSolution.getLastSubmission() : null;
         }
 
         boolean hasEvaluation() {
@@ -189,9 +189,9 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
     }
 
     class AssignmentListAdapter extends ArrayAdapter<AssignmentData> {
-        private List<AssignmentData> assignments;
 
-        private LayoutInflater inflater;
+        private final List<AssignmentData> assignments;
+        private final LayoutInflater inflater;
 
         AssignmentListAdapter(Context context, List<AssignmentData> assignments) {
             super(context, R.layout.fragment_group_detail);
@@ -200,7 +200,7 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
             addAll(assignments);
 
             Collections.sort(assignments, new Comparator<AssignmentData>() {
-                private Date now = Calendar.getInstance().getTime();
+                private final Date now = Calendar.getInstance().getTime();
 
                 @Override
                 public int compare(AssignmentData first, AssignmentData second) {
@@ -245,14 +245,8 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
                             ? second.assignment.getSecondDeadline()
                             : second.assignment.getFirstDeadline();
 
-                    if (firstAssignmentDeadline > secondAssignmentDeadline) {
-                        return 1;
-                    }
-                    if (firstAssignmentDeadline < secondAssignmentDeadline) {
-                        return -1;
-                    }
+                    return Long.compare(firstAssignmentDeadline, secondAssignmentDeadline);
 
-                    return 0;
                 }
             });
         }
@@ -277,9 +271,9 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
             TextView name = (TextView) view.findViewById(R.id.assignment_name);
             name.setText(localizedAssignment != null ? localizedAssignment.getName() : "");
             if (assignmentDone) {
-                name.setTextColor(getResources().getColor(R.color.colorAssignmentDone));
+                name.setTextColor(getResources().getColor(R.color.colorAssignmentDone, null));
             } else if (data.isAfterDeadlines(now)) {
-                name.setTextColor(getResources().getColor(R.color.colorAssignmentMissed));
+                name.setTextColor(getResources().getColor(R.color.colorAssignmentMissed, null));
             }
 
             String firstDeadline = localizationHelper.getDateTime(assignment.getFirstDeadline());
@@ -305,7 +299,7 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
             TextView percentage = (TextView) view.findViewById(R.id.solutions_button);
             if (data.hasEvaluation()) {
                 if (assignmentDone) {
-                    percentage.setTextColor(getResources().getColor(R.color.colorAssignmentDone));
+                    percentage.setTextColor(getResources().getColor(R.color.colorAssignmentDone, null));
                 }
                 percentage.setText(String.format(Locale.ROOT, "%d%%", data.getPointPercentage()));
             } else {
@@ -398,7 +392,7 @@ public class GroupDetailFragment extends Fragment implements SwipeRefreshLayout.
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof OnAssignmentTextSelectedListener && context instanceof OnAssignmentSolutionsSelectedListener) {
             solutionsCallback = (OnAssignmentSolutionsSelectedListener) context;

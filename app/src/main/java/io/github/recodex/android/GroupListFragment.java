@@ -3,10 +3,6 @@ package io.github.recodex.android;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.ListFragment;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +17,10 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.ListFragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import io.github.recodex.android.model.Group;
 import io.github.recodex.android.model.LocalizedGroup;
 import io.github.recodex.android.model.StudentGroupStats;
@@ -44,15 +44,14 @@ public class GroupListFragment extends ListFragment implements SwipeRefreshLayou
     @Inject
     ApiDataFetcher userDataFetcher;
 
-    private ListFragment fragment = this;
+    private final ListFragment fragment = this;
     private OnGroupSelectedListener callback;
     private SwipeRefreshLayout swipeLayout = null;
 
     class LoadGroupsTask extends AsyncTask<Void, Void, UserGroups> {
         protected UserGroups doInBackground(Void... params) {
             try {
-                UserGroups groups = userDataFetcher.fetchAndStoreGroups(users.getCurrentUser());
-                return groups;
+                return userDataFetcher.fetchAndStoreGroups(users.getCurrentUser());
             } catch (Exception e) {
                 return null;
             }
@@ -74,9 +73,8 @@ public class GroupListFragment extends ListFragment implements SwipeRefreshLayou
 
     class GroupListAdapter extends ArrayAdapter<Group> {
         private final List<StudentGroupStats> statsList;
-        private List<Group> groups;
-
-        private LayoutInflater inflater;
+        private final List<Group> groups;
+        private final LayoutInflater inflater;
 
         GroupListAdapter(Context context, List<Group> groups, List<StudentGroupStats> stats) {
             super(context, R.layout.fragment_group_list);
@@ -154,7 +152,7 @@ public class GroupListFragment extends ListFragment implements SwipeRefreshLayou
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
         ViewGroup parent = (ViewGroup) inflater.inflate(R.layout.fragment_group_list, container, false);
@@ -171,14 +169,14 @@ public class GroupListFragment extends ListFragment implements SwipeRefreshLayou
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         fragment.setListShown(true);
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         callback = (OnGroupSelectedListener) context;
     }

@@ -1,8 +1,6 @@
 package io.github.recodex.android;
 
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +13,8 @@ import android.widget.TextView;
 
 import javax.inject.Inject;
 
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import io.github.recodex.android.users.LoginHelper;
 
 /**
@@ -44,7 +44,7 @@ public class CasLoginFragment extends Fragment {
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
+                if (id == R.integer.password_cas_login_action || id == EditorInfo.IME_NULL) {
                     loginHelper.attemptCasLogin((LoginActivity) getActivity(), mEmailView, mPasswordView);
                     return true;
                 }

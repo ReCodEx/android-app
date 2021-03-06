@@ -1,10 +1,9 @@
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/swipe_container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -24,16 +23,19 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="10dp" >
+                    android:padding="10dp">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/submitted_at"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
+
                     <Space
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1" />
+
                     <TextView
                         android:id="@+id/submission_submitted_at"
                         android:layout_width="wrap_content"
@@ -45,16 +47,19 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="10dp" >
+                    android:padding="10dp">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/submitted_by"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
+
                     <Space
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1" />
+
                     <TextView
                         android:id="@+id/submission_author"
                         android:layout_width="wrap_content"
@@ -66,16 +71,19 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="10dp" >
+                    android:padding="10dp">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/evaluation_status"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
+
                     <Space
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1" />
+
                     <TextView
                         android:id="@+id/submission_evaluation_status"
                         android:layout_width="wrap_content"
@@ -91,6 +99,7 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:padding="10dp">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -110,16 +119,19 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="10dp" >
+                    android:padding="10dp">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/evaluated_at"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
+
                     <Space
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1" />
+
                     <TextView
                         android:id="@+id/submission_evaluated_at"
                         android:layout_width="wrap_content"
@@ -131,38 +143,44 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="10dp" >
+                    android:padding="10dp">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/build_succeeded"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
+
                     <Space
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1" />
+
                     <ImageView
                         android:id="@+id/submission_build_succeeded"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:tint="@color/colorRed"
-                        app:srcCompat="@drawable/ic_clear_black_24dp" />
+                        app:srcCompat="@drawable/ic_clear_black_24dp"
+                        app:tint="@color/colorRed" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="10dp" >
+                    android:padding="10dp">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/score"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
+
                     <Space
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1" />
+
                     <TextView
                         android:id="@+id/submission_score"
                         android:layout_width="wrap_content"
@@ -173,16 +191,19 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="10dp" >
+                    android:padding="10dp">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/points"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
+
                     <Space
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1" />
+
                     <TextView
                         android:id="@+id/submission_points"
                         android:layout_width="wrap_content"
@@ -193,16 +214,19 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="10dp" >
+                    android:padding="10dp">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/bonus_points"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
+
                     <Space
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1" />
+
                     <TextView
                         android:id="@+id/submission_bonus_points"
                         android:layout_width="wrap_content"
